@@ -10,8 +10,8 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag ghcr.io/${{ secrets.REPO }}/MtbImporter:latest --label maintainer="Niklas Reimer <${{ secrets.EMAIL }}>"
+      run: docker build . --file Dockerfile --tag ghcr.io/${{ secrets.REPO }}/mtbimporter:latest --label maintainer="Niklas Reimer <${{ secrets.EMAIL }}>"
     - name: Login to Docker registry
       run: echo ${{ secrets.GITHUB_TOKEN }} | docker login -u ${{ secrets.USER }} --password-stdin ${{ secrets.DOCKER_URL }}
     - name: Upload Docker image
-      run: docker push ${{ secrets.DOCKER_URL }}/${{ secrets.REPO }}/MtbImporter:latest
+      run: docker push ${{ secrets.DOCKER_URL }}/${{ secrets.REPO }}/mtbimporter:latest
