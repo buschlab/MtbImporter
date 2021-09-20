@@ -5,7 +5,7 @@ WORKDIR /mtbimporter
 
 RUN mvn install
 
-FROM r-base:4.1.0
+FROM r-base:4.1.1
 
 RUN apt-get update && apt-get install -y default-jre
 
