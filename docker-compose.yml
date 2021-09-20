@@ -1,0 +1,15 @@
+version: "3"
+services:
+  mtbimporter:
+    restart: unless-stopped
+    build: ./
+    image: ghcr.io/buschlab/mtbimporter:latest
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - "./settings.yaml:/app/settings.yaml"
+
+    networks:
+     - mtbimporter_net
+
+networks:
+  mtbimporter_net:

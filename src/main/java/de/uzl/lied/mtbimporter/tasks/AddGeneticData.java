@@ -1,0 +1,233 @@
+package de.uzl.lied.mtbimporter.tasks;
+
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
+
+import com.fasterxml.jackson.core.JsonGenerationException;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.MappingIterator;
+import com.fasterxml.jackson.databind.ObjectReader;
+import com.fasterxml.jackson.dataformat.csv.CsvMapper;
+import com.fasterxml.jackson.dataformat.csv.CsvParser;
+import com.fasterxml.jackson.dataformat.csv.CsvSchema;
+import com.fasterxml.jackson.dataformat.javaprop.JavaPropsMapper;
+import com.fasterxml.jackson.dataformat.javaprop.JavaPropsSchema;
+
+import de.uzl.lied.mtbimporter.model.CaseList;
+import de.uzl.lied.mtbimporter.model.CbioPortalStudy;
+import de.uzl.lied.mtbimporter.model.Cna;
+import de.uzl.lied.mtbimporter.model.ContinuousCna;
+import de.uzl.lied.mtbimporter.model.GenePanelMatrix;
+import de.uzl.lied.mtbimporter.model.Maf;
+
+public class AddGeneticData {
+
+    private static List<Maf> readMafFile(File maf) throws IOException {
+        CsvMapper om = new CsvMapper().enable(CsvParser.Feature.ALLOW_COMMENTS);
+        ObjectReader or = om.readerFor(Maf.class)
+                .with(CsvSchema.emptySchema().withHeader().withComments().withColumnSeparator('\t'));
+
+        MappingIterator<Maf> inputIterator = or.readValues(maf);
+        return inputIterator.readAll();
+    }
+
+    public static void writeMafFile(List<Maf> mafs, File maf)
+            throws JsonGenerationException, JsonMappingException, IOException {
+        CsvMapper om = new CsvMapper().enable(CsvParser.Feature.ALLOW_COMMENTS);
+        CsvSchema s = om.schemaFor(Maf.class).withHeader().withColumnSeparator('\t').withoutQuoteChar();
+        om.writer(s).writeValue(maf, mafs);
+    }
+
+    public static void writeSegFile(List<ContinuousCna> segs, File seg)
+            throws JsonGenerationException, JsonMappingException, IOException {
+        CsvMapper om = new CsvMapper().enable(CsvParser.Feature.ALLOW_COMMENTS);
+        CsvSchema s = om.schemaFor(ContinuousCna.class).withHeader().withColumnSeparator('\t').withoutQuoteChar();
+        om.writer(s).writeValue(seg, segs);
+    }
+
+    private static List<ContinuousCna> readSegFile(File seg) throws IOException {
+        CsvMapper om = new CsvMapper().enable(CsvParser.Feature.ALLOW_COMMENTS);
+        ObjectReader or = om.readerFor(ContinuousCna.class)
+                .with(CsvSchema.emptySchema().withHeader().withComments().withColumnSeparator('\t'));
+
+        MappingIterator<ContinuousCna> inputIterator = or.readValues(seg);
+        return inputIterator.readAll();
+    }
+
+    public static void processSegFile(CbioPortalStudy study, File seg) throws IOException {
+        study.addSeg(readSegFile(seg));
+    }
+
+    public static void processMafFile(CbioPortalStudy study, File maf) throws IOException {
+        study.addMaf(readMafFile(maf));
+    }
+
+    // public static void processMafFile(File maf, Long newState)
+    // throws JsonParseException, JsonMappingException, IOException {
+    // CsvMapper om = new CsvMapper().enable(CsvParser.Feature.ALLOW_COMMENTS);
+    // CsvSchema s =
+    // om.schemaFor(Maf.class).withHeader().withColumnSeparator('\t').withoutQuoteChar();
+    // ObjectReader or = om.readerFor(Maf.class)
+    // .with(CsvSchema.emptySchema().withHeader().withComments().withColumnSeparator('\t'));
+
+    // Iterator<Maf> inputIterator = or
+    // .readValues(new File(Settings.getStudyFolder() + newState +
+    // "/data_mutation_extended.maf"));
+    // Iterator<Maf> mafInterator = or.readValues(maf);
+
+    // List<Maf> mafs = new ArrayList<Maf>();
+    // HashSet<String> sampleIds = new HashSet<String>();
+    // while (inputIterator.hasNext()) {
+    // mafs.add(inputIterator.next());
+    // }
+    // List<Maf> newMafs = new ArrayList<Maf>();
+    // while (mafInterator.hasNext()) {
+    // Maf m = mafInterator.next();
+    // newMafs.add(m);
+    // sampleIds.add(m.getTumorSampleBarcode().replaceAll("_TD", ""));
+    // }
+    // newMafs = Maf.merge(mafs, newMafs);
+
+    // AddClinicalData.addDummyPatient(sampleIds, newState);
+
+    // om.writer(s).writeValue(new File(Settings.getStudyFolder() + newState +
+    // "/data_mutation_extended.maf"),
+    // newMafs);
+
+    // addCasesSequenced(newState, sampleIds);
+
+    // }
+
+    public static void processGenePanelFile(CbioPortalStudy study, File input) throws IOException {
+        study.setGenePanelMatrix(readGenePanelFile(input));
+    }
+
+    public static List<GenePanelMatrix> readGenePanelFile(File panel) throws IOException {
+        CsvMapper om = new CsvMapper().enable(CsvParser.Feature.ALLOW_COMMENTS);
+        ObjectReader or = om.readerFor(GenePanelMatrix.class)
+                .with(CsvSchema.emptySchema().withHeader().withComments().withColumnSeparator('\t'));
+
+        MappingIterator<GenePanelMatrix> inputIterator = or.readValues(panel);
+        return inputIterator.readAll();
+    }
+
+    public static void writeGenePanelFile(Collection<GenePanelMatrix> panels, File target)
+            throws JsonGenerationException, JsonMappingException, IOException {
+        CsvMapper om = new CsvMapper().enable(CsvParser.Feature.ALLOW_COMMENTS);
+        CsvSchema s = om.schemaFor(GenePanelMatrix.class).withHeader().withColumnSeparator('\t').withoutQuoteChar();
+        om.writer(s).writeValue(target, panels);
+    }
+
+    public static List<Cna> readCnaFile(File input) throws IOException {
+        CsvMapper om = new CsvMapper().enable(CsvParser.Feature.ALLOW_COMMENTS);
+        ObjectReader or = om.readerFor(Cna.class)
+                .with(CsvSchema.emptySchema().withHeader().withComments().withColumnSeparator('\t'));
+
+        MappingIterator<Cna> inputIterator = or.readValues(input);
+        return inputIterator.readAll();
+    }
+
+    public static void writeCnaFile(Collection<Cna> cnas, File target) throws IOException {
+        CsvMapper om = new CsvMapper().enable(CsvParser.Feature.ALLOW_COMMENTS);
+        CsvSchema s = om.schemaFor(Cna.class).withHeader().withColumnSeparator('\t').withoutQuoteChar();
+
+        for (String id : cnas.iterator().next().getSamples().keySet()) {
+            s = CsvSchema.builder().addColumnsFrom(s).addColumn(id).build();
+        }
+        om.writer(s.withHeader().withColumnSeparator('\t').withoutQuoteChar()).writeValue(target, cnas);
+    }
+
+    public static void processCnaFile(CbioPortalStudy study, File cna)
+            throws JsonParseException, JsonMappingException, IOException {
+        study.addCna(readCnaFile(cna));
+        // AddClinicalData.addDummyPatient(study, sampleIds);
+
+        // addCasesCna(newState, sampleIds);
+
+    }
+
+    // public static void processSegFile(File cna, Long newState) throws IOException
+    // {
+    // CsvMapper om = new CsvMapper().enable(CsvParser.Feature.ALLOW_COMMENTS);
+    // CsvSchema s =
+    // om.schemaFor(ContinuousCna.class).withHeader().withColumnSeparator('\t').withoutQuoteChar();
+    // ObjectReader or = om.readerFor(ContinuousCna.class)
+    // .with(CsvSchema.emptySchema().withHeader().withComments().withColumnSeparator('\t'));
+
+    // Iterator<ContinuousCna> inputIterator = or
+    // .readValues(new File(Settings.getStudyFolder() + newState +
+    // "/data_cna.seg"));
+    // Iterator<ContinuousCna> cnaIterator = or.readValues(cna);
+
+    // List<ContinuousCna> cnas = new ArrayList<ContinuousCna>();
+    // HashSet<String> sampleIds = new HashSet<String>();
+    // while (inputIterator.hasNext()) {
+    // ContinuousCna c = inputIterator.next();
+    // cnas.add(c);
+    // }
+    // List<ContinuousCna> newCnas = new ArrayList<ContinuousCna>();
+    // while (cnaIterator.hasNext()) {
+    // ContinuousCna c = cnaIterator.next();
+    // newCnas.add(c);
+    // sampleIds.add(c.getId().replaceAll("_TD", ""));
+    // }
+    // cnas = ContinuousCna.merge(cnas, newCnas);
+
+    // AddClinicalData.addDummyPatient(sampleIds, newState);
+
+    // om.writer(s).writeValue(new File(Settings.getStudyFolder() + newState +
+    // "/data_cna.seg"), newCnas);
+
+    // addCasesCna(newState, sampleIds);
+
+    // }
+
+    // private static void addCasesCna(Long newState, HashSet<String> sampleIds)
+    // throws JsonParseException, JsonMappingException, IOException {
+
+    // JavaPropsMapper jpm = new JavaPropsMapper();
+    // JavaPropsSchema jps = JavaPropsSchema.emptySchema().withKeyValueSeparator(":
+    // ");
+    // File f = new File(Settings.getStudyFolder() + newState +
+    // "/case_lists/cases_cna.txt");
+    // CaseList seq = jpm.readValue(f, CaseList.class);
+    // seq.getCaseListIds().addAll(sampleIds);
+
+    // String seqStr = jpm.writer(jps).writeValueAsString(seq).replace("\\t", "\t");
+    // Files.write(Paths.get(Settings.getStudyFolder() + newState +
+    // "/case_lists/cases_cna.txt"), seqStr.getBytes());
+    // }
+
+    // private static void addCasesSequenced(Long newState, HashSet<String>
+    // sampleIds)
+    // throws JsonParseException, JsonMappingException, IOException {
+
+    // JavaPropsMapper jpm = new JavaPropsMapper();
+    // JavaPropsSchema jps = JavaPropsSchema.emptySchema().withKeyValueSeparator(":
+    // ");
+    // File f = new File(Settings.getStudyFolder() + newState +
+    // "/case_lists/cases_sequenced.txt");
+    // CaseList seq = jpm.readValue(f, CaseList.class);
+    // seq.getCaseListIds().addAll(sampleIds);
+
+    // String seqStr = jpm.writer(jps).writeValueAsString(seq).replace("\\t", "\t");
+    // Files.write(Paths.get(Settings.getStudyFolder() + newState +
+    // "/case_lists/cases_sequenced.txt"),
+    // seqStr.getBytes());
+    // }
+
+    public static void writeCaseList(File caseList, Set<String> sampleIds) throws IOException {
+        JavaPropsMapper jpm = new JavaPropsMapper();
+        JavaPropsSchema jps = JavaPropsSchema.emptySchema().withKeyValueSeparator(": ");
+        CaseList seq = jpm.readValue(caseList, CaseList.class);
+        seq.getCaseListIds().addAll(sampleIds);
+
+        String seqStr = jpm.writer(jps).writeValueAsString(seq).replace("\\t", "\t");
+        Files.write(caseList.toPath(), seqStr.getBytes());
+    }
+}

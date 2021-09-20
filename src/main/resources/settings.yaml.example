@@ -1,0 +1,39 @@
+portalUrl: http://cbioportal:8080
+portalInfo: /cbioportal/portalinfo
+#importScriptPath: /opt/cbioportal/core/src/main/scripts/importer/
+mafPath: maf/
+cronIntervall: 60000
+studyFolder: study/
+urlBase: http://localhost:8080/reports
+resourceFolder: reports/
+overrideWarnings: true
+restartAfterImport: true
+#restartCommand: systemctl restart cbioportal
+fhirServer: http://localhost:8080/fhir
+regex:
+    -
+      cbio: "-"
+      his: /
+mappingMethod: cxx
+mdr:
+   - samply:
+      url: https://mdr.itcr.uni-luebeck.de/v2/api/mdr/
+      namespace: cbioportal
+      language: de
+   - cxx:
+      url: https://mdr.imi.uni-luebeck.de/centraxx-mdr-server
+      username: username
+      password: password
+      basicUsername: basicUser
+      basicPassword: basicUUID
+      mappingEnabled: true
+docker:
+  compose:
+    workdir: /home/user/git/MIRACUM-cbioportal
+    serviceName: cbioportal
+  studyFolder:  /study
+  #imageName: ghcr.io/buschlab/cbioportal:latest
+  #containerName: cbioportal_container
+  #networkName: miracum-cbioportal_cbioportal_net
+  #propertiesFile: /Users/nreimer/git/MIRACUM-cbioportal/config/portal.properties
+  #portalInfoVolume: miracum-cbioportal_cbioportal_portalinfo
