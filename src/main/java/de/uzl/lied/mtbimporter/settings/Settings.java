@@ -21,8 +21,8 @@ public class Settings {
     private static String portalInfo;
     @JsonProperty("importScriptPath")
     private static String importScriptPath;
-    @JsonProperty("mafPath")
-    private static String mafPath;
+    @JsonProperty("inputFolders")
+    private static InputFolder[] inputFolders;
     @JsonProperty("cronIntervall")
     private static Integer cronIntervall;
     @JsonProperty("studyFolder")
@@ -83,16 +83,13 @@ public class Settings {
         importScriptPath = newImportScriptPath;
     }
 
-    public static String getMafPath() {
-        return mafPath;
+    public static InputFolder[] getInputFolders() {
+        return inputFolders;
     }
 
-    @JsonProperty("mafPath")
-    public void setMafPath(String newMafPath) {
-        if (!newMafPath.endsWith("/")) {
-            newMafPath = newMafPath + "/";
-        }
-        mafPath = newMafPath;
+    @JsonProperty("inputFolders")
+    public void setMafPath(InputFolder[] newInputFolders) {
+        inputFolders = newInputFolders;
     }
 
     public static Integer getCronIntervall() {
