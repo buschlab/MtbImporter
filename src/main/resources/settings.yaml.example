@@ -1,7 +1,10 @@
 portalUrl: http://cbioportal:8080
 portalInfo: /cbioportal/portalinfo
 #importScriptPath: /opt/cbioportal/core/src/main/scripts/importer/
-mafPath: maf/
+inputFolders:
+  -
+    source: input/
+    target: processed/
 cronIntervall: 60000
 studyFolder: study/
 urlBase: http://localhost:8080/reports
