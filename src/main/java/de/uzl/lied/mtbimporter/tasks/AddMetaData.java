@@ -15,19 +15,19 @@ public class AddMetaData {
 
     public static void processRData(CbioPortalStudy study, File rData)
             throws JsonParseException, JsonMappingException, IOException {
-        String[] getPatientId = { "RScript", "--vanilla", "-e",
+        String[] getPatientId = { "Rscript", "--vanilla", "-e",
                 "options(warn = -1); load(\"" + rData.getAbsolutePath() + "\"); cat(id);" };
-        String[] getTmb = { "RScript", "--vanilla", "-e", "options(warn = -1); load(\"" + rData.getAbsolutePath()
+        String[] getTmb = { "Rscript", "--vanilla", "-e", "options(warn = -1); load(\"" + rData.getAbsolutePath()
                 + "\"); cat(round(x = filt_result_td$tmb, digits = 2));" };
-        String[] getMsiStatus = { "RScript", "--vanilla", "-e", "options(warn = -1); load(\"" + rData.getAbsolutePath()
+        String[] getMsiStatus = { "Rscript", "--vanilla", "-e", "options(warn = -1); load(\"" + rData.getAbsolutePath()
                 + "\"); cat(as.character(filt_result_td$msi$result$MSI_status));" };
-        String[] getMsiScore = { "RScript", "--vanilla", "-e", "options(warn = -1); load(\"" + rData.getAbsolutePath()
+        String[] getMsiScore = { "Rscript", "--vanilla", "-e", "options(warn = -1); load(\"" + rData.getAbsolutePath()
                 + "\"); cat(as.character(filt_result_td$msi$scores$ratio*100));" };
-        String[] getPanel = { "RScript", "--vanilla", "-e",
+        String[] getPanel = { "Rscript", "--vanilla", "-e",
                 "options(warn = -1); load(\"" + rData.getAbsolutePath() + "\"); cat(sureselect_type);" };
-        String[] getProtocol = { "RScript", "--vanilla", "-e",
+        String[] getProtocol = { "Rscript", "--vanilla", "-e",
                 "options(warn = -1); load(\"" + rData.getAbsolutePath() + "\"); cat(protocol);" };
-        String[] getCoveredRegion = { "RScript", "--vanilla", "-e",
+        String[] getCoveredRegion = { "Rscript", "--vanilla", "-e",
                 "options(warn = -1); load(\"" + rData.getAbsolutePath() + "\"); cat(covered_region);" };
 
         String sampleId = runRscriptCommand(getPatientId);
