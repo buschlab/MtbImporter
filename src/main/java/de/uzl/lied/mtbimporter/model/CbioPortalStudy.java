@@ -10,6 +10,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Map.Entry;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+
 import de.uzl.lied.mtbimporter.tasks.AddClinicalData;
 
 public class CbioPortalStudy {
@@ -188,16 +191,16 @@ public class CbioPortalStudy {
         }
     }
 
-    public void addMutationalLimit(Collection<MutationalSignature> mutationalLimit) {
+    public void addMutationalLimit(Collection<MutationalSignature> mutationalLimit) throws JsonParseException, JsonMappingException, IOException {
         addMutationalSignature(mutationalLimit, this.mutationalLimit, 0);
 
     }
 
-    public void addMutationalContribution(Collection<MutationalSignature> mutationalContribution) {
+    public void addMutationalContribution(Collection<MutationalSignature> mutationalContribution) throws JsonParseException, JsonMappingException, IOException {
         addMutationalSignature(mutationalContribution, this.mutationalContribution, 1);
     }
 
-    private void addMutationalSignature(Collection<MutationalSignature> mutationalSignature, Map<String, MutationalSignature> map, int defaultValue) {
+    private void addMutationalSignature(Collection<MutationalSignature> mutationalSignature, Map<String, MutationalSignature> map, int defaultValue) throws JsonParseException, JsonMappingException, IOException {
         Set<String> sampleIds = new HashSet<String>();
         for(MutationalSignature m : mutationalSignature) {
             MutationalSignature m2 = new MutationalSignature();
@@ -206,12 +209,6 @@ public class CbioPortalStudy {
             m2.setDescription(m.getDescription());
             for (Entry<String, Number> e : m.getSamples().entrySet()) {
                 m2.getSamples().put(e.getKey().replaceAll("_TD", ""), e.getValue());
-            }
-            try {
-                AddClinicalData.addDummyPatient(this, m2.getSamples().keySet());
-            } catch (IOException e1) {
-                // TODO Auto-generated catch block
-                e1.printStackTrace();
             }
             if(map.containsKey(m.getEntityStableId())) {
                 sampleIds.addAll(m2.getSamples().keySet());
@@ -228,6 +225,7 @@ public class CbioPortalStudy {
                 }
             }
         }
+        AddClinicalData.addDummyPatient(this, sampleIds);
     }
 
     public Collection<Cna> getCna() {
@@ -241,7 +239,7 @@ public class CbioPortalStudy {
         }
     }
 
-    public void addCna(Collection<Cna> cna) {
+    public void addCna(Collection<Cna> cna) throws JsonParseException, JsonMappingException, IOException {
         for(Cna c : cna) {
             if (c.getEntrezGeneId().equals("NA")) {
                 continue;
@@ -253,12 +251,6 @@ public class CbioPortalStudy {
                 c2.getSamples().put(e.getKey().replaceAll("_TD", ""), e.getValue());
             }
             cnaSampleIds.addAll(c2.getSamples().keySet());
-            try {
-                AddClinicalData.addDummyPatient(this, c2.getSamples().keySet());
-            } catch (IOException e1) {
-                // TODO Auto-generated catch block
-                e1.printStackTrace();
-            }
             if (this.cna.containsKey(c2.getHugoSymbol())) {
                 this.cna.get(c2.getHugoSymbol()).getSamples().putAll(c2.getSamples());
             } else {
@@ -272,6 +264,7 @@ public class CbioPortalStudy {
                 }
             }
         }
+        AddClinicalData.addDummyPatient(this, cnaSampleIds);
     }
 
     public Set<String> getCnaSampleIds() {

@@ -8,6 +8,7 @@ import java.util.Set;
 import java.util.Map.Entry;
 
 import com.fasterxml.jackson.core.JsonGenerationException;
+import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
 import de.uzl.lied.mtbimporter.model.CbioPortalStudy;
@@ -23,14 +24,14 @@ import de.uzl.lied.mtbimporter.tasks.AddTimelineData;
 
 public class StudyHandler {
     
-    public static CbioPortalStudy merge(CbioPortalStudy study, CbioPortalStudy... studies) {
+    public static CbioPortalStudy merge(CbioPortalStudy study, CbioPortalStudy... studies) throws JsonParseException, JsonMappingException, IOException {
         for(CbioPortalStudy newStudy : studies) {
             study = merge(study, newStudy);
         }
         return study;
     }
 
-    public static CbioPortalStudy merge(CbioPortalStudy study, CbioPortalStudy newStudy) {
+    public static CbioPortalStudy merge(CbioPortalStudy study, CbioPortalStudy newStudy) throws JsonParseException, JsonMappingException, IOException {
         study.addMaf(newStudy.getMaf());
         study.addSeg(newStudy.getSeg());
         study.addPatient(newStudy.getPatients());
