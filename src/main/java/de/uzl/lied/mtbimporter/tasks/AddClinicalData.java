@@ -99,7 +99,7 @@ public class AddClinicalData {
 
         for (int i = 0; i < keys.length; i++) {
             clinicalHeaders.put(keys[i],
-                    new ClinicalHeader(displayName[i], description[i], datatype[i], Double.parseDouble(priority[i])));
+                    new ClinicalHeader(displayName[i], description[i], datatype[i], (int) Double.parseDouble(priority[i])));
         }
 
         return clinicalHeaders;
