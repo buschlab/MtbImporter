@@ -3,6 +3,8 @@ package de.uzl.lied.mtbimporter.jobs;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.Scanner;
 import java.util.TimerTask;
 
@@ -102,7 +104,7 @@ public class CheckDropzone extends TimerTask {
                         f.delete();
                     } else {
                         new File(inputfolder.getTarget() + "/" + newState ).mkdirs();
-                        f.renameTo(new File(inputfolder.getTarget() + "/" + newState + "/" + f.getName()));
+                        Files.move(f.toPath(), new File(inputfolder.getTarget() + "/" + newState + "/" + f.getName()).toPath(), StandardCopyOption.REPLACE_EXISTING);
                     }
                     System.out.println("Processed file " + f.getAbsolutePath());
                 } catch (IOException e) {
