@@ -5,12 +5,12 @@ public class ClinicalHeader {
     private String displayName;
     private String description;
     private String datatype;
-    private Number priority;
+    private Integer priority;
 
     public ClinicalHeader() {
     }
 
-    public ClinicalHeader(String displayName, String description, String datatype, Number priority) {
+    public ClinicalHeader(String displayName, String description, String datatype, Integer priority) {
         this.displayName = displayName;
         this.description = description;
         this.datatype = datatype;
@@ -41,11 +41,11 @@ public class ClinicalHeader {
         this.datatype = datatype;
     }
 
-    public Number getPriority() {
+    public Integer getPriority() {
         return priority;
     }
 
-    public void setPriority(Number priority) {
+    public void setPriority(Integer priority) {
         this.priority = priority;
     }
 
