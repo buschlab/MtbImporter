@@ -45,6 +45,7 @@ public class StudyHandler {
         return study;
     }
 
+    @SuppressWarnings({"unchecked", "rawtypes"})
     public static void write(CbioPortalStudy study, Long state) throws JsonGenerationException, JsonMappingException, IOException {
         AddGeneticData.writeMafFile(study.getMaf(), new File(Settings.getStudyFolder() + state + "/data_mutation_extended.maf"));
         AddGeneticData.writeSegFile(study.getSeg(), new File(Settings.getStudyFolder() + state + "/data_cna.seg"));
@@ -65,6 +66,9 @@ public class StudyHandler {
         }
         AddGeneticData.writeCaseList(new File(Settings.getStudyFolder() + state + "/case_lists/cases_sequenced.txt"), caseListSequenced);
         AddGeneticData.writeCaseList(new File(Settings.getStudyFolder() + state + "/case_lists/cases_cna.txt"), study.getCnaSampleIds());
+        caseListSequenced.retainAll(study.getCnaSampleIds());
+        AddGeneticData.writeCaseList(new File(Settings.getStudyFolder() + state + "/case_lists/cases_cnaseq.txt"), caseListSequenced);
+
         
         Set<String> caseListAll = new HashSet<String>();
         for(ClinicalSample s : study.getSamples()) {

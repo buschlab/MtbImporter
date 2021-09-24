@@ -15,6 +15,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 
 import de.uzl.lied.mtbimporter.tasks.AddClinicalData;
 
+@SuppressWarnings("rawtypes")
 public class CbioPortalStudy {
     
     private List<Maf> maf = new ArrayList<Maf>();
