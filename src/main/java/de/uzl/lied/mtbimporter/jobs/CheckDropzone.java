@@ -35,14 +35,6 @@ public class CheckDropzone extends TimerTask {
         Long oldState = 0L;
         Long newState = System.currentTimeMillis();
         int count = 0;
-        try {
-            oldState = Settings.getState();
-            FileUtils.copyDirectory(new File(Settings.getStudyFolder() + oldState),
-                    new File(Settings.getStudyFolder() + newState));
-        } catch (IOException e1) {
-            // TODO Auto-generated catch block
-            e1.printStackTrace();
-        }
         CbioPortalStudy newStudy = new CbioPortalStudy();
 
         System.out.println("Checking for files!");
@@ -100,11 +92,13 @@ public class CheckDropzone extends TimerTask {
                             break;
                     }
 
-                    if(inputfolder.getTarget() == null || inputfolder.getTarget().length() == 0) {
+                    if (inputfolder.getTarget() == null || inputfolder.getTarget().length() == 0) {
                         f.delete();
                     } else {
-                        new File(inputfolder.getTarget() + "/" + newState ).mkdirs();
-                        Files.move(f.toPath(), new File(inputfolder.getTarget() + "/" + newState + "/" + f.getName()).toPath(), StandardCopyOption.REPLACE_EXISTING);
+                        new File(inputfolder.getTarget() + "/" + newState).mkdirs();
+                        Files.move(f.toPath(),
+                                new File(inputfolder.getTarget() + "/" + newState + "/" + f.getName()).toPath(),
+                                StandardCopyOption.REPLACE_EXISTING);
                     }
                     System.out.println("Processed file " + f.getAbsolutePath());
                 } catch (IOException e) {
@@ -115,6 +109,10 @@ public class CheckDropzone extends TimerTask {
 
         if (count > 0) {
             try {
+                oldState = Settings.getState();
+                FileUtils.copyDirectory(new File(Settings.getStudyFolder() + oldState),
+                        new File(Settings.getStudyFolder() + newState));
+
                 StudyHandler.merge(study, newStudy);
                 StudyHandler.write(study, newState);
                 ImportStudy.importStudy(newState, Settings.getOverrideWarnings());
