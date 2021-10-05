@@ -13,6 +13,12 @@
     <maven-javadoc-plugin.version>3.3.1</maven-javadoc-plugin.version>
     <maven-enforcer-plugin.version>3.0.0</maven-enforcer-plugin.version>
   </properties>
+  <repositories>
+		<repository>
+		    <id>jitpack.io</id>
+		    <url>https://jitpack.io</url>
+		</repository>
+	</repositories>
   <dependencies>
     <dependency>
       <groupId>ca.uhn.hapi.fhir</groupId>
@@ -75,9 +81,9 @@
       <version>5.3.10</version>
     </dependency>
     <dependency>
-      <groupId>de.samply</groupId>
-      <artifactId>mdrclient</artifactId>
-      <version>3.0.0</version>
+      <groupId>com.github.nr23730</groupId>
+      <artifactId>common-mdrclient</artifactId>
+      <version>99e83716728be00ca9a096039062a734dd7cd7f7</version>
     </dependency>
     <dependency>
       <groupId>com.github.albfernandez</groupId>
