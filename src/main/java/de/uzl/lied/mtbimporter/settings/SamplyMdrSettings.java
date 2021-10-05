@@ -1,10 +1,11 @@
 package de.uzl.lied.mtbimporter.settings;
 
 public class SamplyMdrSettings {
-    
+
     private String url;
     private String namespace;
     private String language;
+    private boolean mappingEnabled;
 
     public String getUrl() {
         return url;
@@ -29,5 +30,9 @@ public class SamplyMdrSettings {
     public void setLanguage(String language) {
         this.language = language;
     }
-    
+
+    public boolean isMappingEnabled() {
+        return mappingEnabled;
+    }
+
 }

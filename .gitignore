@@ -30,3 +30,10 @@ buildNumber.properties
 
 **/.DS_Store
 settings.yaml
+
+*.groovy
+
+procesed/*
+!procesed/.gitkeep
+input/*
+!input/.gitkeep
