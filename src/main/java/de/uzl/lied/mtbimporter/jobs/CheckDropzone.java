@@ -7,10 +7,13 @@ import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.Scanner;
 import java.util.TimerTask;
+import java.util.concurrent.ExecutionException;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 
+import de.samply.common.mdrclient.MdrConnectionException;
+import de.samply.common.mdrclient.MdrInvalidResponseException;
 import de.uzl.lied.mtbimporter.model.CbioPortalStudy;
 import de.uzl.lied.mtbimporter.settings.InputFolder;
 import de.uzl.lied.mtbimporter.settings.Settings;
@@ -101,7 +104,7 @@ public class CheckDropzone extends TimerTask {
                                 StandardCopyOption.REPLACE_EXISTING);
                     }
                     System.out.println("Processed file " + f.getAbsolutePath());
-                } catch (IOException e) {
+                } catch (IOException | ExecutionException | MdrConnectionException | MdrInvalidResponseException e) {
                     System.err.println("Could not process file " + f.getAbsolutePath());
                 }
             }
