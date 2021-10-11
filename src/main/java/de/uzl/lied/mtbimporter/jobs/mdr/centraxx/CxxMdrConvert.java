@@ -12,13 +12,17 @@ public class CxxMdrConvert {
 
     public static RelationConvert convert(CxxMdrSettings mdr, RelationConvert input) {
 
+        if (mdr.isTokenExpired()) {
+            CxxMdrLogin.login(mdr);
+        }
+
         RestTemplate rt = new RestTemplate();
         HttpHeaders headers = new HttpHeaders();
         headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString());
         headers.add(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON.toString());
         headers.add("Authorization", "Bearer " + mdr.getToken());
-        return rt.postForObject(mdr.getUrl() + "/rest/v1/relations/convert",
-                new HttpEntity<>(input, headers), RelationConvert.class);
+        return rt.postForObject(mdr.getUrl() + "/rest/v1/relations/convert", new HttpEntity<>(input, headers),
+                RelationConvert.class);
 
     }
 
