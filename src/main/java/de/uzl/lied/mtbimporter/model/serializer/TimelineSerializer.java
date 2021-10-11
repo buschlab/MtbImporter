@@ -43,7 +43,7 @@ public class TimelineSerializer extends StdSerializer<Timeline> {
         gen.writeStringField("PATIENT_ID", value.getPatientId());
         gen.writeStringField("START_DATE", value.getStartDate() + "");
         gen.writeStringField("STOP_DATE", value.getStopDate() + "");
-        gen.writeStringField("COMMENTS", value.getComments());
+        gen.writeStringField("NOTE", value.getNote());
 
         if(value instanceof TimelineSpecimen) {
             TimelineSpecimen tls = (TimelineSpecimen) value;

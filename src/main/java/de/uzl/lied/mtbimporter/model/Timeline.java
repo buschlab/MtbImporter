@@ -28,8 +28,8 @@ public class Timeline {
     private Long stopDate;
     @JsonProperty("EVENT_TYPE")
     private String eventType;
-    @JsonProperty("COMMENTS")
-    private String comments;
+    @JsonProperty("NOTE")
+    private String note;
     @JsonProperty("BEGIN")
     private String begin;
     @JsonProperty("END")
@@ -75,12 +75,12 @@ public class Timeline {
         this.eventType = eventType;
     }
 
-    public String getComments() {
-        return comments;
+    public String getNote() {
+        return note;
     }
 
-    public void setComments(String comments) {
-        this.comments = comments;
+    public void setNote(String note) {
+        this.note = note;
     }
 
     public Date getTmpBaseDate() {
