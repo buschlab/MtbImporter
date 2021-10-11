@@ -18,6 +18,11 @@ import de.uzl.lied.mtbimporter.settings.CxxMdrSettings;
 public class CxxMdrAttributes {
 
     public static ClinicalHeader getAttributes(CxxMdrSettings mdr, String mdrProfile, String key) {
+
+        if (mdr.isTokenExpired()) {
+            CxxMdrLogin.login(mdr);
+        }
+
         MultiValueMap<String, String> form = new LinkedMultiValueMap<String, String>();
         form.set("code", mdrProfile);
         form.set("domainCode", "cbioportal");
