@@ -136,9 +136,12 @@ public class AddGeneticData {
         CsvMapper om = new CsvMapper().enable(CsvParser.Feature.ALLOW_COMMENTS);
         CsvSchema s = om.schemaFor(Cna.class).withHeader().withColumnSeparator('\t').withoutQuoteChar();
 
-        for (String id : cnas.iterator().next().getSamples().keySet()) {
-            s = CsvSchema.builder().addColumnsFrom(s).addColumn(id).build();
+        if (cnas.size() > 0) {
+            for (String id : cnas.iterator().next().getSamples().keySet()) {
+                s = CsvSchema.builder().addColumnsFrom(s).addColumn(id).build();
+            }
         }
+
         om.writer(s.withHeader().withColumnSeparator('\t').withoutQuoteChar()).writeValue(target, cnas);
     }
 
