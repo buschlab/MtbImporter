@@ -52,7 +52,7 @@ public class CheckDropzone extends TimerTask {
             }
 
             for (File f : files) {
-                if (f.getName().contains("Diagnosen Vorst")) {
+                if (f.getName().contains("Diagnosen_Vorst")) {
                     try {
                         AddHisData.prepare(f, newStudy);
                     } catch (IOException e) {

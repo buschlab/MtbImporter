@@ -75,19 +75,20 @@ public class AddHisData {
 
             if (Settings.getMappingMethod().equals("cxx") && cxxMdr != null) {
 
-                input.setSourceProfileCode("L_Tumorboard_Molekular");
-                input.setTargetProfileCode("cbioportal-patient");
+                input.setSourceProfileCode("orbis_l-tumorboard-molekular");
+                input.setTargetProfileCode("cbioportal_patient");
                 study.addPatient(cxxMap(ClinicalPatient.class, cxxMdr, input));
 
-                input.setTargetProfileCode("cbioportal-sample");
+                input.setSourceProfileCode("orbis_l-tumorboard-molekular-vorbef-molekula");
+                input.setTargetProfileCode("cbioportal_sample");
                 study.addSample(cxxMap(ClinicalSample.class, cxxMdr, input));
 
-                input.setSourceProfileCode("L_Tumorboard_Molekular-Diagnosen");
-                input.setTargetProfileCode("cbioportal-timeline-diagnostic");
+                input.setSourceProfileCode("orbis_l-tumorboard-molekular-diagnosen-vorst");
+                input.setTargetProfileCode("cbioportal_timeline-diagnostic");
                 study.addTimeline(Timeline.class, cxxMap(Timeline.class, cxxMdr, input));
 
-                input.setSourceProfileCode("L_Tumorboard_Molekular-Therapielinien");
-                input.setTargetProfileCode("cbioportal-timeline-treatment");
+                input.setSourceProfileCode("orbis_l-tumorboard-molekular-therapielinien");
+                input.setTargetProfileCode("cbioportal_timeline-treatment");
                 study.addTimeline(TimelineTreatment.class, cxxMap(TimelineTreatment.class, cxxMdr, input));
 
             } else if (Settings.getMappingMethod().equals("groovy") && samplyMdr != null) {
@@ -173,8 +174,8 @@ public class AddHisData {
         for (Map<String, String> m : l) {
             if (pMap.containsKey(m.get("PID"))) {
                 Map<String, String> n = pMap.get(m.get("PID"));
-                if (Integer.parseInt(m.get("Jahr_Text")) < Integer.parseInt(n.get("Jahr_Text"))) {
-                    if (Integer.parseInt(m.get("Monat_Text")) < Integer.parseInt(n.get("Monat_Text"))) {
+                if (Integer.parseInt(m.get("JAHR_TEXT")) < Integer.parseInt(n.get("JAHR_TEXT"))) {
+                    if (Integer.parseInt(m.get("MONAT_TEXT")) < Integer.parseInt(n.get("MONAT_TEXT"))) {
                         pMap.put(m.get("PID"), m);
                     }
                 }

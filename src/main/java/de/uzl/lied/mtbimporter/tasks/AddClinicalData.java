@@ -108,7 +108,7 @@ public class AddClinicalData {
     public static void writeClinicalPatient(Collection<ClinicalPatient> clinicalPatients,
             Map<String, ClinicalHeader> patientAttributes, File target)
             throws JsonGenerationException, JsonMappingException, IOException {
-        writeClinical(target, clinicalPatients, ClinicalPatient.class, patientAttributes, "cbioportal-patient");
+        writeClinical(target, clinicalPatients, ClinicalPatient.class, patientAttributes, "cbioportal_patient");
     }
 
     public static void processClinicalPatient(CbioPortalStudy study, File clinicalPatient) throws IOException {
@@ -128,7 +128,7 @@ public class AddClinicalData {
     public static void writeClinicalSample(Collection<ClinicalSample> clinicalSamples,
             Map<String, ClinicalHeader> sampleAttributes, File target)
             throws JsonGenerationException, JsonMappingException, IOException {
-        writeClinical(target, clinicalSamples, ClinicalSample.class, sampleAttributes, "cbioportal-sample");
+        writeClinical(target, clinicalSamples, ClinicalSample.class, sampleAttributes, "cbioportal_sample");
 
     }
 
