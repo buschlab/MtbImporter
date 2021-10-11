@@ -277,11 +277,11 @@ public class CbioPortalStudy {
     }
 
     public <T> void addTimeline(Class<T> timeline, Timeline entry) {
-        this.timeline.put(timeline.getClass(), Timeline.merge(this.timeline.getOrDefault(timeline, new ArrayList<Timeline>()), List.of(entry)));
+        this.timeline.put(timeline, Timeline.merge(this.timeline.getOrDefault(timeline, new ArrayList<Timeline>()), List.of(entry)));
     }
 
     public <T> void addTimeline(Class<T> timeline, Collection<Timeline> entries) {
-        this.timeline.put(timeline.getClass(), Timeline.merge(this.timeline.getOrDefault(timeline, new ArrayList<Timeline>()), entries));
+        this.timeline.put(timeline, Timeline.merge(this.timeline.getOrDefault(timeline, new ArrayList<Timeline>()), entries));
     }
 
     public Map<Class, List<Timeline>> getTimelines() {
