@@ -277,6 +277,9 @@ public class CbioPortalStudy {
     }
 
     public <T> void addTimeline(Class<T> timeline, Timeline entry) {
+        if(entry == null) {
+            return;
+        }
         this.timeline.put(timeline, Timeline.merge(this.timeline.getOrDefault(timeline, new ArrayList<Timeline>()), List.of(entry)));
     }
 
