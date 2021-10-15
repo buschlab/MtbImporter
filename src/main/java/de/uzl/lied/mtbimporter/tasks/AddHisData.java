@@ -25,13 +25,13 @@ import de.samply.common.mdrclient.MdrInvalidResponseException;
 import de.uzl.lied.mtbimporter.jobs.mdr.centraxx.CxxMdrConvert;
 import de.uzl.lied.mtbimporter.jobs.mdr.centraxx.CxxMdrItemSet;
 import de.uzl.lied.mtbimporter.jobs.mdr.samply.SamplyMdrConvert;
+import de.uzl.lied.mtbimporter.jobs.mdr.samply.SamplyMdrItems;
 import de.uzl.lied.mtbimporter.model.CbioPortalStudy;
 import de.uzl.lied.mtbimporter.model.ClinicalPatient;
 import de.uzl.lied.mtbimporter.model.ClinicalSample;
 import de.uzl.lied.mtbimporter.model.Timeline;
 import de.uzl.lied.mtbimporter.model.TimelineTreatment;
 import de.uzl.lied.mtbimporter.model.mdr.centraxx.CxxItem;
-import de.uzl.lied.mtbimporter.model.mdr.centraxx.CxxItemSet;
 import de.uzl.lied.mtbimporter.model.mdr.centraxx.RelationConvert;
 import de.uzl.lied.mtbimporter.settings.CxxMdrSettings;
 import de.uzl.lied.mtbimporter.settings.Mdr;
@@ -144,17 +144,13 @@ public class AddHisData {
         List<CxxItem> outputItems = CxxMdrItemSet.getItemList(CxxMdrItemSet.get(mdr, input.getTargetProfileCode()));
         for (CxxItem outputItem : outputItems) {
             if (outputItem.getMandatory() && !output.getValues().containsKey(outputItem.getId())) {
-                System.out.println("Does not fulfil criteria for target " + output.getSourceProfileCode());
+                System.out.println("Does not fulfil criteria for target " + input.getTargetProfileCode());
                 return null;
             }
         }
         if (!output.getValues().isEmpty()) {
-            if (readClass(c, output) instanceof ClinicalSample) {
-                ClinicalSample cs = (ClinicalSample) readClass(c, output);
-                if (cs.getSampleId() == null) {
-                    return null;
-                }
-            }
+            System.out.println("Successfully mapped object from " + input.getSourceProfileCode() + " to "
+                    + input.getTargetProfileCode());
             return readClass(c, output);
         }
         return null;
@@ -162,14 +158,28 @@ public class AddHisData {
 
     private static <T> T samplyMap(Class<T> c, SamplyMdrSettings mdr, RelationConvert input) throws ExecutionException,
             MdrConnectionException, MdrInvalidResponseException, JsonProcessingException, IOException {
-        RelationConvert output = SamplyMdrConvert.convert(mdr, input);
-        if (!output.getValues().isEmpty()) {
-            if (readClass(c, output) instanceof ClinicalSample) {
-                ClinicalSample cs = (ClinicalSample) readClass(c, output);
-                if (cs.getSampleId() == null) {
-                    return null;
-                }
+        Map<String, Map<String, String>> inputItems = SamplyMdrItems.get(mdr, mdr.getSourceNamespace(),
+                input.getSourceProfileCode());
+        for (Entry<String, Map<String, String>> inputItem : inputItems.entrySet()) {
+            if (inputItem.getValue().containsKey("mandatory") && inputItem.getValue().get("mandatory").equals("true")
+                    && !input.getValues().containsKey(inputItem.getKey())) {
+                System.out.println("Does not fulfil criteria for source " + input.getSourceProfileCode());
+                return null;
             }
+        }
+        RelationConvert output = SamplyMdrConvert.convert(mdr, input);
+        Map<String, Map<String, String>> outputItems = SamplyMdrItems.get(mdr, mdr.getTargetNamespace(),
+                input.getTargetProfileCode());
+        for (Entry<String, Map<String, String>> outputItem : outputItems.entrySet()) {
+            if (outputItem.getValue().containsKey("mandatory") && outputItem.getValue().get("mandatory").equals("true")
+                    && !output.getValues().containsKey(outputItem.getKey())) {
+                System.out.println("Does not fulfil criteria for target " + input.getTargetProfileCode());
+                return null;
+            }
+        }
+        if (!output.getValues().isEmpty()) {
+            System.out.println("Successfully mapped object from " + input.getSourceProfileCode() + " to "
+                    + input.getTargetProfileCode());
             return readClass(c, output);
         }
         return null;

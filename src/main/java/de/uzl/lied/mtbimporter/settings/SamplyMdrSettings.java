@@ -3,7 +3,8 @@ package de.uzl.lied.mtbimporter.settings;
 public class SamplyMdrSettings {
 
     private String url;
-    private String namespace;
+    private String sourceNamespace;
+    private String targetNamespace;
     private String language;
     private boolean mappingEnabled;
 
@@ -15,12 +16,20 @@ public class SamplyMdrSettings {
         this.url = url;
     }
 
-    public String getNamespace() {
-        return namespace;
+    public String getSourceNamespace() {
+        return sourceNamespace;
     }
 
-    public void setNamespace(String namespace) {
-        this.namespace = namespace;
+    public void setSourceNamespace(String sourceNamespace) {
+        this.sourceNamespace = sourceNamespace;
+    }
+
+    public String getTargetNamespace() {
+        return targetNamespace;
+    }
+
+    public void setTargetNamespace(String targetNamespace) {
+        this.targetNamespace = targetNamespace;
     }
 
     public String getLanguage() {
