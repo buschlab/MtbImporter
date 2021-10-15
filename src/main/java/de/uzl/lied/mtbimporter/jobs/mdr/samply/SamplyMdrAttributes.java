@@ -23,7 +23,7 @@ public class SamplyMdrAttributes {
         String mdrLanguage = mdr.getLanguage();
 
         MdrClient client = new MdrClient(mdr.getUrl());
-        List<Result> namespace = client.getNamespaceMembers(mdrLanguage, mdr.getNamespace());
+        List<Result> namespace = client.getNamespaceMembers(mdrLanguage, mdr.getTargetNamespace());
         Map<String, Result> nameSpaceMap = namespace.stream()
                 .collect(Collectors.toMap(r -> r.getDesignations().get(0).getDesignation(), Function.identity()));
         if(nameSpaceMap.get(targetProfile) == null) {

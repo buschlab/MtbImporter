@@ -37,7 +37,7 @@ public class SamplyMdrConvert {
         String mdrLanguage = mdr.getLanguage();
 
         MdrClient client = new MdrClient(mdr.getUrl());
-        List<Result> namespace = client.getNamespaceMembers(mdrLanguage, "orbis");
+        List<Result> namespace = client.getNamespaceMembers(mdrLanguage, mdr.getSourceNamespace());
         Map<String, Result> nameSpaceMap = namespace.stream()
                 .collect(Collectors.toMap(r -> r.getDesignations().get(0).getDesignation(), Function.identity()));
         if (nameSpaceMap.get(input.getSourceProfileCode()) == null) {
