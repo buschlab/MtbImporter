@@ -47,6 +47,8 @@ public class Settings {
     private static List<Regex> regex;
     @JsonProperty("mappingMethod")
     private static String mappingMethod;
+    @JsonProperty("mapping")
+    private static List<Mapping> mapping;
     @JsonIgnore
     private static long state;
 
@@ -204,6 +206,15 @@ public class Settings {
     @JsonProperty("mappingMethod")
     public void setMappingMethod(String newMappingMethod) {
         mappingMethod = newMappingMethod;
+    }
+
+    public static List<Mapping> getMapping() {
+        return mapping;
+    }
+
+    @JsonProperty("mapping")
+    public void setMapping(List<Mapping> newMapping) {
+        mapping = newMapping;
     }
 
     public static long getState() throws FileNotFoundException, IOException {

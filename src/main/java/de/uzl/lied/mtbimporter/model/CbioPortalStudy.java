@@ -291,5 +291,16 @@ public class CbioPortalStudy {
         return this.timeline;
     }
 
+    public void add(Object o) {
+        if (o instanceof ClinicalPatient) {
+            addPatient((ClinicalPatient) o);
+        }
+        if (o instanceof ClinicalSample) {
+            addSample((ClinicalSample) o);
+        }
+        if (o instanceof Timeline) {
+            addTimeline(o.getClass(), (Timeline) o);
+        }
+    }
 
 }

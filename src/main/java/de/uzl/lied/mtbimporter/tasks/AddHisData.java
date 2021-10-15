@@ -27,13 +27,10 @@ import de.uzl.lied.mtbimporter.jobs.mdr.centraxx.CxxMdrItemSet;
 import de.uzl.lied.mtbimporter.jobs.mdr.samply.SamplyMdrConvert;
 import de.uzl.lied.mtbimporter.jobs.mdr.samply.SamplyMdrItems;
 import de.uzl.lied.mtbimporter.model.CbioPortalStudy;
-import de.uzl.lied.mtbimporter.model.ClinicalPatient;
-import de.uzl.lied.mtbimporter.model.ClinicalSample;
-import de.uzl.lied.mtbimporter.model.Timeline;
-import de.uzl.lied.mtbimporter.model.TimelineTreatment;
 import de.uzl.lied.mtbimporter.model.mdr.centraxx.CxxItem;
 import de.uzl.lied.mtbimporter.model.mdr.centraxx.RelationConvert;
 import de.uzl.lied.mtbimporter.settings.CxxMdrSettings;
+import de.uzl.lied.mtbimporter.settings.Mapping;
 import de.uzl.lied.mtbimporter.settings.Mdr;
 import de.uzl.lied.mtbimporter.settings.SamplyMdrSettings;
 import de.uzl.lied.mtbimporter.settings.Settings;
@@ -78,38 +75,19 @@ public class AddHisData {
 
             if (Settings.getMappingMethod().equals("cxx") && cxxMdr != null) {
 
-                input.setSourceProfileCode("orbis_l-tumorboard-molekular");
-                input.setTargetProfileCode("cbioportal_patient");
-                study.addPatient(cxxMap(ClinicalPatient.class, cxxMdr, input));
-
-                input.setSourceProfileCode("orbis_l-tumorboard-molekular-vorbef-molekula");
-                input.setTargetProfileCode("cbioportal_sample");
-                study.addSample(cxxMap(ClinicalSample.class, cxxMdr, input));
-
-                input.setSourceProfileCode("orbis_l-tumorboard-molekular-diagnosen-vorst");
-                input.setTargetProfileCode("cbioportal_timeline-diagnostic");
-                study.addTimeline(Timeline.class, cxxMap(Timeline.class, cxxMdr, input));
-
-                input.setSourceProfileCode("orbis_l-tumorboard-molekular-therapielinien");
-                input.setTargetProfileCode("cbioportal_timeline-treatment");
-                study.addTimeline(TimelineTreatment.class, cxxMap(TimelineTreatment.class, cxxMdr, input));
+                for (Mapping mapping : Settings.getMapping()) {
+                    input.setSourceProfileCode(mapping.getSource());
+                    input.setTargetProfileCode(mapping.getTarget());
+                    study.add(cxxMap(mapping.getModelClass(), cxxMdr, input));
+                }
 
             } else if (Settings.getMappingMethod().equals("groovy") && samplyMdr != null) {
 
-                input.setSourceProfileCode("L_Tumorboard_Molekular");
-                input.setTargetProfileCode("cbioportal-patient");
-                study.addPatient(samplyMap(ClinicalPatient.class, samplyMdr, input));
-
-                input.setTargetProfileCode("cbioportal-sample");
-                study.addSample(samplyMap(ClinicalSample.class, samplyMdr, input));
-
-                input.setSourceProfileCode("L_Tumorboard_Molekular-Diagnosen");
-                input.setTargetProfileCode("cbioportal-timeline-diagnostic");
-                study.addTimeline(Timeline.class, samplyMap(Timeline.class, samplyMdr, input));
-
-                input.setSourceProfileCode("L_Tumorboard_Molekular-Therapielinien");
-                input.setTargetProfileCode("cbioportal-timeline-treatment");
-                study.addTimeline(TimelineTreatment.class, samplyMap(TimelineTreatment.class, samplyMdr, input));
+                for (Mapping mapping : Settings.getMapping()) {
+                    input.setSourceProfileCode(mapping.getSource());
+                    input.setTargetProfileCode(mapping.getTarget());
+                    study.add(samplyMap(mapping.getModelClass(), samplyMdr, input));
+                }
 
             } else if (Settings.getMappingMethod().equals("none")) {
 
@@ -160,6 +138,10 @@ public class AddHisData {
             MdrConnectionException, MdrInvalidResponseException, JsonProcessingException, IOException {
         Map<String, Map<String, String>> inputItems = SamplyMdrItems.get(mdr, mdr.getSourceNamespace(),
                 input.getSourceProfileCode());
+        if (inputItems == null) {
+            System.out.println("Does not fulfil criteria for source " + input.getSourceProfileCode());
+            return null;
+        }
         for (Entry<String, Map<String, String>> inputItem : inputItems.entrySet()) {
             if (inputItem.getValue().containsKey("mandatory") && inputItem.getValue().get("mandatory").equals("true")
                     && !input.getValues().containsKey(inputItem.getKey())) {
@@ -170,6 +152,10 @@ public class AddHisData {
         RelationConvert output = SamplyMdrConvert.convert(mdr, input);
         Map<String, Map<String, String>> outputItems = SamplyMdrItems.get(mdr, mdr.getTargetNamespace(),
                 input.getTargetProfileCode());
+        if (outputItems == null) {
+            System.out.println("Does not fulfil criteria for target " + input.getTargetProfileCode());
+            return null;
+        }
         for (Entry<String, Map<String, String>> outputItem : outputItems.entrySet()) {
             if (outputItem.getValue().containsKey("mandatory") && outputItem.getValue().get("mandatory").equals("true")
                     && !output.getValues().containsKey(outputItem.getKey())) {
