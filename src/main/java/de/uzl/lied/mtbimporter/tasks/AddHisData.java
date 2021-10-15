@@ -23,12 +23,15 @@ import org.mozilla.universalchardet.ReaderFactory;
 import de.samply.common.mdrclient.MdrConnectionException;
 import de.samply.common.mdrclient.MdrInvalidResponseException;
 import de.uzl.lied.mtbimporter.jobs.mdr.centraxx.CxxMdrConvert;
+import de.uzl.lied.mtbimporter.jobs.mdr.centraxx.CxxMdrItemSet;
 import de.uzl.lied.mtbimporter.jobs.mdr.samply.SamplyMdrConvert;
 import de.uzl.lied.mtbimporter.model.CbioPortalStudy;
 import de.uzl.lied.mtbimporter.model.ClinicalPatient;
 import de.uzl.lied.mtbimporter.model.ClinicalSample;
 import de.uzl.lied.mtbimporter.model.Timeline;
 import de.uzl.lied.mtbimporter.model.TimelineTreatment;
+import de.uzl.lied.mtbimporter.model.mdr.centraxx.CxxItem;
+import de.uzl.lied.mtbimporter.model.mdr.centraxx.CxxItemSet;
 import de.uzl.lied.mtbimporter.model.mdr.centraxx.RelationConvert;
 import de.uzl.lied.mtbimporter.settings.CxxMdrSettings;
 import de.uzl.lied.mtbimporter.settings.Mdr;
@@ -130,7 +133,21 @@ public class AddHisData {
 
     private static <T> T cxxMap(Class<T> c, CxxMdrSettings mdr, RelationConvert input)
             throws JsonProcessingException, IOException {
+        List<CxxItem> inputItems = CxxMdrItemSet.getItemList(CxxMdrItemSet.get(mdr, input.getSourceProfileCode()));
+        for (CxxItem inputItem : inputItems) {
+            if (inputItem.getMandatory() && !input.getValues().containsKey(inputItem.getId())) {
+                System.out.println("Does not fulfil criteria for source " + input.getSourceProfileCode());
+                return null;
+            }
+        }
         RelationConvert output = CxxMdrConvert.convert(mdr, input);
+        List<CxxItem> outputItems = CxxMdrItemSet.getItemList(CxxMdrItemSet.get(mdr, input.getTargetProfileCode()));
+        for (CxxItem outputItem : outputItems) {
+            if (outputItem.getMandatory() && !output.getValues().containsKey(outputItem.getId())) {
+                System.out.println("Does not fulfil criteria for target " + output.getSourceProfileCode());
+                return null;
+            }
+        }
         if (!output.getValues().isEmpty()) {
             if (readClass(c, output) instanceof ClinicalSample) {
                 ClinicalSample cs = (ClinicalSample) readClass(c, output);
