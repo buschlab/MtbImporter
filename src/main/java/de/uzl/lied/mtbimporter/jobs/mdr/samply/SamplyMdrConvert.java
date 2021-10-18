@@ -43,7 +43,8 @@ public class SamplyMdrConvert {
         if (nameSpaceMap.get(input.getSourceProfileCode()) == null) {
             return output;
         }
-        List<Result> dataelements = client.getMembers(nameSpaceMap.get(input.getSourceProfileCode()).getId(), mdrLanguage);
+        List<Result> dataelements = client.getMembers(nameSpaceMap.get(input.getSourceProfileCode()).getId(),
+                mdrLanguage);
         Map<String, Result> dataelementMap = dataelements.stream()
                 .collect(Collectors.toMap(r -> r.getDesignations().get(0).getDesignation(), Function.identity()));
 
@@ -59,7 +60,7 @@ public class SamplyMdrConvert {
             DataElement de = client.getDataElement(dataelementMap.get(e.getKey()).getId(), mdrLanguage);
             for (Concept c : de.getConcepts()) {
                 if (c.getConceptSystem().equals("cbioportal")
-                        && c.getConceptTerm().equals(input.getTargetProfileCode())) {
+                        && c.getConceptTerm().split("/")[0].equals(input.getTargetProfileCode())) {
                     if (c.getConceptLinktype().equals("equal")) {
                         output.getValues().put(c.getConceptText(), e.getValue());
                     } else {
