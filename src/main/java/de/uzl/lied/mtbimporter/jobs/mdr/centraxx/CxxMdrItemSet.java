@@ -1,7 +1,9 @@
 package de.uzl.lied.mtbimporter.jobs.mdr.centraxx;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -18,22 +20,26 @@ import de.uzl.lied.mtbimporter.model.mdr.centraxx.CxxSection;
 import de.uzl.lied.mtbimporter.settings.CxxMdrSettings;
 
 public class CxxMdrItemSet {
-    
+
+    private final static Map<String, CxxItemSet> cache = new HashMap<String, CxxItemSet>();
+
     public static CxxItemSet get(CxxMdrSettings mdr, String itemSet) {
 
-        if (mdr.isTokenExpired()) {
-            CxxMdrLogin.login(mdr);
-        }
-
-        RestTemplate rt = new RestTemplate();
-        HttpHeaders headers = new HttpHeaders();
-        headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString());
-        headers.add(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON.toString());
-        headers.add("Authorization", "Bearer " + mdr.getToken());
-        ResponseEntity<CxxItemSet> response = rt.exchange(mdr.getUrl() + "/rest/v1/itemsets/itemset?code=" + itemSet, HttpMethod.GET,
+        if (!cache.containsKey(itemSet)) {
+            if (mdr.isTokenExpired()) {
+                CxxMdrLogin.login(mdr);
+            }
+            RestTemplate rt = new RestTemplate();
+            HttpHeaders headers = new HttpHeaders();
+            headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON.toString());
+            headers.add(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON.toString());
+            headers.add("Authorization", "Bearer " + mdr.getToken());
+            ResponseEntity<CxxItemSet> response = rt.exchange(
+                    mdr.getUrl() + "/rest/v1/itemsets/itemset?code=" + itemSet, HttpMethod.GET,
                     new HttpEntity<>(headers), CxxItemSet.class);
-        return response.getBody();
-
+            cache.put(itemSet, response.getBody());
+        }
+        return cache.get(itemSet);
     }
 
     public static List<CxxItem> getItemList(CxxItemSet itemSet) {
@@ -57,7 +63,7 @@ public class CxxMdrItemSet {
             for (CxxField f : s.getFields()) {
                 items.add(f.getItem());
             }
-            for(CxxSection subSection : sections) {
+            for (CxxSection subSection : sections) {
                 extractFromSections(subSection.getSections());
             }
         }
