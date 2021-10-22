@@ -10,6 +10,8 @@ public class TimelineTreatment extends Timeline {
     private String subtype;
     @JsonProperty("AGENT")
     private String agent;
+    @JsonProperty("TREATMENT_BEST_RESPONSE")
+    private String treatmentBestResponse;
 
     public TimelineTreatment() {
         setEventType("TREATMENT");
@@ -37,6 +39,14 @@ public class TimelineTreatment extends Timeline {
 
     public void setAgent(String agent) {
         this.agent = agent;
+    }
+
+    public String getTreatmentBestResponse() {
+        return treatmentBestResponse;
+    }
+    
+    public void setTreatmentBestResponse(String treatmentBestResponse) {
+        this.treatmentBestResponse = treatmentBestResponse;
     }
 
 }

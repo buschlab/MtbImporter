@@ -41,6 +41,9 @@ public class StudyHandler {
         study.addMutationalLimit(newStudy.getMutationalLimit());
         study.addGenePanelMatrix(newStudy.getGenePanelMatrix());
         study.addSampleResource(newStudy.getSampleResources());
+        for(Entry<Class, List<Timeline>> t : newStudy.getTimelines().entrySet()) {
+            study.addTimeline(t.getKey(), t.getValue());
+        }
         
         return study;
     }
@@ -51,9 +54,6 @@ public class StudyHandler {
         AddGeneticData.writeSegFile(study.getSeg(), new File(Settings.getStudyFolder() + state + "/data_cna.seg"));
         AddGeneticData.writeCnaFile(study.getCna(), new File(Settings.getStudyFolder() + state + "/data_cna.txt"));
         AddGeneticData.writeGenePanelFile(study.getGenePanelMatrix(), new File(Settings.getStudyFolder() + state + "/data_gene_panel_matrix.txt"));
-
-        AddClinicalData.writeClinicalPatient(study.getPatients(), study.getPatientAttributes(), new File(Settings.getStudyFolder() + state + "/data_clinical_patient.txt"));
-        AddClinicalData.writeClinicalSample(study.getSamples(), study.getSampleAttributes(), new File(Settings.getStudyFolder() + state + "/data_clinical_sample.txt"));
 
         AddResourceData.writeResourceFile(study.getSampleResources(), new File(Settings.getStudyFolder() + state + "/data_resource_sample.txt"));
 
@@ -77,8 +77,11 @@ public class StudyHandler {
         AddGeneticData.writeCaseList(new File(Settings.getStudyFolder() + state + "/case_lists/cases_all.txt"), caseListAll);
 
         for(Entry<Class, List<Timeline>> e : study.getTimelines().entrySet()) {
-            AddTimelineData.writeTimelineFile(e.getValue(), e.getKey(), new File(Settings.getStudyFolder() + state + "data_timeline_" + e.getKey().getSimpleName().toLowerCase().replaceFirst("Timeline", "")));
+            AddTimelineData.writeTimelineFile(e.getValue(), e.getKey(), new File(Settings.getStudyFolder() + state + "/data_timeline_" + e.getKey().getSimpleName().toLowerCase().replaceFirst("Timeline", "") + ".txt"));
         }
+
+        AddClinicalData.writeClinicalPatient(study.getPatients(), study.getPatientAttributes(), new File(Settings.getStudyFolder() + state + "/data_clinical_patient.txt"));
+        AddClinicalData.writeClinicalSample(study.getSamples(), study.getSampleAttributes(), new File(Settings.getStudyFolder() + state + "/data_clinical_sample.txt"));
     }
 
 }
