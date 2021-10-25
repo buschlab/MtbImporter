@@ -32,6 +32,7 @@ public class CbioPortalStudy {
     private Map<String, SampleResource> sampleResources = new HashMap<String, SampleResource>();
     private Map<String, MutationalSignature> mutationalLimit = new HashMap<String, MutationalSignature>();
     private Map<String, MutationalSignature> mutationalContribution = new HashMap<String, MutationalSignature>();
+    private String studyId = "MTB";
 
     public List<Maf> getMaf() {
         return maf;
@@ -301,6 +302,14 @@ public class CbioPortalStudy {
         if (o instanceof Timeline) {
             addTimeline(o.getClass(), (Timeline) o);
         }
+    }
+
+    public String getStudyId() {
+        return studyId;
+    }
+
+    public void setStudyId(String studyId) {
+        this.studyId = studyId;
     }
 
 }

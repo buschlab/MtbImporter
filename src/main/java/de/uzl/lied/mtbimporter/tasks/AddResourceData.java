@@ -26,13 +26,13 @@ public class AddResourceData {
         String sampleId = pdf.getName().replaceAll("somaticGermline_|somatic_|tumorOnly_|_Report|.pdf", "");
         String patientId = FhirResolver.resolvePatientFromSample(sampleId);
         FileUtils.copyFile(pdf,
-                new File(Settings.getResourceFolder() + "/" + patientId + "/" + sampleId + "/" + pdf.getName()));
+                new File(Settings.getResourceFolder() + "/" + study.getStudyId() + "/" + patientId + "/" + pdf.getName()));
         SampleResource sr = new SampleResource();
         sr.setPatientId(patientId);
         sr.setSampleId(sampleId);
         sr.setResourceId("PATHOLOGY_SLIDE");
         try {
-            sr.setUrl(Settings.getUrlBase() + "/" + patientId + "/" + sampleId + "/" + pdf.getName());
+            sr.setUrl(Settings.getUrlBase() + "/" + study.getStudyId() +  "/" + patientId + "/" + pdf.getName());
         } catch (Exception e) {
             System.err.println("Skipped resource file due to invalid URL:" + Settings.getUrlBase() + "/" + patientId
                     + "/" + sampleId + "/" + pdf.getName());
