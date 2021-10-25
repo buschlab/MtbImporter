@@ -15,6 +15,7 @@ import de.uzl.lied.mtbimporter.settings.Mdr;
 import de.uzl.lied.mtbimporter.settings.Settings;
 import de.uzl.lied.mtbimporter.tasks.AddClinicalData;
 import de.uzl.lied.mtbimporter.tasks.AddGeneticData;
+import de.uzl.lied.mtbimporter.tasks.AddMetaFile;
 import de.uzl.lied.mtbimporter.tasks.AddResourceData;
 import de.uzl.lied.mtbimporter.tasks.AddSignatureData;
 import de.uzl.lied.mtbimporter.tasks.AddTimelineData;
@@ -53,8 +54,12 @@ public final class MtbImporter {
         AddSignatureData.processLimit(study, new File(Settings.getStudyFolder() + Settings.getState() + "/data_mutational_signature_limit.txt"));
         AddGeneticData.processCnaFile(study, new File(Settings.getStudyFolder() + Settings.getState() + "/data_cna.txt"));
         File[] timelines = new File(Settings.getStudyFolder() + Settings.getState()).listFiles((File f) -> f.getName().startsWith("data_timeline"));
+        File[] metaFiles = new File(Settings.getStudyFolder() + Settings.getState()).listFiles((File f) -> f.getName().startsWith("meta_"));
         for(File t : timelines) {
             AddTimelineData.processTimelineFile(study, t);
+        }
+        for(File m : metaFiles) {
+            AddMetaFile.processMetaFile(study, m);
         }
 
         Timer t = new Timer();

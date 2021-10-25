@@ -33,6 +33,7 @@ public class CbioPortalStudy {
     private Map<String, MutationalSignature> mutationalLimit = new HashMap<String, MutationalSignature>();
     private Map<String, MutationalSignature> mutationalContribution = new HashMap<String, MutationalSignature>();
     private String studyId = "MTB";
+    private Map<String, Meta> metaFiles = new HashMap<String, Meta>();
 
     public List<Maf> getMaf() {
         return maf;
@@ -310,6 +311,18 @@ public class CbioPortalStudy {
 
     public void setStudyId(String studyId) {
         this.studyId = studyId;
+    }
+
+    public Meta getMetaFile(String meta) {
+        return metaFiles.get(meta);
+    }
+
+    public Map<String, Meta> getMetaFiles() {
+        return metaFiles;
+    }
+
+    public void addMeta(String type, Meta meta) {
+        metaFiles.put(type, meta);
     }
 
 }
