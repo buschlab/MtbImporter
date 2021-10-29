@@ -44,7 +44,7 @@ public class AddHisData {
 
         CsvMapper om = new CsvMapper().enable(CsvParser.Feature.ALLOW_COMMENTS);
         ObjectReader or = om.readerFor(new TypeReference<HashMap<String, String>>() {
-        }).with(CsvSchema.emptySchema().withHeader().withComments().withColumnSeparator(';'));
+        }).with(CsvSchema.emptySchema().withHeader().withComments().withColumnSeparator(';').withNullValue(""));
 
         Iterator<Map<String, Object>> inputIterator = or.readValues(ReaderFactory.createBufferedReader(csv));
         List<Map<String, Object>> l = new ArrayList<Map<String, Object>>();
