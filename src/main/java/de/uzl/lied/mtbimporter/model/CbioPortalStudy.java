@@ -1,5 +1,6 @@
 package de.uzl.lied.mtbimporter.model;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -13,6 +14,7 @@ import java.util.Map.Entry;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
+import de.uzl.lied.mtbimporter.settings.Settings;
 import de.uzl.lied.mtbimporter.tasks.AddClinicalData;
 
 @SuppressWarnings("rawtypes")
@@ -32,8 +34,9 @@ public class CbioPortalStudy {
     private Map<String, SampleResource> sampleResources = new HashMap<String, SampleResource>();
     private Map<String, MutationalSignature> mutationalLimit = new HashMap<String, MutationalSignature>();
     private Map<String, MutationalSignature> mutationalContribution = new HashMap<String, MutationalSignature>();
-    private String studyId = "MTB";
+    private String studyId = "";
     private Map<String, Meta> metaFiles = new HashMap<String, Meta>();
+    private long state;
 
     public List<Maf> getMaf() {
         return maf;
@@ -57,6 +60,10 @@ public class CbioPortalStudy {
 
     public void addSeg(List<ContinuousCna> seg) {
         this.seg = ContinuousCna.merge(this.seg, seg);
+    }
+
+    public ClinicalPatient getPatient(String patientId) {
+        return patients.get(patientId);
     }
 
     public Collection<ClinicalPatient> getPatients() {
@@ -90,6 +97,16 @@ public class CbioPortalStudy {
 
     public Collection<ClinicalSample> getSamples() {
         return samples.values();
+    }
+
+    public Collection<ClinicalSample> getSamplesByPatient(String patientId) {
+        Collection<ClinicalSample> patientSamples = new ArrayList<ClinicalSample>();
+        for(ClinicalSample cs : samples.values()) {
+            if(cs.getPatientId().equals(patientId)) {
+                patientSamples.add(cs);
+            }
+        }
+        return patientSamples;
     }
 
     public void addSample(ClinicalSample sample) {
@@ -323,6 +340,17 @@ public class CbioPortalStudy {
 
     public void addMeta(String type, Meta meta) {
         metaFiles.put(type, meta);
+    }
+
+    public long getState() throws IOException {
+        return state;
+    }
+
+    public void setState(Long newState) throws IOException {
+        FileOutputStream fos = new FileOutputStream(Settings.getStudyFolder() + studyId + "/.state");
+        fos.write(String.valueOf(newState).getBytes());
+        fos.close();
+        state = newState;
     }
 
 }

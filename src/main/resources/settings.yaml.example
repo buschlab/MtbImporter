@@ -7,6 +7,8 @@ inputFolders:
     target: processed/
 cronIntervall: 60000
 studyFolder: study/
+studyTemplate: template/
+mainStudyId: MTB
 urlBase: http://localhost:8080/reports
 resourceFolder: reports/
 overrideWarnings: true

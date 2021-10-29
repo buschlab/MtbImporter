@@ -2,8 +2,11 @@ package de.uzl.lied.mtbimporter.model.mdr.centraxx;
 
 import java.util.Map;
 
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+@JsonInclude(value = Include.NON_EMPTY, content = Include.NON_NULL)
 public class RelationConvert {
 
 @JsonProperty("srcProfileCode")

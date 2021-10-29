@@ -1,16 +1,9 @@
 package de.uzl.lied.mtbimporter.settings;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.common.io.ByteStreams;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Settings {
@@ -27,6 +20,10 @@ public class Settings {
     private static Integer cronIntervall;
     @JsonProperty("studyFolder")
     private static String studyFolder;
+    @JsonProperty("studyTemplate")
+    private static String studyTemplate;
+    @JsonProperty("mainStudyId")
+    private static String mainStudyId;
     @JsonProperty("urlBase")
     private static String urlBase;
     @JsonProperty("resourceFolder")
@@ -49,8 +46,6 @@ public class Settings {
     private static String mappingMethod;
     @JsonProperty("mapping")
     private static List<Mapping> mapping;
-    @JsonIgnore
-    private static long state;
 
     public static String getPortalUrl() {
         return portalUrl;
@@ -113,6 +108,24 @@ public class Settings {
             newStudyFolder = newStudyFolder + "/";
         }
         studyFolder = newStudyFolder;
+    }
+
+    public static String getStudyTemplate() {
+        return studyTemplate;
+    }
+
+    @JsonProperty("studyTemplate")
+    public void setStudyTemplate(String newStudyTemplate) {
+        studyTemplate = newStudyTemplate;
+    }
+
+    public static String getMainStudyId() {
+        return mainStudyId;
+    }
+
+    @JsonProperty("mainStudyId")
+    public void setMainStudyId(String newMainStudyId) {
+        mainStudyId = newMainStudyId;
     }
 
     public static String getUrlBase() {
@@ -215,21 +228,6 @@ public class Settings {
     @JsonProperty("mapping")
     public void setMapping(List<Mapping> newMapping) {
         mapping = newMapping;
-    }
-
-    public static long getState() throws FileNotFoundException, IOException {
-        if (state == 0) {
-            InputStream stateFile = new FileInputStream(studyFolder + "/.state");
-            state = Long.parseLong(new String(ByteStreams.toByteArray(stateFile)));
-        }
-        return state;
-    }
-
-    public static void setState(Long newState) throws IOException {
-        FileOutputStream fos = new FileOutputStream(studyFolder + "/.state");
-        fos.write(String.valueOf(newState).getBytes());
-        fos.close();
-        state = newState;
     }
 
 }

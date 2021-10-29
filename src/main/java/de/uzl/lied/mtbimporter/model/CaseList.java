@@ -22,6 +22,22 @@ public class CaseList {
     private String caseListDescription;
     private HashSet<String> caseListIds = new HashSet<String>();
 
+    public String getCancerStudyIdentifier() {
+        return cancerStudyIdentifier;
+    }
+
+    public void setCancerStudyIdentifier(String cancerStudyIdentifier) {
+        this.cancerStudyIdentifier = cancerStudyIdentifier;
+    }
+
+    public String getStableId() {
+        return stableId;
+    }
+
+    public void setStableId(String stableId) {
+        this.stableId = stableId;
+    }
+
     @JsonProperty("case_list_ids")
     public void setCaseListIds(String ids) {
         caseListIds.addAll(Arrays.asList(ids.split("\t")));
