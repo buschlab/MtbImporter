@@ -33,7 +33,7 @@ settings.yaml
 
 *.groovy
 
-procesed/*
-!procesed/.gitkeep
+processed/*
+!processed/.gitkeep
 input/*
 !input/.gitkeep

@@ -9,11 +9,11 @@ import de.uzl.lied.mtbimporter.settings.Settings;
 
 public class ImportStudy {
 
-    public static void importStudy(Long state) throws IOException, InterruptedException {
-        importStudy(state, false);
+    public static void importStudy(String studyId, Long state) throws IOException, InterruptedException {
+        importStudy(studyId, state, false);
     }
 
-    public static void importStudy(Long state, Boolean overrideWarnings) throws IOException, InterruptedException {
+    public static void importStudy(String studyId, Long state, Boolean overrideWarnings) throws IOException, InterruptedException {
         ProcessBuilder pb = new ProcessBuilder();
         String[] portal = getPortal();
         List<String> args = new ArrayList<String>();
@@ -42,7 +42,7 @@ public class ImportStudy {
             }
             args.add("metaImport.py");
             args.add("-s");
-            args.add(Settings.getDocker().getStudyFolder() + state);
+            args.add(Settings.getDocker().getStudyFolder() + studyId + "/" + state);
         } else {
             args.add(Settings.getImportScriptPath());
             args.add("metaImport.py");

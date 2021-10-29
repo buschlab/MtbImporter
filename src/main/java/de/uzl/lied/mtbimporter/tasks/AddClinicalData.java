@@ -40,23 +40,6 @@ import de.uzl.lied.mtbimporter.settings.Settings;
 
 public class AddClinicalData {
 
-    // public static void processClinicalData(List<Clinical> clinical, Long
-    // newState)
-    // throws JsonParseException, JsonMappingException, IOException {
-
-    // for (Clinical c : clinical) {
-    // switch (c.getClass().getSimpleName()) {
-    // case "ClinicalPatient":
-    // processPatient((ClinicalPatient) c, newState);
-    // break;
-    // case "ClinicalSample":
-    // processSample((ClinicalSample) c, newState);
-    // break;
-    // }
-    // }
-
-    // }
-
     private static Collection<ClinicalPatient> readClinicalPatient(File clinicalPatient) throws IOException {
         CsvMapper om = new CsvMapper().enable(CsvParser.Feature.ALLOW_COMMENTS);
         ObjectReader or = om.readerFor(ClinicalPatient.class)
@@ -136,77 +119,6 @@ public class AddClinicalData {
         study.addSample(readClinicalSample(clinicalSample));
         study.addSampleAttributes(readClinicalAttributes(clinicalSample));
     }
-
-    // private static void processPatient(ClinicalPatient patient, Long newState)
-    // throws JsonParseException, JsonMappingException, IOException {
-    // CsvMapper om = new CsvMapper().enable(CsvParser.Feature.ALLOW_COMMENTS);
-    // ObjectReader or = om.readerFor(ClinicalPatient.class)
-    // .with(CsvSchema.emptySchema().withHeader().withComments().withColumnSeparator('\t'));
-
-    // File inputClinicalPatient = new File(Settings.getStudyFolder() + newState +
-    // "/data_clinical_patient.txt");
-    // Iterator<ClinicalPatient> inputIterator =
-    // or.readValues(inputClinicalPatient);
-
-    // Map<String, ClinicalPatient> patients = new LinkedHashMap<String,
-    // ClinicalPatient>();
-    // while (inputIterator.hasNext()) {
-    // ClinicalPatient p = inputIterator.next();
-    // patients.put(p.getPatientId(), p);
-    // }
-    // if (patients.containsKey(patient.getPatientId())) {
-    // patient = mergePatients(patients.get(patient.getPatientId()), patient);
-    // }
-    // patients.put(patient.getPatientId(), patient);
-
-    // writeClinical(om, inputClinicalPatient, patients.values(),
-    // patient.getAdditionalAttributes().keySet(),
-    // "cbioportal-patient");
-    // }
-
-    // private static void processSample(ClinicalSample sample, Long newState)
-    // throws JsonParseException, JsonMappingException, IOException {
-    // CsvMapper om = new CsvMapper().enable(CsvParser.Feature.ALLOW_COMMENTS);
-    // ObjectReader or = om.readerFor(ClinicalSample.class)
-    // .with(CsvSchema.emptySchema().withHeader().withComments().withColumnSeparator('\t'));
-
-    // File inputClinicalSample = new File(Settings.getStudyFolder() + newState +
-    // "/data_clinical_sample.txt");
-    // Iterator<ClinicalSample> inputIterator = or.readValues(inputClinicalSample);
-
-    // Map<String, ClinicalSample> samples = new LinkedHashMap<String,
-    // ClinicalSample>();
-    // while (inputIterator.hasNext()) {
-    // ClinicalSample s = inputIterator.next();
-    // samples.put(s.getSampleId(), s);
-    // }
-    // if (samples.containsKey(sample.getSampleId())) {
-    // sample = mergeSamples(samples.get(sample.getSampleId()), sample);
-    // }
-    // samples.put(sample.getSampleId(), sample);
-
-    // writeClinical(om, inputClinicalSample, samples.values(),
-    // sample.getAdditionalAttributes().keySet(),
-    // "cbioportal-sample");
-
-    // addCasesAll(newState, samples.keySet());
-    // }
-
-    // private static void addCasesAll(Long newState, Set<String> sampleIds)
-    // throws JsonParseException, JsonMappingException, IOException {
-
-    // JavaPropsMapper jpm = new JavaPropsMapper();
-    // JavaPropsSchema jps = JavaPropsSchema.emptySchema().withKeyValueSeparator(":
-    // ");
-    // File f = new File(Settings.getStudyFolder() + newState +
-    // "/case_lists/cases_all.txt");
-    // CaseList seq = jpm.readValue(f, CaseList.class);
-    // seq.getCaseListIds().addAll(sampleIds);
-
-    // String seqStr = jpm.writer(jps).writeValueAsString(seq).replace("\\t", "\t");
-    // Files.write(Paths.get(Settings.getStudyFolder() + newState +
-    // "/case_lists/cases_all.txt"), seqStr.getBytes());
-    // }
 
     public static ClinicalPatient mergePatients(ClinicalPatient oldPatient, ClinicalPatient newPatient) {
 
