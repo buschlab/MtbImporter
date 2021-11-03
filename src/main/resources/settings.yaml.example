@@ -14,7 +14,14 @@ resourceFolder: reports/
 overrideWarnings: true
 restartAfterImport: true
 #restartCommand: systemctl restart cbioportal
-fhirServer: http://localhost:8080/fhir
+fhir:
+  clinicalDataServerUrl: http://localhost:8080/fhir
+  terminology:
+    serverUrl: https://ontoserver.imi.uni-luebeck.de/fhir/
+    icdO3Url: http://hl7.org/fhir/sid/icd-o-3
+    oncoTreeUrl: http://oncotree.mskcc.org/fhir/ValueSet/snapshot
+    icdO3ToOncoTreeConceptMapUrl: https://imi.uni-luebeck.de/fhir/ConceptMap/ICD-O_to_ONCOTREE
+    icdO3ToOncoTreeConceptMapId: top-100-icd-o-to-oncoTree
 regex:
     -
       cbio: "-"

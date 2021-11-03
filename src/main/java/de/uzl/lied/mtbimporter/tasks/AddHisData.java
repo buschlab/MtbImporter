@@ -18,15 +18,18 @@ import com.fasterxml.jackson.dataformat.csv.CsvParser;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema.ColumnType;
 
+import org.hl7.fhir.r4.model.Coding;
 import org.mozilla.universalchardet.ReaderFactory;
 
 import de.samply.common.mdrclient.MdrConnectionException;
 import de.samply.common.mdrclient.MdrInvalidResponseException;
+import de.uzl.lied.mtbimporter.jobs.FhirResolver;
 import de.uzl.lied.mtbimporter.jobs.mdr.centraxx.CxxMdrConvert;
 import de.uzl.lied.mtbimporter.jobs.mdr.centraxx.CxxMdrItemSet;
 import de.uzl.lied.mtbimporter.jobs.mdr.samply.SamplyMdrConvert;
 import de.uzl.lied.mtbimporter.jobs.mdr.samply.SamplyMdrItems;
 import de.uzl.lied.mtbimporter.model.CbioPortalStudy;
+import de.uzl.lied.mtbimporter.model.ClinicalPatient;
 import de.uzl.lied.mtbimporter.model.mdr.centraxx.CxxItem;
 import de.uzl.lied.mtbimporter.model.mdr.centraxx.RelationConvert;
 import de.uzl.lied.mtbimporter.settings.CxxMdrSettings;
@@ -78,7 +81,22 @@ public class AddHisData {
                 for (Mapping mapping : Settings.getMapping()) {
                     input.setSourceProfileCode(mapping.getSource());
                     input.setTargetProfileCode(mapping.getTarget());
-                    study.add(cxxMap(mapping.getModelClass(), cxxMdr, input));
+                    Object o = cxxMap(mapping.getModelClass(), cxxMdr, input);
+                    if (o instanceof ClinicalPatient) {
+                        ClinicalPatient p = (ClinicalPatient) o;
+                        if (p.getAdditionalAttributes().containsKey("ICD_O_3_SITE")
+                                && p.getAdditionalAttributes().containsKey("ICD_O_3_HISTOLOGY")
+                                && Settings.getFhir().getTerminology() != null) {
+                            Coding oncoTree = FhirResolver.resolveOncoTree(
+                                    (String) p.getAdditionalAttributes().get("ICD_O_3_SITE"),
+                                    (String) p.getAdditionalAttributes().get("ICD_O_3_HISTOLOGY"));
+                            if (oncoTree != null) {
+                                p.getAdditionalAttributes().put("ONCOTREE_CODE", oncoTree.getCode());
+                                p.getAdditionalAttributes().put("CANCER_TYPE", oncoTree.getDisplay());
+                            }
+                        }
+                    }
+                    study.add(o);
                 }
 
             } else if (Settings.getMappingMethod().equals("groovy") && samplyMdr != null) {

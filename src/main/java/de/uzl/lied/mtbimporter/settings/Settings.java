@@ -34,8 +34,8 @@ public class Settings {
     private static Boolean restartAfterImport = false;
     @JsonProperty("restartCommand")
     private static String restartCommand;
-    @JsonProperty("fhirServer")
-    private static String fhirServer;
+    @JsonProperty("fhir")
+    private static FhirSettings fhir;
     @JsonProperty("docker")
     private static DockerSettings docker;
     @JsonProperty("mdr")
@@ -176,13 +176,13 @@ public class Settings {
         restartCommand = newRestartCommand;
     }
 
-    public static String getFhirServer() {
-        return fhirServer;
+    public static FhirSettings getFhir() {
+        return fhir;
     }
 
-    @JsonProperty("fhirServer")
-    public void setFhirServer(String newFhirServer) {
-        fhirServer = newFhirServer;
+    @JsonProperty("fhir")
+    public void setFhir(FhirSettings newFhir) {
+        fhir = newFhir;
     }
 
     public static DockerSettings getDocker() {
