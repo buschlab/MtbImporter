@@ -2,6 +2,8 @@ package de.uzl.lied.mtbimporter.tasks;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.attribute.PosixFilePermissions;
 import java.util.Collection;
 import java.util.List;
 
@@ -25,8 +27,9 @@ public class AddResourceData {
     public static void processPdfFile(CbioPortalStudy study, File pdf) throws IOException {
         String sampleId = pdf.getName().replaceAll("somaticGermline_|somatic_|tumorOnly_|_Report|.pdf", "");
         String patientId = FhirResolver.resolvePatientFromSample(sampleId);
-        FileUtils.copyFile(pdf,
-                new File(Settings.getResourceFolder() + "/" + study.getStudyId() + "/" + patientId + "/" + pdf.getName()));
+        File target = new File(Settings.getResourceFolder() + "/" + study.getStudyId() + "/" + patientId + "/" + pdf.getName());
+        FileUtils.copyFile(pdf, target);
+        Files.setPosixFilePermissions(target.toPath(), PosixFilePermissions.fromString("rw-r--r--"));
         SampleResource sr = new SampleResource();
         sr.setPatientId(patientId);
         sr.setSampleId(sampleId);
