@@ -44,6 +44,7 @@ public class CheckDropzone extends TimerTask {
         Long newState = System.currentTimeMillis();
         int count = 0;
         CbioPortalStudy newStudy = new CbioPortalStudy();
+        newStudy.setStudyId(study.getStudyId());
 
         System.out.println("Checking for files!");
         for (InputFolder inputfolder : Settings.getInputFolders()) {
