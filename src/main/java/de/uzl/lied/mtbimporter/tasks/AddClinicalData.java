@@ -124,6 +124,9 @@ public class AddClinicalData {
 
         if (newPatient.getAdditionalAttributes() != null) {
             for (Entry<String, Object> e : newPatient.getAdditionalAttributes().entrySet()) {
+                if(e.getKey().equals("PATIENT_DISPLAY_NAME") && e.getValue().equals("Unknown")) {
+                    continue;
+                }
                 oldPatient.getAdditionalAttributes().put(e.getKey(), e.getValue());
             }
         }
