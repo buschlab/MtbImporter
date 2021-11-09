@@ -68,7 +68,7 @@ public class CheckDropzone extends TimerTask {
                 }
             }
             for (File f : files) {
-                if(f.getName().equals(".gitkeep")) {
+                if (f.getName().equals(".gitkeep")) {
                     continue;
                 }
                 System.out.println("Found " + f.getAbsolutePath());
@@ -121,7 +121,8 @@ public class CheckDropzone extends TimerTask {
 
         if (count > 0) {
             try {
-                FileUtils.copyDirectory(new File(Settings.getStudyFolder() + study.getStudyId() + "/" + study.getState()),
+                FileUtils.copyDirectory(
+                        new File(Settings.getStudyFolder() + study.getStudyId() + "/" + study.getState()),
                         new File(Settings.getStudyFolder() + study.getStudyId() + "/" + newState));
 
                 StudyHandler.merge(study, newStudy);
@@ -138,19 +139,26 @@ public class CheckDropzone extends TimerTask {
                                 new ArrayList<String>());
                         al.add(patient.getPatientId());
                         patientsByDate.put((String) patient.getAdditionalAttributes().get("PRESENTATION_DATE"), al);
-                        patientStudy.put(patient.getPatientId(), StudyHandler.getPatientStudy(study, patient.getPatientId()));
+                        patientStudy.put(patient.getPatientId(),
+                                StudyHandler.getPatientStudy(study, patient.getPatientId()));
                     }
                 }
-                for(Entry<String, List<String>> e : patientsByDate.entrySet()) {
+                for (Entry<String, List<String>> e : patientsByDate.entrySet()) {
                     CbioPortalStudy s = StudyHandler.load(study.getStudyId() + "_" + e.getKey());
-                    s.getMetaFile("meta_study.txt").setAdditionalAttributes("name", e.getKey() + " " + s.getMetaFile("meta_study.txt").getAdditionalAttributes().get("name"));
-                    s.getMetaFile("meta_study.txt").setAdditionalAttributes("short_name", e.getKey() + " " + s.getMetaFile("meta_study.txt").getAdditionalAttributes().get("short_name"));
-                    s.getMetaFile("meta_study.txt").setAdditionalAttributes("description", e.getKey() + " " + s.getMetaFile("meta_study.txt").getAdditionalAttributes().get("description"));
-                    for(String patient : e.getValue()) {
+                    FileUtils.copyDirectory(new File(Settings.getStudyFolder() + s.getStudyId() + "/" + s.getState()),
+                            new File(Settings.getStudyFolder() + s.getStudyId() + "/" + newState));
+                    s.getMetaFile("meta_study.txt").setAdditionalAttributes("name", e.getKey() + " "
+                            + study.getMetaFile("meta_study.txt").getAdditionalAttributes().get("name"));
+                    s.getMetaFile("meta_study.txt").setAdditionalAttributes("short_name", e.getKey() + " "
+                            + study.getMetaFile("meta_study.txt").getAdditionalAttributes().get("short_name"));
+                    s.getMetaFile("meta_study.txt").setAdditionalAttributes("description", e.getKey() + " "
+                            + study.getMetaFile("meta_study.txt").getAdditionalAttributes().get("description"));
+                    for (String patient : e.getValue()) {
                         StudyHandler.merge(s, patientStudy.get(patient));
                     }
-                    StudyHandler.write(s, s.getState());
-                    ImportStudy.importStudy(s.getStudyId(), s.getState(), Settings.getOverrideWarnings());
+                    StudyHandler.write(s, newState);
+                    s.setState(newState);
+                    ImportStudy.importStudy(s.getStudyId(), newState, Settings.getOverrideWarnings());
                 }
             } catch (IOException | InterruptedException e) {
                 // TODO Auto-generated catch block

@@ -2,14 +2,14 @@ package de.uzl.lied.mtbimporter.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class TimelineLabTest extends Timeline {
+public class TimelineLabtest extends Timeline {
 
     @JsonProperty("TEST")
     private String test;
     @JsonProperty("RESULT")
     private String result;
 
-    public TimelineLabTest() {
+    public TimelineLabtest() {
         setEventType("LAB_TEST");
     }
     

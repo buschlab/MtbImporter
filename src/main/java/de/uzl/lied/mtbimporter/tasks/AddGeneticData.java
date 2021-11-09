@@ -120,7 +120,7 @@ public class AddGeneticData {
         JavaPropsSchema jps = JavaPropsSchema.emptySchema().withKeyValueSeparator(": ");
         CaseList seq = jpm.readValue(caseList, CaseList.class);
         seq.setCancerStudyIdentifier(studyId);
-        seq.setStableId(studyId + "_" + seq.getStableId().split("_")[1]);
+        seq.setStableId(studyId + "_" + seq.getStableId().split("_")[seq.getStableId().split("_").length-1]);
         seq.getCaseListIds().addAll(sampleIds);
 
         String seqStr = jpm.writer(jps).writeValueAsString(seq).replace("\\t", "\t");

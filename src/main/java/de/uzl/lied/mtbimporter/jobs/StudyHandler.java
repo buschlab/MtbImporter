@@ -37,13 +37,13 @@ public class StudyHandler {
         File stateFile = new File(Settings.getStudyFolder() + studyId + "/.state");
         study.setStudyId(studyId);
         if (!stateFile.exists()) {
-            Long s = System.currentTimeMillis();
             FileUtils.copyDirectory(new File(Settings.getStudyTemplate()),
-                    new File(Settings.getStudyFolder() + study.getStudyId() + "/" + s));
-            study.setState(s);
+                    new File(Settings.getStudyFolder() + study.getStudyId() + "/0"));
+            study.setState(0L);
         }
         InputStream stateStream = new FileInputStream(stateFile);
         long state = Long.parseLong(new String(ByteStreams.toByteArray(stateStream)));
+        study.setState(state);
         AddGeneticData.processMafFile(study, new File(Settings.getStudyFolder() + studyId + "/" + state + "/data_mutation_extended.maf"));
         AddGeneticData.processSegFile(study, new File(Settings.getStudyFolder() + studyId + "/" + state + "/data_cna.seg"));
         AddGeneticData.processGenePanelFile(study, new File(Settings.getStudyFolder() + studyId + "/" + state + "/data_gene_panel_matrix.txt"));
@@ -81,14 +81,13 @@ public class StudyHandler {
         study.addMutationalLimit(newStudy.getMutationalLimit());
         study.addGenePanelMatrix(newStudy.getGenePanelMatrix());
         study.addSampleResource(newStudy.getSampleResources());
-        for(Entry<Class, List<Timeline>> t : newStudy.getTimelines().entrySet()) {
+        for(Entry<String, List<Timeline>> t : newStudy.getTimelines().entrySet()) {
             study.addTimeline(t.getKey(), t.getValue());
         }
         
         return study;
     }
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
     public static void write(CbioPortalStudy study, Long state) throws JsonGenerationException, JsonMappingException, IOException {
         AddGeneticData.writeMafFile(study.getMaf(), new File(Settings.getStudyFolder() + study.getStudyId() + "/" + state + "/data_mutation_extended.maf"));
         AddGeneticData.writeSegFile(study.getSeg(), new File(Settings.getStudyFolder() + study.getStudyId() + "/" + state + "/data_cna.seg"));
@@ -116,8 +115,8 @@ public class StudyHandler {
         }
         AddGeneticData.writeCaseList(new File(Settings.getStudyFolder() + study.getStudyId() + "/" + state + "/case_lists/cases_all.txt"), study.getStudyId(), caseListAll);
 
-        for(Entry<Class, List<Timeline>> e : study.getTimelines().entrySet()) {
-            AddTimelineData.writeTimelineFile(e.getValue(), e.getKey(), new File(Settings.getStudyFolder() + study.getStudyId() + "/" + state + "/data_timeline_" + e.getKey().getSimpleName().toLowerCase().replaceFirst("Timeline", "") + ".txt"));
+        for(Entry<String, List<Timeline>> e : study.getTimelines().entrySet()) {
+            AddTimelineData.writeTimelineFile(e.getValue(), e.getKey(), new File(Settings.getStudyFolder() + study.getStudyId() + "/" + state + "/data_timeline_" + e.getKey() + ".txt"));
         }
 
         for(Entry<String, Meta> e : study.getMetaFiles().entrySet()) {
@@ -133,6 +132,22 @@ public class StudyHandler {
 
         patientStudy.addPatient(study.getPatient(patientId));
         patientStudy.addSample(study.getSamplesByPatient(patientId));
+        for(ClinicalSample s : patientStudy.getSamples()) {
+            patientStudy.addSeg(study.getSegBySampleId(s.getSampleId()));
+            patientStudy.addSampleResource(study.getSampleResourcesBySampleId(s.getSampleId()));
+            patientStudy.addGenePanelMatrix(study.getGenePanelMatrixBySampleId(s.getSampleId()));
+            patientStudy.addMaf(study.getMafBySampleId(s.getSampleId()));
+            try {
+                patientStudy.addCna(study.getCnaBySampleId(s.getSampleId()));
+                patientStudy.addMutationalContribution(study.getMutationalContributionBySampleId(s.getSampleId()));
+                patientStudy.addMutationalLimit(study.getMutationalLimitBySampleId(s.getSampleId()));
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+            
+        }
+        patientStudy.setTimelines(study.getTimelinesByPatient(patientId));
 
         return patientStudy;
     }
