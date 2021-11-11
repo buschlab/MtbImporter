@@ -50,7 +50,7 @@ public class TimelineSerializer extends StdSerializer<Timeline> {
             gen.writeStringField("SPECIMEN_SITE", tls.getSpecimenSite());
             gen.writeStringField("SPECIMEN_TYPE", tls.getSpecimenType());
             gen.writeStringField("SOURCE", tls.getSource());
-            gen.writeStringField("SPECIMEN_REFERENCE_NUMBER", tls.getSpecimenReferenceNumber());
+            gen.writeStringField("SAMPLE_ID", tls.getSampleId());
         }
 
         if(value instanceof TimelineTreatment) {

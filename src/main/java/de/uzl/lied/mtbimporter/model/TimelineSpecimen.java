@@ -4,8 +4,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class TimelineSpecimen extends Timeline {
     
-    @JsonProperty("SPECIMEN_REFERENCE_NUMBER")
-    private String specimenReferenceNumber;
+    @JsonProperty("SAMPLE_ID")
+    private String sampleId;
     @JsonProperty("SPECIMEN_SITE")
     private String specimenSite;
     @JsonProperty("SPECIMEN_TYPE")
@@ -17,12 +17,12 @@ public class TimelineSpecimen extends Timeline {
         setEventType("SPECIMEN");
     }
 
-    public String getSpecimenReferenceNumber() {
-        return this.specimenReferenceNumber;
+    public String getSampleId() {
+        return this.sampleId;
     }
 
-    public void setSpecimenReferenceNumber(String specimenReferenceNumber) {
-        this.specimenReferenceNumber = specimenReferenceNumber;
+    public void setSampleId(String sampleId) {
+        this.sampleId = sampleId;
     }
 
     public String getSpecimenSite() {
