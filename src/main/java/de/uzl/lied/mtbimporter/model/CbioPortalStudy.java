@@ -401,12 +401,12 @@ public class CbioPortalStudy {
             return;
         }
         this.timeline.put(type,
-                Timeline.merge(this.timeline.getOrDefault(timeline, new ArrayList<Timeline>()), List.of(entry)));
+                Timeline.merge(this.timeline.getOrDefault(type, new ArrayList<Timeline>()), List.of(entry)));
     }
 
-    public <T> void addTimeline(String timeline, Collection<Timeline> entries) {
-        this.timeline.put(timeline,
-                Timeline.merge(this.timeline.getOrDefault(timeline, new ArrayList<Timeline>()), entries));
+    public <T> void addTimeline(String type, Collection<Timeline> entries) {
+        this.timeline.put(type,
+                Timeline.merge(this.timeline.getOrDefault(type, new ArrayList<Timeline>()), entries));
     }
 
     public Map<String, List<Timeline>> getTimelines() {
