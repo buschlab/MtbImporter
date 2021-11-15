@@ -340,13 +340,10 @@ public class CbioPortalStudy {
 
     public void addCna(Collection<Cna> cna) throws JsonParseException, JsonMappingException, IOException {
         for (Cna c : cna) {
-            if (c.getEntrezGeneId().equals("NA")) {
-                continue;
-            }
             Cna c2 = new Cna();
             c2.setEntrezGeneId(c.getEntrezGeneId());
             c2.setHugoSymbol(c.getHugoSymbol());
-            for (Entry<String, Integer> e : c.getSamples().entrySet()) {
+            for (Entry<String, String> e : c.getSamples().entrySet()) {
                 c2.getSamples().put(e.getKey().replaceAll("_TD", ""), e.getValue());
             }
             cnaSampleIds.addAll(c2.getSamples().keySet());
@@ -359,7 +356,7 @@ public class CbioPortalStudy {
         for (Cna c : this.cna.values()) {
             for (String i : this.cnaSampleIds) {
                 if (c.getSamples().get(i) == null) {
-                    c.getSamples().put(i, 0);
+                    c.getSamples().put(i, "0");
                 }
             }
         }
@@ -423,6 +420,25 @@ public class CbioPortalStudy {
         if (o instanceof Timeline) {
             Timeline t = (Timeline) o;
             addTimeline(t.getEventType().replace("_", "").toLowerCase(), t);
+        }
+        if (o instanceof Maf) {
+            addMaf((Maf) o);
+        }
+        if (o instanceof Cna) {
+            Cna c = (Cna) o;
+            if(c.getSamples().containsKey("SAMPLE_ID") && c.getSamples().containsKey("CNA")) {
+                Cna n = new Cna();
+                n.setEntrezGeneId(c.getEntrezGeneId());
+                n.setHugoSymbol(c.getHugoSymbol());
+                n.setSamples(c.getSamples().get("SAMPLE_ID"), c.getSamples().get("CNA"));
+                c = n;
+            }
+            try {
+                addCna(List.of(c));
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
         }
     }
 

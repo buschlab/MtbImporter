@@ -17,7 +17,7 @@ public class Cna {
     @JsonProperty("Entrez_Gene_Id")
     private String entrezGeneId;
     @JsonIgnore
-    private Map<String, Integer> samples = new HashMap<String, Integer>();
+    private Map<String, String> samples = new HashMap<String, String>();
 
     public String getHugoSymbol() {
         return this.hugoSymbol;
@@ -36,12 +36,12 @@ public class Cna {
     }
 
     @JsonAnyGetter
-    public Map<String, Integer> getSamples() {
+    public Map<String, String> getSamples() {
         return this.samples;
     }
 
     @JsonAnySetter
-    public void setSamples(String name, Integer value) {
+    public void setSamples(String name, String value) {
         this.samples.put(name, value);
     }
 }
