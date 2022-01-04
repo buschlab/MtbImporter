@@ -14,6 +14,7 @@ import java.util.Map.Entry;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 
+import de.uzl.lied.mtbimporter.jobs.EnsemblResolver;
 import de.uzl.lied.mtbimporter.settings.Settings;
 import de.uzl.lied.mtbimporter.tasks.AddClinicalData;
 
@@ -422,7 +423,11 @@ public class CbioPortalStudy {
             addTimeline(t.getEventType().replace("_", "").toLowerCase(), t);
         }
         if (o instanceof Maf) {
-            addMaf((Maf) o);
+            Maf m = (Maf) o;
+            if(m.getChromosome() == null || m.getStartPosition() == null || m.getEndPosition() == null) {
+                m = EnsemblResolver.enrich(m);
+            }
+            addMaf(m);
         }
         if (o instanceof Cna) {
             Cna c = (Cna) o;

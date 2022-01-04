@@ -34,6 +34,8 @@ public class Settings {
     private static Boolean restartAfterImport = false;
     @JsonProperty("restartCommand")
     private static String restartCommand;
+    @JsonProperty("ensemblUrl")
+    private static String ensemblUrl;
     @JsonProperty("fhir")
     private static FhirSettings fhir;
     @JsonProperty("docker")
@@ -174,6 +176,15 @@ public class Settings {
     @JsonProperty("restartCommand")
     public void setRestartCommand(String newRestartCommand) {
         restartCommand = newRestartCommand;
+    }
+
+    public static String getEnsemblUrl() {
+        return ensemblUrl;
+    }
+
+    @JsonProperty("ensemblUrl")
+    public void setEnsemblUrl(String newEnsemblUrl) {
+        ensemblUrl = newEnsemblUrl;
     }
 
     public static FhirSettings getFhir() {
