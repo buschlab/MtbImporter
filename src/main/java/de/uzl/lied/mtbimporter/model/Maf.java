@@ -113,12 +113,36 @@ public class Maf {
         return startPosition;
     }
 
+    public void setStartPosition(Integer startPosition) {
+        this.startPosition = startPosition;
+    }
+
     public Integer getEndPosition() {
         return endPosition;
     }
 
+    public void setEndPosition(Integer endPosition) {
+        this.endPosition = endPosition;
+    }
+
     public String getTxChange() {
         return txChange;
+    }
+
+    public String getHgvspShort() {
+        return hgvspShort;
+    }
+
+    public String getHugoSymbol() {
+        return hugoSymbol;
+    }
+
+    public String getChromosome() {
+        return chromosome;
+    }
+
+    public void setChromosome(String chromosome) {
+        this.chromosome = chromosome;
     }
 
     @JsonAnySetter
