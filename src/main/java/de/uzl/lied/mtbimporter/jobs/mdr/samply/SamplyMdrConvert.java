@@ -1,18 +1,5 @@
 package de.uzl.lied.mtbimporter.jobs.mdr.samply;
 
-import java.util.function.Function;
-import java.io.File;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.stream.Collectors;
-
-import org.codehaus.groovy.control.CompilationFailedException;
-
-import java.util.concurrent.ExecutionException;
-
 import de.samply.common.mdrclient.MdrClient;
 import de.samply.common.mdrclient.MdrConnectionException;
 import de.samply.common.mdrclient.MdrInvalidResponseException;
@@ -23,9 +10,36 @@ import de.uzl.lied.mtbimporter.model.mdr.centraxx.RelationConvert;
 import de.uzl.lied.mtbimporter.settings.SamplyMdrSettings;
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
+import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.concurrent.ExecutionException;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import org.codehaus.groovy.control.CompilationFailedException;
 
-public class SamplyMdrConvert {
+/**
+ * Class for data conversion using Samply MDR.
+ */
+public final class SamplyMdrConvert {
 
+    private SamplyMdrConvert() {
+    }
+
+    /**
+     * Converts a relation from a source to a target using Samply MDR.
+     * @param mdr Configuration for MDR.
+     * @param input Relation with input data
+     * @return Relation with output data
+     * @throws ExecutionException
+     * @throws MdrConnectionException
+     * @throws MdrInvalidResponseException
+     * @throws CompilationFailedException
+     * @throws IOException
+     */
     public static RelationConvert convert(SamplyMdrSettings mdr, RelationConvert input) throws ExecutionException,
             MdrConnectionException, MdrInvalidResponseException, CompilationFailedException, IOException {
 

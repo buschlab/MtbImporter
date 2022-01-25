@@ -1,20 +1,5 @@
 package de.uzl.lied.mtbimporter.tasks;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.Map;
-import java.util.Scanner;
-import java.util.Set;
-import java.util.Map.Entry;
-import java.util.concurrent.ExecutionException;
-
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -24,7 +9,6 @@ import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvParser;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema.Builder;
-
 import de.samply.common.mdrclient.MdrConnectionException;
 import de.samply.common.mdrclient.MdrInvalidResponseException;
 import de.uzl.lied.mtbimporter.jobs.FhirResolver;
@@ -37,8 +21,28 @@ import de.uzl.lied.mtbimporter.model.ClinicalPatient;
 import de.uzl.lied.mtbimporter.model.ClinicalSample;
 import de.uzl.lied.mtbimporter.settings.Mdr;
 import de.uzl.lied.mtbimporter.settings.Settings;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Scanner;
+import java.util.Set;
+import java.util.concurrent.ExecutionException;
 
-public class AddClinicalData {
+/**
+ * Adds data to both patients and samples.
+ */
+public final class AddClinicalData {
+
+    private AddClinicalData() {
+    }
 
     private static Collection<ClinicalPatient> readClinicalPatient(File clinicalPatient) throws IOException {
         CsvMapper om = new CsvMapper().enable(CsvParser.Feature.ALLOW_COMMENTS);
@@ -82,7 +86,8 @@ public class AddClinicalData {
 
         for (int i = 0; i < keys.length; i++) {
             clinicalHeaders.put(keys[i],
-                    new ClinicalHeader(displayName[i], description[i], datatype[i], (int) Double.parseDouble(priority[i])));
+                    new ClinicalHeader(displayName[i], description[i], datatype[i],
+                            (int) Double.parseDouble(priority[i])));
         }
 
         return clinicalHeaders;
@@ -120,11 +125,17 @@ public class AddClinicalData {
         study.addSampleAttributes(readClinicalAttributes(clinicalSample));
     }
 
+    /**
+     * Merges content of two patients.
+     * @param oldPatient
+     * @param newPatient
+     * @return
+     */
     public static ClinicalPatient mergePatients(ClinicalPatient oldPatient, ClinicalPatient newPatient) {
 
         if (newPatient.getAdditionalAttributes() != null) {
             for (Entry<String, Object> e : newPatient.getAdditionalAttributes().entrySet()) {
-                if(e.getKey().equals("PATIENT_DISPLAY_NAME") && e.getValue().equals("Unknown")) {
+                if (e.getKey().equals("PATIENT_DISPLAY_NAME") && e.getValue().equals("Unknown")) {
                     continue;
                 }
                 oldPatient.getAdditionalAttributes().put(e.getKey(), e.getValue());
@@ -135,6 +146,12 @@ public class AddClinicalData {
 
     }
 
+    /**
+     * Merges content of two samples.
+     * @param oldSample
+     * @param newSample
+     * @return
+     */
     public static ClinicalSample mergeSamples(ClinicalSample oldSample, ClinicalSample newSample) {
 
         if (newSample.getAdditionalAttributes() != null) {
@@ -211,6 +228,14 @@ public class AddClinicalData {
         fos.close();
     }
 
+    /**
+     * Adds dummy patient.
+     * @param study
+     * @param sampleId
+     * @throws JsonParseException
+     * @throws JsonMappingException
+     * @throws IOException
+     */
     public static void addDummyPatient(CbioPortalStudy study, String sampleId)
             throws JsonParseException, JsonMappingException, IOException {
         ClinicalPatient cp = new ClinicalPatient();
@@ -220,10 +245,21 @@ public class AddClinicalData {
         ClinicalSample cs = new ClinicalSample();
         cs.setPatientId(patientId);
         cs.setSampleId(sampleId);
-        study.addPatient(cp);
         study.addSample(cs);
+        if (study.getPatient(patientId) != null) {
+            return;
+        }
+        study.add(cp);
     }
 
+    /**
+     * Adds multiple dummy patients.
+     * @param study
+     * @param sampleIds
+     * @throws JsonParseException
+     * @throws JsonMappingException
+     * @throws IOException
+     */
     public static void addDummyPatient(CbioPortalStudy study, Collection<String> sampleIds)
             throws JsonParseException, JsonMappingException, IOException {
         for (String sampleId : sampleIds) {
@@ -234,8 +270,11 @@ public class AddClinicalData {
             ClinicalSample cs = new ClinicalSample();
             cs.setPatientId(patientId);
             cs.setSampleId(sampleId);
-            study.addPatient(cp);
             study.addSample(cs);
+            if (study.getPatient(patientId) != null) {
+                continue;
+            }
+            study.add(cp);
         }
     }
 

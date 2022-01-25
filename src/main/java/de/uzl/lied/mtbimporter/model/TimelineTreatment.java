@@ -2,8 +2,11 @@ package de.uzl.lied.mtbimporter.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+/**
+ * Timeline entry for treatment.
+ */
 public class TimelineTreatment extends Timeline {
-    
+
     @JsonProperty("TREATMENT_TYPE")
     private String treatmentType;
     @JsonProperty("SUBTYPE")
@@ -44,7 +47,7 @@ public class TimelineTreatment extends Timeline {
     public String getTreatmentBestResponse() {
         return treatmentBestResponse;
     }
-    
+
     public void setTreatmentBestResponse(String treatmentBestResponse) {
         this.treatmentBestResponse = treatmentBestResponse;
     }

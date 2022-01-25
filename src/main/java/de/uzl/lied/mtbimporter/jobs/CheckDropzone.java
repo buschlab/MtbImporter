@@ -1,5 +1,17 @@
 package de.uzl.lied.mtbimporter.jobs;
 
+import de.samply.common.mdrclient.MdrConnectionException;
+import de.samply.common.mdrclient.MdrInvalidResponseException;
+import de.uzl.lied.mtbimporter.model.CbioPortalStudy;
+import de.uzl.lied.mtbimporter.model.ClinicalPatient;
+import de.uzl.lied.mtbimporter.settings.InputFolder;
+import de.uzl.lied.mtbimporter.settings.Settings;
+import de.uzl.lied.mtbimporter.tasks.AddGeneticData;
+import de.uzl.lied.mtbimporter.tasks.AddHisData;
+import de.uzl.lied.mtbimporter.tasks.AddMetaData;
+import de.uzl.lied.mtbimporter.tasks.AddResourceData;
+import de.uzl.lied.mtbimporter.tasks.AddSignatureData;
+import de.uzl.lied.mtbimporter.tasks.ImportStudy;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -9,30 +21,19 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Scanner;
 import java.util.TimerTask;
-import java.util.Map.Entry;
 import java.util.concurrent.ExecutionException;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 
-import de.samply.common.mdrclient.MdrConnectionException;
-import de.samply.common.mdrclient.MdrInvalidResponseException;
-import de.uzl.lied.mtbimporter.model.CbioPortalStudy;
-import de.uzl.lied.mtbimporter.model.ClinicalPatient;
-import de.uzl.lied.mtbimporter.settings.InputFolder;
-import de.uzl.lied.mtbimporter.settings.Settings;
-import de.uzl.lied.mtbimporter.tasks.AddGeneticData;
-import de.uzl.lied.mtbimporter.tasks.AddMetaData;
-import de.uzl.lied.mtbimporter.tasks.AddHisData;
-import de.uzl.lied.mtbimporter.tasks.AddResourceData;
-import de.uzl.lied.mtbimporter.tasks.AddSignatureData;
-import de.uzl.lied.mtbimporter.tasks.ImportStudy;
-
+/**
+ * Class providing the cronjob for scheduled data processing.
+ */
 public class CheckDropzone extends TimerTask {
 
-    CbioPortalStudy study;
+    private CbioPortalStudy study;
 
     public CheckDropzone(CbioPortalStudy study) {
         this.study = study;
@@ -50,7 +51,7 @@ public class CheckDropzone extends TimerTask {
         for (InputFolder inputfolder : Settings.getInputFolders()) {
             File[] files = new File(inputfolder.getSource()).listFiles();
 
-            if (files.length == 0 || (files.length == 1 && files[0].getName().equals(".gitkeep"))) {
+            if (files.length == 0 || files.length == 1 && files[0].getName().equals(".gitkeep")) {
                 System.out.println("No new files at " + inputfolder.getSource() + ".");
                 continue;
             } else {
@@ -74,34 +75,38 @@ public class CheckDropzone extends TimerTask {
                 System.out.println("Found " + f.getAbsolutePath());
                 try {
                     switch (FilenameUtils.getExtension(f.getName())) {
-                    case "maf":
-                        AddGeneticData.processMafFile(newStudy, f);
-                        break;
-                    case "txt":
-                        switch (determineDatatype(f)) {
-                        case "cna":
-                            AddGeneticData.processCnaFile(newStudy, f);
+                        case "maf":
+                            AddGeneticData.processMafFile(newStudy, f);
                             break;
-                        case "mutsigLimit":
-                            AddSignatureData.processLimit(newStudy, f);
+                        case "txt":
+                            switch (determineDatatype(f)) {
+                                case "cna":
+                                    AddGeneticData.processCnaFile(newStudy, f);
+                                    break;
+                                case "mutsigLimit":
+                                    AddSignatureData.processLimit(newStudy, f);
+                                    break;
+                                case "mutsigContribution":
+                                    AddSignatureData.processContribution(newStudy, f);
+                                    break;
+                                default:
+                                    break;
+                            }
                             break;
-                        case "mutsigContribution":
-                            AddSignatureData.processContribution(newStudy, f);
+                        case "seg":
+                            AddGeneticData.processSegFile(newStudy, f);
                             break;
-                        }
-                        break;
-                    case "seg":
-                        AddGeneticData.processSegFile(newStudy, f);
-                        break;
-                    case "pdf":
-                        AddResourceData.processPdfFile(newStudy, f);
-                        break;
-                    case "RData":
-                        AddMetaData.processRData(newStudy, f);
-                        break;
-                    case "csv":
-                        AddHisData.processCsv(newStudy, f);
-                        break;
+                        case "pdf":
+                            AddResourceData.processPdfFile(newStudy, f);
+                            break;
+                        case "RData":
+                            AddMetaData.processRData(newStudy, f);
+                            break;
+                        case "csv":
+                            AddHisData.processCsv(newStudy, f);
+                            break;
+                        default:
+                            break;
                     }
 
                     if (inputfolder.getTarget() == null || inputfolder.getTarget().length() == 0) {

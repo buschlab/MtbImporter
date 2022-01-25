@@ -2,6 +2,9 @@ package de.uzl.lied.mtbimporter.settings;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+/**
+ * Settings for usage with Docker.
+ */
 public class DockerSettings {
 
     @JsonProperty("studyFolder")
@@ -24,11 +27,12 @@ public class DockerSettings {
     }
 
     @JsonProperty("studyFolder")
-    private void setStudyFolder(String newStudyFolder) {
+    private void setStudyFolder(String studyFolder) {
+        String newStudyFolder = studyFolder;
         if (!newStudyFolder.endsWith("/")) {
             newStudyFolder = newStudyFolder + "/";
         }
-        studyFolder = newStudyFolder;
+        this.studyFolder = newStudyFolder;
     }
 
     public DockerCompose getCompose() {

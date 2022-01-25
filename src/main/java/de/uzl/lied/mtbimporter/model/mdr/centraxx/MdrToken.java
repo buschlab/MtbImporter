@@ -1,11 +1,13 @@
 package de.uzl.lied.mtbimporter.model.mdr.centraxx;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.UUID;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
+/**
+ * Model for Token in Kairos CentraXX MDR.
+ */
 public class MdrToken {
-    
+
     @JsonProperty("access_token")
     private UUID accessToken;
     @JsonProperty("token_type")

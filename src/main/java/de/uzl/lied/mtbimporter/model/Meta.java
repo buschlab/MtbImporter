@@ -1,15 +1,17 @@
 package de.uzl.lied.mtbimporter.model;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import java.util.HashMap;
+import java.util.Map;
 
+/**
+ * Pojo for meta files.
+ */
 public class Meta {
-    
+
     @JsonProperty("cancer_study_identifier")
     private String cancerStudyIdentifier;
     @JsonIgnore

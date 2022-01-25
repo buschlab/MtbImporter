@@ -1,12 +1,5 @@
 package de.uzl.lied.mtbimporter.tasks;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
-
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -17,15 +10,26 @@ import com.fasterxml.jackson.dataformat.csv.CsvParser;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import com.fasterxml.jackson.dataformat.javaprop.JavaPropsMapper;
 import com.fasterxml.jackson.dataformat.javaprop.JavaPropsSchema;
-
 import de.uzl.lied.mtbimporter.model.CaseList;
 import de.uzl.lied.mtbimporter.model.CbioPortalStudy;
 import de.uzl.lied.mtbimporter.model.Cna;
 import de.uzl.lied.mtbimporter.model.ContinuousCna;
 import de.uzl.lied.mtbimporter.model.GenePanelMatrix;
 import de.uzl.lied.mtbimporter.model.Maf;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
 
-public class AddGeneticData {
+/**
+ * Add various types of genetic data to study.
+ */
+public final class AddGeneticData {
+
+    private AddGeneticData() {
+    }
 
     private static List<Maf> readMafFile(File maf) throws IOException {
         CsvMapper om = new CsvMapper().enable(CsvParser.Feature.ALLOW_COMMENTS);
@@ -36,6 +40,14 @@ public class AddGeneticData {
         return inputIterator.readAll();
     }
 
+    /**
+     * Write mutation pojos to tsv.
+     * @param mafs
+     * @param maf
+     * @throws JsonGenerationException
+     * @throws JsonMappingException
+     * @throws IOException
+     */
     public static void writeMafFile(List<Maf> mafs, File maf)
             throws JsonGenerationException, JsonMappingException, IOException {
         CsvMapper om = new CsvMapper().enable(CsvParser.Feature.ALLOW_COMMENTS);
@@ -43,6 +55,14 @@ public class AddGeneticData {
         om.writer(s).writeValue(maf, mafs);
     }
 
+    /**
+     * Write continuous cna pojos to tsv.
+     * @param segs
+     * @param seg
+     * @throws JsonGenerationException
+     * @throws JsonMappingException
+     * @throws IOException
+     */
     public static void writeSegFile(List<ContinuousCna> segs, File seg)
             throws JsonGenerationException, JsonMappingException, IOException {
         CsvMapper om = new CsvMapper().enable(CsvParser.Feature.ALLOW_COMMENTS);
@@ -71,6 +91,12 @@ public class AddGeneticData {
         study.setGenePanelMatrix(readGenePanelFile(input));
     }
 
+    /**
+     * Read gene panel file to pojo list.
+     * @param panel
+     * @return
+     * @throws IOException
+     */
     public static List<GenePanelMatrix> readGenePanelFile(File panel) throws IOException {
         CsvMapper om = new CsvMapper().enable(CsvParser.Feature.ALLOW_COMMENTS);
         ObjectReader or = om.readerFor(GenePanelMatrix.class)
@@ -80,6 +106,14 @@ public class AddGeneticData {
         return inputIterator.readAll();
     }
 
+    /**
+     * Write gene panel pojo to tsv.
+     * @param panels
+     * @param target
+     * @throws JsonGenerationException
+     * @throws JsonMappingException
+     * @throws IOException
+     */
     public static void writeGenePanelFile(Collection<GenePanelMatrix> panels, File target)
             throws JsonGenerationException, JsonMappingException, IOException {
         CsvMapper om = new CsvMapper().enable(CsvParser.Feature.ALLOW_COMMENTS);
@@ -87,6 +121,12 @@ public class AddGeneticData {
         om.writer(s).writeValue(target, panels);
     }
 
+    /**
+     * Read cna file to pojo list.
+     * @param input
+     * @return
+     * @throws IOException
+     */
     public static List<Cna> readCnaFile(File input) throws IOException {
         CsvMapper om = new CsvMapper().enable(CsvParser.Feature.ALLOW_COMMENTS);
         ObjectReader or = om.readerFor(Cna.class)
@@ -96,6 +136,12 @@ public class AddGeneticData {
         return inputIterator.readAll();
     }
 
+    /**
+     * Write cna pojo to tsv.
+     * @param cnas
+     * @param target
+     * @throws IOException
+     */
     public static void writeCnaFile(Collection<Cna> cnas, File target) throws IOException {
         CsvMapper om = new CsvMapper().enable(CsvParser.Feature.ALLOW_COMMENTS);
         CsvSchema s = om.schemaFor(Cna.class).withHeader().withColumnSeparator('\t').withoutQuoteChar();
@@ -114,13 +160,19 @@ public class AddGeneticData {
         study.addCna(readCnaFile(cna));
     }
 
-
+    /**
+     * Write case list to file.
+     * @param caseList
+     * @param studyId
+     * @param sampleIds
+     * @throws IOException
+     */
     public static void writeCaseList(File caseList, String studyId, Set<String> sampleIds) throws IOException {
         JavaPropsMapper jpm = new JavaPropsMapper();
         JavaPropsSchema jps = JavaPropsSchema.emptySchema().withKeyValueSeparator(": ");
         CaseList seq = jpm.readValue(caseList, CaseList.class);
         seq.setCancerStudyIdentifier(studyId);
-        seq.setStableId(studyId + "_" + seq.getStableId().split("_")[seq.getStableId().split("_").length-1]);
+        seq.setStableId(studyId + "_" + seq.getStableId().split("_")[seq.getStableId().split("_").length - 1]);
         seq.getCaseListIds().addAll(sampleIds);
 
         String seqStr = jpm.writer(jps).writeValueAsString(seq).replace("\\t", "\t");

@@ -1,11 +1,13 @@
 
 package de.uzl.lied.mtbimporter.model.mdr.centraxx;
 
-import java.util.Map;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import java.util.Map;
 
+/**
+ * Model for Item in Kairos CentraXX MDR.
+ */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
     "id",

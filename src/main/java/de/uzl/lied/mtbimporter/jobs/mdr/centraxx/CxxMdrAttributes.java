@@ -1,5 +1,9 @@
 package de.uzl.lied.mtbimporter.jobs.mdr.centraxx;
 
+import de.uzl.lied.mtbimporter.model.ClinicalHeader;
+import de.uzl.lied.mtbimporter.model.mdr.centraxx.CxxAttributeValue;
+import de.uzl.lied.mtbimporter.model.mdr.centraxx.CxxList;
+import de.uzl.lied.mtbimporter.settings.CxxMdrSettings;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -10,13 +14,22 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
-import de.uzl.lied.mtbimporter.model.ClinicalHeader;
-import de.uzl.lied.mtbimporter.model.mdr.centraxx.CxxAttributeValue;
-import de.uzl.lied.mtbimporter.model.mdr.centraxx.CxxList;
-import de.uzl.lied.mtbimporter.settings.CxxMdrSettings;
 
-public class CxxMdrAttributes {
+/**
+ * Class to fetch attributes from a Kairos CentraXX MDR.
+ */
+public final class CxxMdrAttributes {
 
+    private CxxMdrAttributes() {
+    }
+
+    /**
+     * Retrieves a cBioPortal ClinicalHeader object for a specified attribute.
+     * @param mdr Configuration for MDR.
+     * @param mdrProfile profile / form / ItemSet where the item is defined
+     * @param key key of the requested attribute
+     * @return ClinicalHeader object for cBioPortal
+     */
     public static ClinicalHeader getAttributes(CxxMdrSettings mdr, String mdrProfile, String key) {
 
         if (mdr.isTokenExpired()) {
@@ -55,6 +68,8 @@ public class CxxMdrAttributes {
                             break;
                         case "description":
                             ch.setDescription(av.getValue());
+                            break;
+                        default:
                             break;
                     }
                 }

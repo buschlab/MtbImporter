@@ -1,5 +1,8 @@
 package de.uzl.lied.mtbimporter.settings;
 
+/**
+ * Settings for Samply MDR.
+ */
 public class SamplyMdrSettings {
 
     private String url;

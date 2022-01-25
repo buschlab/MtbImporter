@@ -1,7 +1,11 @@
 package de.uzl.lied.mtbimporter.settings;
 
+/**
+ * Sets input folder. New data is in source and will be moved to target once it
+ * is processed.
+ */
 public class InputFolder {
-    
+
     private String source;
     private String target;
 

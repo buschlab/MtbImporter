@@ -1,10 +1,5 @@
 package de.uzl.lied.mtbimporter.tasks;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Collection;
-import java.util.List;
-
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.MappingIterator;
@@ -12,18 +7,44 @@ import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvParser;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
-
 import de.uzl.lied.mtbimporter.model.CbioPortalStudy;
 import de.uzl.lied.mtbimporter.model.Timeline;
+import java.io.File;
+import java.io.IOException;
+import java.util.Collection;
+import java.util.List;
 
-public class AddTimelineData {
+/**
+ * Process timeline files and objects.
+ */
+public final class AddTimelineData {
 
+    private AddTimelineData() {
+    }
+
+    /**
+     * Adds timeline data files to study.
+     * @param study
+     * @param timeline
+     * @throws JsonGenerationException
+     * @throws JsonMappingException
+     * @throws IOException
+     */
     public static void processTimelineFile(CbioPortalStudy study, File timeline)
             throws JsonGenerationException, JsonMappingException, IOException {
         Class<?> c = getTimelineClass(timeline.getName().replaceFirst("data_timeline_", "").replace(".txt", ""));
-        processTimelineClass(study, readTimelineFile(timeline, c), timeline.getName().replaceFirst("data_timeline_", "").replace(".txt", ""));
+        processTimelineClass(study, readTimelineFile(timeline, c),
+                timeline.getName().replaceFirst("data_timeline_", "").replace(".txt", ""));
     }
 
+    /**
+     * Reads timeline tsv files to jvm Timeline objects.
+     * @param <T>
+     * @param input
+     * @param c
+     * @return
+     * @throws IOException
+     */
     public static <T> List<T> readTimelineFile(File input, Class<T> c) throws IOException {
         CsvMapper om = new CsvMapper().enable(CsvParser.Feature.ALLOW_COMMENTS);
         ObjectReader or = om.readerFor(c)
@@ -32,6 +53,16 @@ public class AddTimelineData {
         return inputIterator.readAll();
     }
 
+    /**
+     * Writes jvm Timeline objects to tsv files.
+     * @param <T>
+     * @param timelines
+     * @param type
+     * @param target
+     * @throws JsonGenerationException
+     * @throws JsonMappingException
+     * @throws IOException
+     */
     public static <T> void writeTimelineFile(Collection<Timeline> timelines, String type, File target)
             throws JsonGenerationException, JsonMappingException, IOException {
         Class<?> c = getTimelineClass(type);
@@ -59,7 +90,8 @@ public class AddTimelineData {
     private static Class<?> getTimelineClass(String str) {
         Class<?> c;
         try {
-            c = Class.forName("de.uzl.lied.mtbimporter.model.Timeline" + str.substring(0, 1).toUpperCase() + str.substring(1));
+            c = Class.forName(
+                    "de.uzl.lied.mtbimporter.model.Timeline" + str.substring(0, 1).toUpperCase() + str.substring(1));
         } catch (ClassNotFoundException e) {
             c = Timeline.class;
         }

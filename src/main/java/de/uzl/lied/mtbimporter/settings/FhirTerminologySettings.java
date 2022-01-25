@@ -1,7 +1,11 @@
 package de.uzl.lied.mtbimporter.settings;
 
+/**
+ * Settings for the HL7 FHIR Server that will be used for ICD-O-3 to OncoTree
+ * mapping.
+ */
 public class FhirTerminologySettings {
-    
+
     private String serverUrl;
     private String icdO3Url;
     private String oncoTreeUrl;

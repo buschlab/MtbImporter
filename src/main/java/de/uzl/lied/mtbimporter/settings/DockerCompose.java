@@ -2,8 +2,11 @@ package de.uzl.lied.mtbimporter.settings;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+/**
+ * Settings for cBioPortal when using Docker-Compose.
+ */
 public class DockerCompose {
-    
+
     @JsonProperty("workdir")
     private String workdir;
     @JsonProperty("serviceName")
@@ -16,6 +19,5 @@ public class DockerCompose {
     public String getServiceName() {
         return serviceName;
     }
-
 
 }

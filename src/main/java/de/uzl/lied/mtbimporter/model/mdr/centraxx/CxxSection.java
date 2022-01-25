@@ -1,12 +1,14 @@
 
 package de.uzl.lied.mtbimporter.model.mdr.centraxx;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import java.util.List;
 import java.util.Map;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-
+/**
+ * Model for Section in Kairos CentraXX MDR.
+ */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({
     "code",
@@ -28,8 +30,8 @@ public class CxxSection {
 
     private String code;
     private Map<String, CxxCaption> caption;
-    private List<CxxField> fields = null;
-    private List<CxxSection> sections = null;
+    private List<CxxField> fields;
+    private List<CxxSection> sections;
     private Integer column;
     private Integer row;
     private Integer columnSpan;

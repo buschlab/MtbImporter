@@ -1,7 +1,10 @@
 package de.uzl.lied.mtbimporter.settings;
 
+/**
+ * MDR settings.
+ */
 public class Mdr {
-    
+
     private CxxMdrSettings cxx;
     private SamplyMdrSettings samply;
 

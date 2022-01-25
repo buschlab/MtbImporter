@@ -2,8 +2,11 @@ package de.uzl.lied.mtbimporter.model.mdr.centraxx;
 
 import java.util.List;
 
+/**
+ * Model for AttributeValue in Kairos CentraXX MDR.
+ */
 public class CxxAttributeValue {
-    
+
     private String domain;
     private String attribute;
     private String value;
@@ -20,7 +23,7 @@ public class CxxAttributeValue {
     public String getValue() {
         return value;
     }
-    
+
     public List<CxxLinks> getLinks() {
         return links;
     }

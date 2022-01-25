@@ -2,8 +2,11 @@ package de.uzl.lied.mtbimporter.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+/**
+ * Timeline entry for specimen.
+ */
 public class TimelineSpecimen extends Timeline {
-    
+
     @JsonProperty("SAMPLE_ID")
     private String sampleId;
     @JsonProperty("SPECIMEN_SITE")

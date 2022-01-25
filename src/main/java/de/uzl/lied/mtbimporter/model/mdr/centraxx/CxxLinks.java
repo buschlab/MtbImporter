@@ -1,7 +1,10 @@
 package de.uzl.lied.mtbimporter.model.mdr.centraxx;
 
+/**
+ * Model for Links in Kairos CentraXX MDR.
+ */
 public class CxxLinks {
-    
+
     private String rel;
     private String href;
     private String hreflang;
