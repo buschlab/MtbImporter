@@ -204,41 +204,4 @@ public final class AddHisData {
         return null;
     }
 
-    /**
-     * Preparation. Loads the diagnoses file for calculation fo dates relative to first diagnose.
-     * @param csv File with diagnoses
-     * @param study study that will cache the diagnoses data
-     * @throws IOException if file is not properly formatted csv or non existent
-     */
-    public static void prepare(File csv, CbioPortalStudy study) throws IOException {
-
-        Map<String, Map<String, String>> pMap = new HashMap<String, Map<String, String>>();
-
-        CsvMapper om = new CsvMapper().enable(CsvParser.Feature.ALLOW_COMMENTS);
-        ObjectReader or = om.readerFor(new TypeReference<HashMap<String, String>>() {
-        }).with(CsvSchema.emptySchema().withHeader().withComments().withColumnSeparator(';'));
-
-        Iterator<Map<String, String>> inputIterator = or.readValues(ReaderFactory.createBufferedReader(csv));
-        List<Map<String, String>> l = new ArrayList<Map<String, String>>();
-        while (inputIterator.hasNext()) {
-            l.add(inputIterator.next());
-        }
-        for (Map<String, String> m : l) {
-            if (pMap.containsKey(m.get("PID"))) {
-                Map<String, String> n = pMap.get(m.get("PID"));
-                if (Integer.parseInt(m.get("JAHR_TEXT")) < Integer.parseInt(n.get("JAHR_TEXT"))
-                        && Integer.parseInt(m.get("MONAT_TEXT")) < Integer.parseInt(n.get("MONAT_TEXT"))) {
-                    pMap.put(m.get("PID"), m);
-                }
-            } else {
-                pMap.put(m.get("PID"), m);
-            }
-        }
-
-        for (Entry<String, Map<String, String>> e : pMap.entrySet()) {
-            study.addPreparation(e.getKey(), e.getValue());
-        }
-
-    }
-
 }

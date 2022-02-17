@@ -32,6 +32,7 @@ buildNumber.properties
 settings.yaml
 
 *.groovy
+!prepare.groovy
 
 processed/*
 !processed/.gitkeep

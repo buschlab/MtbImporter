@@ -12,6 +12,9 @@ import de.uzl.lied.mtbimporter.tasks.AddMetaData;
 import de.uzl.lied.mtbimporter.tasks.AddResourceData;
 import de.uzl.lied.mtbimporter.tasks.AddSignatureData;
 import de.uzl.lied.mtbimporter.tasks.ImportStudy;
+import groovy.lang.Binding;
+import groovy.lang.GroovyShell;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -61,7 +64,12 @@ public class CheckDropzone extends TimerTask {
             for (File f : files) {
                 if (f.getName().contains("Diagnosen_Vorst")) {
                     try {
-                        AddHisData.prepare(f, newStudy);
+                        // AddHisData.prepare(f, newStudy);
+                        Binding b = new Binding();
+                        GroovyShell s = new GroovyShell(b);
+                        b.setVariable("csv", f);
+                        b.setVariable("study", newStudy);
+                        s.evaluate(new File("mapper/prepare.groovy"));
                     } catch (IOException e) {
                         // TODO Auto-generated catch block
                         e.printStackTrace();
