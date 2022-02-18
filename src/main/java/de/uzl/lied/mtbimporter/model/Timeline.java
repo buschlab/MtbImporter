@@ -1,5 +1,11 @@
 package de.uzl.lied.mtbimporter.model;
 
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -10,13 +16,9 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.fasterxml.jackson.annotation.JsonAnyGetter;
-import com.fasterxml.jackson.annotation.JsonAnySetter;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-
+/**
+ * Generic timeline entry.
+ */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({ "PATIENT_ID", "START_DATE", "STOP_DATE", "EVENT_TYPE", "BEGIN", "END" })
 public class Timeline {
@@ -117,11 +119,15 @@ public class Timeline {
         this.additionalAttributes.put(name, value);
     }
 
+    /**
+     * Merge to timeline objects.
+     */
     public static <T> List<T> merge(Collection<T> timeline1, Collection<T> timeline2) {
-        return new ArrayList<T>(Stream.of(timeline1, timeline2).flatMap(Collection::stream).collect(Collectors.toMap(r -> {
-            Timeline t = (Timeline) r;
-            return t.getPatientId() + ";" + t.getEventType() + ";" + t.getStartDate() + ";" + t.getStopDate();
-        }, Function.identity(), (T x, T y) -> y)).values());
+        return new ArrayList<T>(
+                Stream.of(timeline1, timeline2).flatMap(Collection::stream).collect(Collectors.toMap(r -> {
+                    Timeline t = (Timeline) r;
+                    return t.getPatientId() + ";" + t.getEventType() + ";" + t.getStartDate() + ";" + t.getStopDate();
+                }, Function.identity(), (T x, T y) -> y)).values());
     }
 
 }

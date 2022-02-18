@@ -2,6 +2,9 @@ package de.uzl.lied.mtbimporter.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+/**
+ * Timeline entry for laboratory test.
+ */
 public class TimelineLabtest extends Timeline {
 
     @JsonProperty("TEST")
@@ -12,7 +15,7 @@ public class TimelineLabtest extends Timeline {
     public TimelineLabtest() {
         setEventType("LAB_TEST");
     }
-    
+
     public String getTest() {
         return this.test;
     }

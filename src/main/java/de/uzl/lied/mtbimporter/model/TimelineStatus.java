@@ -2,8 +2,11 @@ package de.uzl.lied.mtbimporter.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+/**
+ * Timeline entry for status.
+ */
 public class TimelineStatus extends Timeline {
-   
+
     @JsonProperty("STATUS")
     private String status;
     @JsonProperty("SOURCE")

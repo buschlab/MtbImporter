@@ -1,5 +1,10 @@
 package de.uzl.lied.mtbimporter.model;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import de.uzl.lied.mtbimporter.jobs.EnsemblResolver;
+import de.uzl.lied.mtbimporter.settings.Settings;
+import de.uzl.lied.mtbimporter.tasks.AddClinicalData;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -8,16 +13,12 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-
-import de.uzl.lied.mtbimporter.jobs.EnsemblResolver;
-import de.uzl.lied.mtbimporter.settings.Settings;
-import de.uzl.lied.mtbimporter.tasks.AddClinicalData;
-
+/**
+ * Pojo for a whole cBioPortal study.
+ */
 public class CbioPortalStudy {
 
     private List<Maf> maf = new ArrayList<Maf>();
@@ -42,6 +43,11 @@ public class CbioPortalStudy {
         return maf;
     }
 
+    /**
+     * Filter mutations in study by a specific patient id.
+     * @param sampleId patient id for filtering
+     * @return all mutations for specified patient
+     */
     public List<Maf> getMafBySampleId(String sampleId) {
         List<Maf> l = new ArrayList<Maf>();
         for (Maf m : maf) {
@@ -52,18 +58,23 @@ public class CbioPortalStudy {
         return l;
     }
 
-    public void addMaf(Maf maf) {
-        this.maf = Maf.merge(this.maf, List.of(maf));
+    public void addMaf(Maf newMaf) {
+        this.maf = Maf.merge(this.maf, List.of(newMaf));
     }
 
-    public void addMaf(List<Maf> maf) {
-        this.maf = Maf.merge(this.maf, maf);
+    public void addMaf(List<Maf> newMaf) {
+        this.maf = Maf.merge(this.maf, newMaf);
     }
 
     public List<ContinuousCna> getSeg() {
         return seg;
     }
 
+    /**
+     * Filter continuous cna in study by a specific patient id.
+     * @param sampleId patient id for filtering
+     * @return all continuous cna for specified patient
+     */
     public List<ContinuousCna> getSegBySampleId(String sampleId) {
         List<ContinuousCna> l = new ArrayList<ContinuousCna>();
         for (ContinuousCna s : seg) {
@@ -74,12 +85,12 @@ public class CbioPortalStudy {
         return l;
     }
 
-    public void addSeg(ContinuousCna seg) {
-        this.seg = ContinuousCna.merge(this.seg, List.of(seg));
+    public void addSeg(ContinuousCna newSeg) {
+        this.seg = ContinuousCna.merge(this.seg, List.of(newSeg));
     }
 
-    public void addSeg(List<ContinuousCna> seg) {
-        this.seg = ContinuousCna.merge(this.seg, seg);
+    public void addSeg(List<ContinuousCna> newSeg) {
+        this.seg = ContinuousCna.merge(this.seg, newSeg);
     }
 
     public ClinicalPatient getPatient(String patientId) {
@@ -90,19 +101,24 @@ public class CbioPortalStudy {
         return patients.values();
     }
 
-    public void setPatients(Map<String, ClinicalPatient> patients) {
-        this.patients = patients;
-    }
-
+    /**
+     * Adds patient to study with potential merging.
+     * @param patient patient to be added
+     */
     public void addPatient(ClinicalPatient patient) {
-        if (patients.containsKey(patient.getPatientId())) {
-            patient = AddClinicalData.mergePatients(patients.get(patient.getPatientId()), patient);
+        ClinicalPatient newPatient = patient;
+        if (patients.containsKey(newPatient.getPatientId())) {
+            newPatient = AddClinicalData.mergePatients(patients.get(newPatient.getPatientId()), newPatient);
         }
-        patients.put(patient.getPatientId(), patient);
+        patients.put(newPatient.getPatientId(), newPatient);
     }
 
-    public void addPatient(Collection<ClinicalPatient> patients) {
-        for (ClinicalPatient patient : patients) {
+    /**
+     * Adds multiple patients to study.
+     * @param newPatients list of patients to be added
+     */
+    public void addPatient(Collection<ClinicalPatient> newPatients) {
+        for (ClinicalPatient patient : newPatients) {
             addPatient(patient);
         }
     }
@@ -111,14 +127,19 @@ public class CbioPortalStudy {
         return patientAttributes;
     }
 
-    public void addPatientAttributes(Map<String, ClinicalHeader> patientAttributes) {
-        this.patientAttributes.putAll(patientAttributes);
+    public void addPatientAttributes(Map<String, ClinicalHeader> newPatientAttributes) {
+        this.patientAttributes.putAll(newPatientAttributes);
     }
 
     public Collection<ClinicalSample> getSamples() {
         return samples.values();
     }
 
+    /**
+     * Filter patients in study by a specific patient id.
+     * @param patientId patient id for filtering
+     * @return specified patient
+     */
     public Collection<ClinicalSample> getSamplesByPatient(String patientId) {
         Collection<ClinicalSample> patientSamples = new ArrayList<ClinicalSample>();
         for (ClinicalSample cs : samples.values()) {
@@ -129,32 +150,41 @@ public class CbioPortalStudy {
         return patientSamples;
     }
 
+    /**
+     * Adds sample to study.
+     * @param sample sample to be added
+     */
     public void addSample(ClinicalSample sample) {
         if (sample == null) {
             return;
         }
-        if (samples.containsKey(sample.getSampleId())) {
-            sample = AddClinicalData.mergeSamples(samples.get(sample.getSampleId()), sample);
+        ClinicalSample newSample = sample;
+        if (samples.containsKey(newSample.getSampleId())) {
+            newSample = AddClinicalData.mergeSamples(samples.get(newSample.getSampleId()), newSample);
         }
-        samples.put(sample.getSampleId(), sample);
+        samples.put(newSample.getSampleId(), newSample);
     }
 
-    public void addSample(Collection<ClinicalSample> samples) {
-        for (ClinicalSample sample : samples) {
+    /**
+     * Adds multiple samples to study.
+     * @param newSamples list of samples to be added
+     */
+    public void addSample(Collection<ClinicalSample> newSamples) {
+        for (ClinicalSample sample : newSamples) {
             addSample(sample);
         }
     }
 
-    public void setSamples(Map<String, ClinicalSample> samples) {
-        this.samples = samples;
+    public void setSamples(Map<String, ClinicalSample> newSamples) {
+        this.samples = newSamples;
     }
 
     public Map<String, ClinicalHeader> getSampleAttributes() {
         return sampleAttributes;
     }
 
-    public void addSampleAttributes(Map<String, ClinicalHeader> sampleAttributes) {
-        this.sampleAttributes.putAll(sampleAttributes);
+    public void addSampleAttributes(Map<String, ClinicalHeader> newSampleAttributes) {
+        this.sampleAttributes.putAll(newSampleAttributes);
     }
 
     public Collection<GenePanelMatrix> getGenePanelMatrix() {
@@ -165,20 +195,32 @@ public class CbioPortalStudy {
         return genePanelMatrix.get(sampleId);
     }
 
-    public void setGenePanelMatrix(Collection<GenePanelMatrix> genePanelMatrix) {
-        for (GenePanelMatrix gpm : genePanelMatrix) {
+    /**
+     * Set a list of gene panel matrix entries for study.
+     * @param newGenePanelMatrix list of gene panel matrix entries to be set
+     */
+    public void setGenePanelMatrix(Collection<GenePanelMatrix> newGenePanelMatrix) {
+        for (GenePanelMatrix gpm : newGenePanelMatrix) {
             this.genePanelMatrix.put(gpm.getSampleId(), gpm);
         }
     }
 
-    public void addGenePanelMatrix(GenePanelMatrix genePanelMatrix) {
-        if (genePanelMatrix != null) {
-            this.genePanelMatrix.put(genePanelMatrix.getSampleId(), genePanelMatrix);
+    /**
+     * Adds gene panel matrix to study.
+     * @param newGenePanelMatrix gene panel matrix entries to be added
+     */
+    public void addGenePanelMatrix(GenePanelMatrix newGenePanelMatrix) {
+        if (newGenePanelMatrix != null) {
+            this.genePanelMatrix.put(newGenePanelMatrix.getSampleId(), newGenePanelMatrix);
         }
     }
 
-    public void addGenePanelMatrix(Collection<GenePanelMatrix> genePanelMatrix) {
-        for (GenePanelMatrix gpm : genePanelMatrix) {
+    /**
+     * Adds multiple gene panel matrix entries to study.
+     * @param newGenePanelMatrix gene panel matrix entries to be added
+     */
+    public void addGenePanelMatrix(Collection<GenePanelMatrix> newGenePanelMatrix) {
+        for (GenePanelMatrix gpm : newGenePanelMatrix) {
             addGenePanelMatrix(gpm);
         }
     }
@@ -191,6 +233,10 @@ public class CbioPortalStudy {
         return preparation.get(p);
     }
 
+    /**
+     * Set a list of sample resources for study.
+     * @param sampleResources list of sample resources to be set
+     */
     public void setSampleResources(List<SampleResource> sampleResources) {
         for (SampleResource sr : sampleResources) {
             this.sampleResources.put(sr.getSampleId(), sr);
@@ -205,12 +251,20 @@ public class CbioPortalStudy {
         return sampleResources.get(sampleId);
     }
 
+    /**
+     * Adds sample resource to study.
+     * @param sampleResource sample resource to be added
+     */
     public void addSampleResource(SampleResource sampleResource) {
-        if(sampleResource != null) {
+        if (sampleResource != null) {
             this.sampleResources.put(sampleResource.getSampleId(), sampleResource);
         }
     }
 
+    /**
+     * Adds multimple sample resources to study.
+     * @param sampleResource list of sample resources to be added
+     */
     public void addSampleResource(Collection<SampleResource> sampleResource) {
         for (SampleResource sr : sampleResource) {
             addSampleResource(sr);
@@ -227,10 +281,15 @@ public class CbioPortalStudy {
         return mutationalContribution.values();
     }
 
+    /**
+     * Filter mutational contribution in study by a specific patient id.
+     * @param sampleId patient id for filtering
+     * @return all mutational contributions for specified patient
+     */
     public Collection<MutationalSignature> getMutationalContributionBySampleId(String sampleId) {
         Collection<MutationalSignature> l = new ArrayList<MutationalSignature>();
-        for(MutationalSignature c : mutationalContribution.values()) {
-            if(c.getSamples().containsKey(sampleId)) {
+        for (MutationalSignature c : mutationalContribution.values()) {
+            if (c.getSamples().containsKey(sampleId)) {
                 MutationalSignature n = new MutationalSignature();
                 n.setDescription(c.getDescription());
                 n.setEntityStableId(c.getEntityStableId());
@@ -240,22 +299,21 @@ public class CbioPortalStudy {
             }
         }
         return l;
-    }
-
-    public void setMutationalContribution(Collection<MutationalSignature> mutationalContribution) {
-        for (MutationalSignature mutationalSignature : mutationalContribution) {
-            this.mutationalContribution.put(mutationalSignature.getEntityStableId(), mutationalSignature);
-        }
     }
 
     public Collection<MutationalSignature> getMutationalLimit() {
         return mutationalLimit.values();
     }
 
+    /**
+     * Filter mutational limits in study by a specific patient id.
+     * @param sampleId patient id for filtering
+     * @return all mutational limits for specified patient
+     */
     public Collection<MutationalSignature> getMutationalLimitBySampleId(String sampleId) {
         Collection<MutationalSignature> l = new ArrayList<MutationalSignature>();
-        for(MutationalSignature c : mutationalLimit.values()) {
-            if(c.getSamples().containsKey(sampleId)) {
+        for (MutationalSignature c : mutationalLimit.values()) {
+            if (c.getSamples().containsKey(sampleId)) {
                 MutationalSignature n = new MutationalSignature();
                 n.setDescription(c.getDescription());
                 n.setEntityStableId(c.getEntityStableId());
@@ -267,21 +325,15 @@ public class CbioPortalStudy {
         return l;
     }
 
-    public void setMutationalLimit(Collection<MutationalSignature> mutationalLimit) {
-        for (MutationalSignature mutationalSignature : mutationalLimit) {
-            this.mutationalLimit.put(mutationalSignature.getEntityStableId(), mutationalSignature);
-        }
-    }
-
-    public void addMutationalLimit(Collection<MutationalSignature> mutationalLimit)
+    public void addMutationalLimit(Collection<MutationalSignature> newMutationalLimit)
             throws JsonParseException, JsonMappingException, IOException {
-        addMutationalSignature(mutationalLimit, this.mutationalLimit, 0);
+        addMutationalSignature(newMutationalLimit, this.mutationalLimit, 0);
 
     }
 
-    public void addMutationalContribution(Collection<MutationalSignature> mutationalContribution)
+    public void addMutationalContribution(Collection<MutationalSignature> newMutationalContribution)
             throws JsonParseException, JsonMappingException, IOException {
-        addMutationalSignature(mutationalContribution, this.mutationalContribution, 1);
+        addMutationalSignature(newMutationalContribution, this.mutationalContribution, 1);
     }
 
     private void addMutationalSignature(Collection<MutationalSignature> mutationalSignature,
@@ -318,10 +370,15 @@ public class CbioPortalStudy {
         return cna.values();
     }
 
+    /**
+     * Filter samples in study by a specific patient id.
+     * @param sampleId patient id for filtering
+     * @return all samples for specified patient
+     */
     public Collection<Cna> getCnaBySampleId(String sampleId) {
         Collection<Cna> l = new ArrayList<Cna>();
-        for(Cna c : cna.values()) {
-            if(c.getSamples().containsKey(sampleId)) {
+        for (Cna c : cna.values()) {
+            if (c.getSamples().containsKey(sampleId)) {
                 Cna n = new Cna();
                 n.setEntrezGeneId(c.getEntrezGeneId());
                 n.setHugoSymbol(c.getHugoSymbol());
@@ -332,15 +389,15 @@ public class CbioPortalStudy {
         return l;
     }
 
-    public void setCna(Collection<Cna> cna) {
-        for (Cna c : cna) {
-            this.cna.put(c.getHugoSymbol(), c);
-            cnaSampleIds.addAll(c.getSamples().keySet());
-        }
-    }
-
-    public void addCna(Collection<Cna> cna) throws JsonParseException, JsonMappingException, IOException {
-        for (Cna c : cna) {
+    /**
+     * Add multiple discrete CNA entries.
+     * @param newCna new discrete CNA entries
+     * @throws JsonParseException
+     * @throws JsonMappingException
+     * @throws IOException
+     */
+    public void addCna(Collection<Cna> newCna) throws JsonParseException, JsonMappingException, IOException {
+        for (Cna c : newCna) {
             Cna c2 = new Cna();
             c2.setEntrezGeneId(c.getEntrezGeneId());
             c2.setHugoSymbol(c.getHugoSymbol());
@@ -368,17 +425,22 @@ public class CbioPortalStudy {
         return cnaSampleIds;
     }
 
-    public <T> Collection<Timeline> getTimeline(Class<T> timeline) {
-        return this.timeline.getOrDefault(timeline, new ArrayList<Timeline>());
+    public <T> Collection<Timeline> getTimeline(Class<T> newTimeline) {
+        return this.timeline.getOrDefault(newTimeline, new ArrayList<Timeline>());
     }
 
+    /**
+     * Filter timelines in study by a specific patient id.
+     * @param patientId patient id for filtering
+     * @return all timeline entries for specified patient
+     */
     public Map<String, List<Timeline>> getTimelinesByPatient(String patientId) {
         Map<String, List<Timeline>> m = new HashMap<String, List<Timeline>>();
 
-        for(Entry<String, List<Timeline>> e : timeline.entrySet()) {
+        for (Entry<String, List<Timeline>> e : timeline.entrySet()) {
             List<Timeline> l = new ArrayList<Timeline>();
-            for(Timeline t : e.getValue()) {
-                if(t.getPatientId().equals(patientId)) {
+            for (Timeline t : e.getValue()) {
+                if (t.getPatientId().equals(patientId)) {
                     l.add(t);
                 }
             }
@@ -390,11 +452,16 @@ public class CbioPortalStudy {
         return m;
     }
 
-    public void setTimelines(Map<String, List<Timeline>> timeline) {
-        this.timeline = timeline;
+    public void setTimelines(Map<String, List<Timeline>> newTimeline) {
+        this.timeline = newTimeline;
     }
 
-    public <T> void addTimeline(String type, Timeline entry) {
+    /**
+     * Adds a timeline entry of whatever timeline type.
+     * @param type defines the timeline type for later serialization
+     * @param entry timeilne entry
+     */
+    public void addTimeline(String type, Timeline entry) {
         if (entry == null) {
             return;
         }
@@ -411,6 +478,10 @@ public class CbioPortalStudy {
         return this.timeline;
     }
 
+    /**
+     * MDR mapped objects may have various types so there differntiation is here at a central place.
+     * @param o study object of whatever type
+     */
     public void add(Object o) {
         if (o instanceof ClinicalPatient) {
             addPatient((ClinicalPatient) o);
@@ -424,14 +495,14 @@ public class CbioPortalStudy {
         }
         if (o instanceof Maf) {
             Maf m = (Maf) o;
-            if(m.getChromosome() == null || m.getStartPosition() == null || m.getEndPosition() == null) {
+            if (m.getChromosome() == null || m.getStartPosition() == null || m.getEndPosition() == null) {
                 m = EnsemblResolver.enrich(m);
             }
             addMaf(m);
         }
         if (o instanceof Cna) {
             Cna c = (Cna) o;
-            if(c.getSamples().containsKey("SAMPLE_ID") && c.getSamples().containsKey("CNA")) {
+            if (c.getSamples().containsKey("SAMPLE_ID") && c.getSamples().containsKey("CNA")) {
                 Cna n = new Cna();
                 n.setEntrezGeneId(c.getEntrezGeneId());
                 n.setHugoSymbol(c.getHugoSymbol());
@@ -471,6 +542,11 @@ public class CbioPortalStudy {
         return state;
     }
 
+    /**
+     * Set a new timestamp as last modficiation. Used as starting point after restart.
+     * @param newState timestamp representing the last modification
+     * @throws IOException
+     */
     public void setState(Long newState) throws IOException {
         FileOutputStream fos = new FileOutputStream(Settings.getStudyFolder() + studyId + "/.state");
         fos.write(String.valueOf(newState).getBytes());

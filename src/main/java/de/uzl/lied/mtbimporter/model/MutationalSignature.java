@@ -1,14 +1,16 @@
 package de.uzl.lied.mtbimporter.model;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import java.util.HashMap;
+import java.util.Map;
 
+/**
+ * Mutational signature entry.
+ */
 @JsonPropertyOrder({
     "ENTITY_STABLE_ID",
     "NAME",
@@ -55,8 +57,8 @@ public class MutationalSignature {
     }
 
     @JsonAnySetter
-    public void setSamples(String name, Number value) {
-        this.samples.put(name, value);
+    public void setSamples(String key, Number value) {
+        this.samples.put(key, value);
     }
 
 }

@@ -2,8 +2,11 @@ package de.uzl.lied.mtbimporter.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+/**
+ * Timeline entry for images.
+ */
 public class TimelineImaging extends Timeline {
-    
+
     @JsonProperty("DIAGNOSTIC_TYPE")
     private String diagnosticType;
     @JsonProperty("DIAGNOSTIC_TYPE_DETAILED")

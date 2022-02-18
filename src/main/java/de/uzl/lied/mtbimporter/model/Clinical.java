@@ -1,14 +1,16 @@
 package de.uzl.lied.mtbimporter.model;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import java.util.HashMap;
+import java.util.Map;
 
+/**
+ * Abstract class for common attributes of ClinicalPatient and ClinicalSample.
+ */
 @JsonInclude(JsonInclude.Include.ALWAYS)
 public abstract class Clinical {
 
@@ -16,7 +18,7 @@ public abstract class Clinical {
     private String patientId;
     @JsonIgnore
     private Map<String, Object> additionalAttributes = new HashMap<String, Object>();
-    
+
     public String getPatientId() {
         return patientId;
     }

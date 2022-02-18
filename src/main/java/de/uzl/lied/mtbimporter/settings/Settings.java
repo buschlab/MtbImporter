@@ -1,10 +1,12 @@
 package de.uzl.lied.mtbimporter.settings;
 
-import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import java.util.List;
 
+/**
+ * Settings for MtbExporter.
+ */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Settings {
 
@@ -62,24 +64,34 @@ public class Settings {
         return portalInfo;
     }
 
+    /**
+     * Sets path for portal info.
+     * @param portalInfo
+     */
     @JsonProperty("portalInfo")
-    public void setPortalInfo(String newPortalInfo) {
+    public void setPortalInfo(String portalInfo) {
+        String newPortalInfo = portalInfo;
         if (!newPortalInfo.endsWith("/")) {
             newPortalInfo = newPortalInfo + "/";
         }
-        portalInfo = newPortalInfo;
+        Settings.portalInfo = newPortalInfo;
     }
 
     public static String getImportScriptPath() {
         return importScriptPath;
     }
 
+    /**
+     * Sets path for import script.
+     * @param importScriptPath
+     */
     @JsonProperty("importScriptPath")
-    public void setImportScriptPath(String newImportScriptPath) {
+    public void setImportScriptPath(String importScriptPath) {
+        String newImportScriptPath = importScriptPath;
         if (!newImportScriptPath.endsWith("/")) {
             newImportScriptPath = newImportScriptPath + "/";
         }
-        importScriptPath = newImportScriptPath;
+        Settings.importScriptPath = newImportScriptPath;
     }
 
     public static InputFolder[] getInputFolders() {
@@ -104,12 +116,16 @@ public class Settings {
         return studyFolder;
     }
 
+    /**
+     * Sets path for study folder.
+     */
     @JsonProperty("studyFolder")
-    public void setStudyFolder(String newStudyFolder) {
+    public void setStudyFolder(String studyFolder) {
+        String newStudyFolder = studyFolder;
         if (!newStudyFolder.endsWith("/")) {
             newStudyFolder = newStudyFolder + "/";
         }
-        studyFolder = newStudyFolder;
+        Settings.studyFolder = newStudyFolder;
     }
 
     public static String getStudyTemplate() {
@@ -143,12 +159,17 @@ public class Settings {
         return resourceFolder;
     }
 
+    /**
+     * Sets path for resource folder.
+     * @param resourceFolder
+     */
     @JsonProperty("resourceFolder")
-    public void setResourceFolder(String newResourceFolder) {
+    public void setResourceFolder(String resourceFolder) {
+        String newResourceFolder = resourceFolder;
         if (!newResourceFolder.endsWith("/")) {
             newResourceFolder = newResourceFolder + "/";
         }
-        resourceFolder = newResourceFolder;
+        Settings.resourceFolder = newResourceFolder;
     }
 
     public static Boolean getOverrideWarnings() {

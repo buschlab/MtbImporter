@@ -1,5 +1,9 @@
 package de.uzl.lied.mtbimporter.model;
 
+import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -9,11 +13,9 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.fasterxml.jackson.annotation.JsonAnySetter;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonProperty;
-
+/**
+ * Mutation entry for cBioPortal (MAF = Mutation Annotation Format).
+ */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class Maf {
 
@@ -24,7 +26,7 @@ public class Maf {
     @JsonProperty("Center")
     private String center;
     @JsonProperty("NCBI_Build")
-    private String NcbiBuild;
+    private String ncbiBuild;
     @JsonProperty("Chromosome")
     private String chromosome;
     @JsonProperty("Start_Position")
@@ -88,7 +90,7 @@ public class Maf {
     @JsonProperty("Transcript_Id")
     private String transcriptId;
     @JsonProperty("ENSEMBL_Gene_Id")
-    private String EnsemblGeneId;
+    private String ensemblGeneId;
     @JsonProperty("t_ref_count")
     private Integer tRefCount;
     @JsonProperty("t_alt_count")
@@ -150,6 +152,12 @@ public class Maf {
         this.additionalProperties.put(name, value);
     }
 
+    /**
+     * Method to merge two lists of mutation entries.
+     * @param maf1 Input 1
+     * @param maf2 Input 2
+     * @return Merged list of mutations
+     */
     public static List<Maf> merge(Collection<Maf> maf1, Collection<Maf> maf2) {
         return new ArrayList<Maf>(Stream.of(maf1, maf2).flatMap(Collection::stream).collect(Collectors.toMap(m -> {
             String s = m.getTumorSampleBarcode() + ";";

@@ -1,10 +1,5 @@
 package de.uzl.lied.mtbimporter;
 
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Timer;
-
 import de.uzl.lied.mtbimporter.jobs.CheckDropzone;
 import de.uzl.lied.mtbimporter.jobs.FhirResolver;
 import de.uzl.lied.mtbimporter.jobs.StudyHandler;
@@ -13,10 +8,24 @@ import de.uzl.lied.mtbimporter.model.CbioPortalStudy;
 import de.uzl.lied.mtbimporter.settings.ConfigurationLoader;
 import de.uzl.lied.mtbimporter.settings.Mdr;
 import de.uzl.lied.mtbimporter.settings.Settings;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Timer;
 
+/**
+ * Fully automated data import tool for cBioPortal
+ * (https://github.com/cbioportal/cbioportal). Best deployed with
+ * MIRACUM-cBioPortal (https://github.com/buschlab/MIRACUM-cbioportal) and
+ * MIRACUM-Pipe (https://github.com/AG-Boerries/MIRACUM-Pipe-docker).
+ */
 public final class MtbImporter {
+
+    private MtbImporter() {
+    }
+
     /**
-     * 
+     * Entry point method for MtbImporter.
      * @param args The arguments of the program.
      * @throws InterruptedException
      * @throws IOException
@@ -32,7 +41,7 @@ public final class MtbImporter {
 
         FhirResolver.initalize();
         for (Mdr m : Settings.getMdr()) {
-            if(m.getCxx() != null) {
+            if (m.getCxx() != null) {
                 CxxMdrLogin.login(m.getCxx());
             }
         }

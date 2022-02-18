@@ -1,15 +1,5 @@
 package de.uzl.lied.mtbimporter.tasks;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.concurrent.ExecutionException;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectReader;
@@ -17,10 +7,6 @@ import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvParser;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema.ColumnType;
-
-import org.hl7.fhir.r4.model.Coding;
-import org.mozilla.universalchardet.ReaderFactory;
-
 import de.samply.common.mdrclient.MdrConnectionException;
 import de.samply.common.mdrclient.MdrInvalidResponseException;
 import de.uzl.lied.mtbimporter.jobs.FhirResolver;
@@ -37,11 +23,35 @@ import de.uzl.lied.mtbimporter.settings.Mapping;
 import de.uzl.lied.mtbimporter.settings.Mdr;
 import de.uzl.lied.mtbimporter.settings.SamplyMdrSettings;
 import de.uzl.lied.mtbimporter.settings.Settings;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.concurrent.ExecutionException;
+import org.hl7.fhir.r4.model.Coding;
+import org.mozilla.universalchardet.ReaderFactory;
 
-public class AddHisData {
+/**
+ * Process files and objects from hospital information system.
+ */
+public final class AddHisData {
 
-    public static Map<String, String> stMap = null;
+    private AddHisData() {
+    }
 
+    /**
+     * Process a csv file from hospital information system.
+     * @param study
+     * @param csv
+     * @throws IOException
+     * @throws ExecutionException
+     * @throws MdrConnectionException
+     * @throws MdrInvalidResponseException
+     */
     public static void processCsv(CbioPortalStudy study, File csv)
             throws IOException, ExecutionException, MdrConnectionException, MdrInvalidResponseException {
 
@@ -82,19 +92,15 @@ public class AddHisData {
                     input.setSourceProfileCode(mapping.getSource());
                     input.setTargetProfileCode(mapping.getTarget());
                     Object o = cxxMap(mapping.getModelClass(), cxxMdr, input);
-                    if (o instanceof ClinicalPatient) {
-                        ClinicalPatient p = (ClinicalPatient) o;
-                        if (p.getAdditionalAttributes().containsKey("ICD_O_3_SITE")
-                                && p.getAdditionalAttributes().containsKey("ICD_O_3_HISTOLOGY")
-                                && Settings.getFhir().getTerminology() != null) {
-                            Coding oncoTree = FhirResolver.resolveOncoTree(
-                                    (String) p.getAdditionalAttributes().get("ICD_O_3_SITE"),
-                                    (String) p.getAdditionalAttributes().get("ICD_O_3_HISTOLOGY"));
-                            if (oncoTree != null) {
-                                p.getAdditionalAttributes().put("ONCOTREE_CODE", oncoTree.getCode());
-                                p.getAdditionalAttributes().put("CANCER_TYPE", oncoTree.getDisplay());
-                            }
-                        }
+                    if (o instanceof ClinicalPatient
+                            && Settings.getFhir().getTerminology() != null
+                            && ((ClinicalPatient) o).getAdditionalAttributes().containsKey("ICD_O_3_SITE")
+                            && ((ClinicalPatient) o).getAdditionalAttributes().containsKey("ICD_O_3_HISTOLOGY")) {
+                        Coding oncoTree = FhirResolver.resolveOncoTree(
+                                (String) ((ClinicalPatient) o).getAdditionalAttributes().get("ICD_O_3_SITE"),
+                                (String) ((ClinicalPatient) o).getAdditionalAttributes().get("ICD_O_3_HISTOLOGY"));
+                        ((ClinicalPatient) o).getAdditionalAttributes().put("ONCOTREE_CODE", oncoTree.getCode());
+                        ((ClinicalPatient) o).getAdditionalAttributes().put("CANCER_TYPE", oncoTree.getDisplay());
                     }
                     study.add(o);
                 }
@@ -107,15 +113,24 @@ public class AddHisData {
                     study.add(samplyMap(mapping.getModelClass(), samplyMdr, input));
                 }
 
-            } else if (Settings.getMappingMethod().equals("none")) {
+                // } else if (Settings.getMappingMethod().equals("none")) {
 
-                // TODO
+                // // TODO
 
             }
         }
 
     }
 
+    /**
+     * Converts a relation for MDR to a specific jvm pojo object.
+     * @param <T> Target pojo object
+     * @param c Target jvm pojo class
+     * @param relation Relation used as input
+     * @return relation converted to an object of class c
+     * @throws JsonProcessingException
+     * @throws IOException
+     */
     @SuppressWarnings("unchecked")
     private static <T> T readClass(Class<T> c, RelationConvert relation) throws JsonProcessingException, IOException {
         CsvMapper om = new CsvMapper().enable(CsvParser.Feature.ALLOW_COMMENTS);
@@ -187,38 +202,6 @@ public class AddHisData {
             return readClass(c, output);
         }
         return null;
-    }
-
-    public static void prepare(File csv, CbioPortalStudy study) throws IOException {
-
-        Map<String, Map<String, String>> pMap = new HashMap<String, Map<String, String>>();
-
-        CsvMapper om = new CsvMapper().enable(CsvParser.Feature.ALLOW_COMMENTS);
-        ObjectReader or = om.readerFor(new TypeReference<HashMap<String, String>>() {
-        }).with(CsvSchema.emptySchema().withHeader().withComments().withColumnSeparator(';'));
-
-        Iterator<Map<String, String>> inputIterator = or.readValues(ReaderFactory.createBufferedReader(csv));
-        List<Map<String, String>> l = new ArrayList<Map<String, String>>();
-        while (inputIterator.hasNext()) {
-            l.add(inputIterator.next());
-        }
-        for (Map<String, String> m : l) {
-            if (pMap.containsKey(m.get("PID"))) {
-                Map<String, String> n = pMap.get(m.get("PID"));
-                if (Integer.parseInt(m.get("JAHR_TEXT")) < Integer.parseInt(n.get("JAHR_TEXT"))) {
-                    if (Integer.parseInt(m.get("MONAT_TEXT")) < Integer.parseInt(n.get("MONAT_TEXT"))) {
-                        pMap.put(m.get("PID"), m);
-                    }
-                }
-            } else {
-                pMap.put(m.get("PID"), m);
-            }
-        }
-
-        for (Entry<String, Map<String, String>> e : pMap.entrySet()) {
-            study.addPreparation(e.getKey(), e.getValue());
-        }
-
     }
 
 }

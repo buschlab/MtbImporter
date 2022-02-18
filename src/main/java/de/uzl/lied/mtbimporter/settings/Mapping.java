@@ -1,5 +1,8 @@
 package de.uzl.lied.mtbimporter.settings;
 
+/**
+ * Defines mappings between source and target profiles used for MDR mapping.
+ */
 public class Mapping {
 
     private String source;

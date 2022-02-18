@@ -1,5 +1,8 @@
 package de.uzl.lied.mtbimporter.settings;
 
+/**
+ * Regular expression to overcome limited charset in cBioPortal.
+ */
 public class Regex {
 
     private String cbio;
@@ -20,5 +23,5 @@ public class Regex {
     public void setHis(String his) {
         this.his = his;
     }
-    
+
 }

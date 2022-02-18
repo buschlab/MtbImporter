@@ -1,5 +1,8 @@
 package de.uzl.lied.mtbimporter.model;
 
+/**
+ * Dedicated class for header information of clinical files (patient and sample).
+ */
 public class ClinicalHeader {
 
     private String displayName;
@@ -10,6 +13,9 @@ public class ClinicalHeader {
     public ClinicalHeader() {
     }
 
+    /**
+     * Constructor for ClinicalHeader with all Attributes present.
+     */
     public ClinicalHeader(String displayName, String description, String datatype, Integer priority) {
         this.displayName = displayName;
         this.description = description;

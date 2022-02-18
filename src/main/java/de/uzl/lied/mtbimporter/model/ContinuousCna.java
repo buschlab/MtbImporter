@@ -1,14 +1,16 @@
 package de.uzl.lied.mtbimporter.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-
+/**
+ * Pojo for continuous copy number alteration.
+ */
 @JsonPropertyOrder({ "ID", "chrom", "loc.start", "loc.end", "num.mark", "seg.mean" })
 public class ContinuousCna {
 
@@ -73,12 +75,18 @@ public class ContinuousCna {
         this.segMean = segMean;
     }
 
+    /**
+     * Method for merging two lists of continuous CNA.
+     * @param continuous1 List 1
+     * @param continuous2 List 2
+     * @return Merged list of continuous cna.
+     */
     public static List<ContinuousCna> merge(List<ContinuousCna> continuous1, List<ContinuousCna> continuous2) {
         return new ArrayList<ContinuousCna>(Stream.of(continuous1, continuous2).flatMap(List::stream)
                 .collect(Collectors.toMap(
                         c -> c.getId() + ";" + c.getChrom() + ";" + c.getLocStart() + ";" + c.getLocEnd(),
                         Function.identity(), (ContinuousCna x, ContinuousCna y) -> y))
                 .values());
-        }
+    }
 
 }
