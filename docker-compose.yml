@@ -4,10 +4,15 @@ services:
     restart: unless-stopped
     build: ./
     image: ghcr.io/buschlab/mtbimporter:latest
+    command: "/app/settings.yaml"
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock"
       - "./settings.yaml:/app/settings.yaml"
-
+      - "./input:/app/input"
+      - "./mapper:/mapper"
+      - "./processed:/app/processed"
+      - "./study:/app/study"
+      - "./template:/app/template"
     networks:
      - mtbimporter_net
 

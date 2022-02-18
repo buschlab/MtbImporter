@@ -38,3 +38,5 @@ processed/*
 !processed/.gitkeep
 input/*
 !input/.gitkeep
+study/*
+!study/.gitkeep
