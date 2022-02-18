@@ -14,7 +14,8 @@ services:
       - "./study:/app/study"
       - "./template:/app/template"
     networks:
-     - mtbimporter_net
+      - miracum-cbioportal_cbioportal_net
 
 networks:
-  mtbimporter_net:
+  miracum-cbioportal_cbioportal_net:
+    external: true
