@@ -2,6 +2,7 @@ package de.uzl.lied.mtbimporter.tasks;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.MappingIterator;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvParser;
@@ -25,9 +26,7 @@ import de.uzl.lied.mtbimporter.settings.SamplyMdrSettings;
 import de.uzl.lied.mtbimporter.settings.Settings;
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -58,12 +57,8 @@ public final class AddHisData {
         CsvMapper om = new CsvMapper().enable(CsvParser.Feature.ALLOW_COMMENTS);
         ObjectReader or = om.readerFor(new TypeReference<HashMap<String, String>>() {
         }).with(CsvSchema.emptySchema().withHeader().withComments().withColumnSeparator(';').withNullValue(""));
-
-        Iterator<Map<String, Object>> inputIterator = or.readValues(ReaderFactory.createBufferedReader(csv));
-        List<Map<String, Object>> l = new ArrayList<Map<String, Object>>();
-        while (inputIterator.hasNext()) {
-            l.add(inputIterator.next());
-        }
+        MappingIterator<Map<String, Object>> mi = or.readValues(ReaderFactory.createBufferedReader(csv));
+        List<Map<String, Object>> l = mi.readAll();
 
         RelationConvert input = new RelationConvert();
         input.setSourceProfileVersion("1");
