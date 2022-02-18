@@ -14,7 +14,6 @@ import de.uzl.lied.mtbimporter.tasks.AddSignatureData;
 import de.uzl.lied.mtbimporter.tasks.ImportStudy;
 import groovy.lang.Binding;
 import groovy.lang.GroovyShell;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -30,6 +29,7 @@ import java.util.TimerTask;
 import java.util.concurrent.ExecutionException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
+import org.codehaus.groovy.control.CompilationFailedException;
 
 /**
  * Class providing the cronjob for scheduled data processing.
@@ -43,6 +43,7 @@ public class CheckDropzone extends TimerTask {
     }
 
     @Override
+    @SuppressWarnings({"checkstyle:IllegalCatch"})
     public void run() {
 
         Long newState = System.currentTimeMillis();
@@ -62,25 +63,23 @@ public class CheckDropzone extends TimerTask {
             }
 
             for (File f : files) {
-                if (f.getName().contains("Diagnosen_Vorst")) {
-                    try {
-                        // AddHisData.prepare(f, newStudy);
-                        Binding b = new Binding();
-                        GroovyShell s = new GroovyShell(b);
-                        b.setVariable("csv", f);
-                        b.setVariable("study", newStudy);
-                        s.evaluate(new File("mapper/prepare.groovy"));
-                    } catch (IOException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    }
-                }
-            }
-            for (File f : files) {
                 if (f.getName().equals(".gitkeep")) {
                     continue;
                 }
                 System.out.println("Found " + f.getAbsolutePath());
+                try {
+                    Binding b = new Binding();
+                    GroovyShell s = new GroovyShell(b);
+                    b.setVariable("csv", f);
+                    b.setVariable("study", newStudy);
+                    s.evaluate(new File("mapper/prepare.groovy"));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (CompilationFailedException e) {
+                    e.printStackTrace();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 try {
                     switch (FilenameUtils.getExtension(f.getName())) {
                         case "maf":
