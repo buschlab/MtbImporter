@@ -97,7 +97,7 @@ public final class FhirResolver {
                     str = ((StringType) c.getValue()).getValue();
                 }
             }
-            if (str.equals(Settings.getFhir().getTerminology().getIcdO3ToOncoTreeConceptMapUrl())) {
+            if (str != null && str.equals(Settings.getFhir().getTerminology().getIcdO3ToOncoTreeConceptMapUrl())) {
                 return coding;
             }
         }
