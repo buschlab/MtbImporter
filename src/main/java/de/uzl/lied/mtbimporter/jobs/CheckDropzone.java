@@ -117,7 +117,9 @@ public class CheckDropzone extends TimerTask {
                     }
 
                     if (inputfolder.getTarget() == null || inputfolder.getTarget().length() == 0) {
-                        f.delete();
+                        if (!f.delete()) {
+                            throw new IOException("Could not delete file " + f.getAbsolutePath());
+                        }
                     } else {
                         new File(inputfolder.getTarget() + "/" + newState).mkdirs();
                         Files.move(f.toPath(),
