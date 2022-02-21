@@ -1,7 +1,6 @@
 package de.uzl.lied.mtbimporter.jobs;
 
 import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.google.common.io.ByteStreams;
 import de.uzl.lied.mtbimporter.model.CbioPortalStudy;
@@ -90,12 +89,8 @@ public final class StudyHandler {
      * @param study old study where the new studies will be merged into
      * @param studies the new studies that will be merged one after the other
      * @return the updated study object
-     * @throws JsonParseException
-     * @throws JsonMappingException
-     * @throws IOException
      */
-    public static CbioPortalStudy merge(CbioPortalStudy study, CbioPortalStudy... studies)
-            throws JsonParseException, JsonMappingException, IOException {
+    public static CbioPortalStudy merge(CbioPortalStudy study, CbioPortalStudy... studies) {
         CbioPortalStudy newStudy = study;
         for (CbioPortalStudy s : studies) {
             newStudy = merge(newStudy, s);
@@ -109,12 +104,8 @@ public final class StudyHandler {
      * @param study old study where the new studies will be merged into
      * @param newStudy the new study that will be merged into the other
      * @return the updated study object
-     * @throws JsonParseException
-     * @throws JsonMappingException
-     * @throws IOException
      */
-    public static CbioPortalStudy merge(CbioPortalStudy study, CbioPortalStudy newStudy)
-            throws JsonParseException, JsonMappingException, IOException {
+    public static CbioPortalStudy merge(CbioPortalStudy study, CbioPortalStudy newStudy) {
         study.addMaf(newStudy.getMaf());
         study.addSeg(newStudy.getSeg());
         study.addPatient(newStudy.getPatients());
@@ -213,15 +204,10 @@ public final class StudyHandler {
             patientStudy.addSampleResource(study.getSampleResourcesBySampleId(s.getSampleId()));
             patientStudy.addGenePanelMatrix(study.getGenePanelMatrixBySampleId(s.getSampleId()));
             patientStudy.addMaf(study.getMafBySampleId(s.getSampleId()));
-            try {
-                patientStudy.addCna(study.getCnaBySampleId(s.getSampleId()));
-                patientStudy.addMutationalContribution(study.getMutationalContributionBySampleId(s.getSampleId()));
-                patientStudy.addMutationalLimit(study.getMutationalLimitBySampleId(s.getSampleId()));
-            } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
 
+            patientStudy.addCna(study.getCnaBySampleId(s.getSampleId()));
+            patientStudy.addMutationalContribution(study.getMutationalContributionBySampleId(s.getSampleId()));
+            patientStudy.addMutationalLimit(study.getMutationalLimitBySampleId(s.getSampleId()));
         }
         patientStudy.setTimelines(study.getTimelinesByPatient(patientId));
 

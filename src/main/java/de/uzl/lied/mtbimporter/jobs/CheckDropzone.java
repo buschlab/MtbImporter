@@ -75,11 +75,14 @@ public class CheckDropzone extends TimerTask {
                     b.setVariable("study", newStudy);
                     s.evaluate(new File("mapper/prepare.groovy"));
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    Logger.error("Could not access file mapper/prepare.groovy");
+                    Logger.debug(e);
                 } catch (CompilationFailedException e) {
-                    e.printStackTrace();
+                    Logger.error("Could not compile Groovy script mapper/prepare.groovy");
+                    Logger.debug(e);
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    Logger.error("Error executing Groovy script mapper/prepare.groovy");
+                    Logger.debug(e);
                 }
                 try {
                     switch (FilenameUtils.getExtension(f.getName())) {
@@ -177,8 +180,8 @@ public class CheckDropzone extends TimerTask {
                     ImportStudy.importStudy(s.getStudyId(), newState, Settings.getOverrideWarnings());
                 }
             } catch (IOException | InterruptedException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                Logger.error("Importing study failed with timestamp", newState);
+                Logger.debug(e);
                 Thread.currentThread().interrupt();
             }
         }

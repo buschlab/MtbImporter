@@ -1,7 +1,5 @@
 package de.uzl.lied.mtbimporter.tasks;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import de.uzl.lied.mtbimporter.jobs.FhirResolver;
 import de.uzl.lied.mtbimporter.model.CbioPortalStudy;
 import de.uzl.lied.mtbimporter.model.ClinicalSample;
@@ -21,12 +19,9 @@ public final class AddMetaData {
      * Add meta data to study.
      * @param study Study where the metadata will be added
      * @param rData File with R data frame
-     * @throws JsonParseException
-     * @throws JsonMappingException
      * @throws IOException
      */
-    public static void processRData(CbioPortalStudy study, File rData)
-            throws JsonParseException, JsonMappingException, IOException {
+    public static void processRData(CbioPortalStudy study, File rData) throws IOException {
         String[] getPatientId = {"Rscript", "--vanilla", "-e",
             "options(warn = -1); load(\"" + rData.getAbsolutePath() + "\"); cat(id);"};
         String[] getTmb = {"Rscript", "--vanilla", "-e",

@@ -1,7 +1,5 @@
 package de.uzl.lied.mtbimporter.model;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import de.uzl.lied.mtbimporter.jobs.EnsemblResolver;
 import de.uzl.lied.mtbimporter.settings.Settings;
 import de.uzl.lied.mtbimporter.tasks.AddClinicalData;
@@ -15,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import org.tinylog.Logger;
 
 /**
  * Pojo for a whole cBioPortal study.
@@ -268,12 +267,7 @@ public class CbioPortalStudy {
     public void addSampleResource(Collection<SampleResource> sampleResource) {
         for (SampleResource sr : sampleResource) {
             addSampleResource(sr);
-            try {
-                AddClinicalData.addDummyPatient(this, sr.getSampleId());
-            } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
+            AddClinicalData.addDummyPatient(this, sr.getSampleId());
         }
     }
 
@@ -325,20 +319,17 @@ public class CbioPortalStudy {
         return l;
     }
 
-    public void addMutationalLimit(Collection<MutationalSignature> newMutationalLimit)
-            throws JsonParseException, JsonMappingException, IOException {
+    public void addMutationalLimit(Collection<MutationalSignature> newMutationalLimit) {
         addMutationalSignature(newMutationalLimit, this.mutationalLimit, 0);
 
     }
 
-    public void addMutationalContribution(Collection<MutationalSignature> newMutationalContribution)
-            throws JsonParseException, JsonMappingException, IOException {
+    public void addMutationalContribution(Collection<MutationalSignature> newMutationalContribution) {
         addMutationalSignature(newMutationalContribution, this.mutationalContribution, 1);
     }
 
     private void addMutationalSignature(Collection<MutationalSignature> mutationalSignature,
-            Map<String, MutationalSignature> map, int defaultValue)
-            throws JsonParseException, JsonMappingException, IOException {
+            Map<String, MutationalSignature> map, int defaultValue) {
         Set<String> sampleIds = new HashSet<String>();
         for (MutationalSignature m : mutationalSignature) {
             MutationalSignature m2 = new MutationalSignature();
@@ -392,11 +383,8 @@ public class CbioPortalStudy {
     /**
      * Add multiple discrete CNA entries.
      * @param newCna new discrete CNA entries
-     * @throws JsonParseException
-     * @throws JsonMappingException
-     * @throws IOException
      */
-    public void addCna(Collection<Cna> newCna) throws JsonParseException, JsonMappingException, IOException {
+    public void addCna(Collection<Cna> newCna) {
         for (Cna c : newCna) {
             Cna c2 = new Cna();
             c2.setEntrezGeneId(c.getEntrezGeneId());
@@ -505,12 +493,7 @@ public class CbioPortalStudy {
                 n.setSamples(c.getSamples().get("SAMPLE_ID"), c.getSamples().get("CNA"));
                 c = n;
             }
-            try {
-                addCna(List.of(c));
-            } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
-            }
+            addCna(List.of(c));
         }
     }
 
@@ -547,8 +530,8 @@ public class CbioPortalStudy {
             fos.write(String.valueOf(newState).getBytes());
             fos.close();
         } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            Logger.error("Unable to write state file to disk");
+            Logger.debug(e);
         }
         state = newState;
     }
