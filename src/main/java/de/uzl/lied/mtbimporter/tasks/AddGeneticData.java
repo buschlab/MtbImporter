@@ -1,7 +1,6 @@
 package de.uzl.lied.mtbimporter.tasks;
 
 import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.MappingIterator;
 import com.fasterxml.jackson.databind.ObjectReader;
@@ -155,8 +154,7 @@ public final class AddGeneticData {
         om.writer(s.withHeader().withColumnSeparator('\t').withoutQuoteChar()).writeValue(target, cnas);
     }
 
-    public static void processCnaFile(CbioPortalStudy study, File cna)
-            throws JsonParseException, JsonMappingException, IOException {
+    public static void processCnaFile(CbioPortalStudy study, File cna) throws IOException {
         study.addCna(readCnaFile(cna));
     }
 

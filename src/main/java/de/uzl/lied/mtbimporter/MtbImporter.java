@@ -12,6 +12,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Timer;
+import org.tinylog.Logger;
 
 /**
  * Fully automated data import tool for cBioPortal
@@ -52,6 +53,6 @@ public final class MtbImporter {
         CheckDropzone checkDropzone = new CheckDropzone(study);
         t.scheduleAtFixedRate(checkDropzone, 0, Settings.getCronIntervall());
 
-        System.out.println("MtbImporter started!");
+        Logger.info("MtbImporter started!");
     }
 }

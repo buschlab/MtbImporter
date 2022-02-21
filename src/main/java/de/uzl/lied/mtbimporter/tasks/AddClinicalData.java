@@ -1,7 +1,6 @@
 package de.uzl.lied.mtbimporter.tasks;
 
 import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.MappingIterator;
@@ -36,6 +35,7 @@ import java.util.Map.Entry;
 import java.util.Scanner;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
+import org.tinylog.Logger;
 
 /**
  * Adds data to both patients and samples.
@@ -193,8 +193,8 @@ public final class AddClinicalData {
                     try {
                         ch = SamplyMdrAttributes.getAttributes(m.getSamply(), mdrProfile, key);
                     } catch (ExecutionException | MdrConnectionException | MdrInvalidResponseException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
+                        Logger.error("Could not get data from Samply MDR.");
+                        Logger.debug(e);
                     }
                 }
             }
@@ -228,8 +228,8 @@ public final class AddClinicalData {
             fos.write(String.valueOf(clinicalString).getBytes());
             fos.close();
         } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            Logger.error("Cloud not write clinical file to disk.");
+            Logger.debug(e);
         }
     }
 
@@ -237,12 +237,8 @@ public final class AddClinicalData {
      * Adds dummy patient.
      * @param study
      * @param sampleId
-     * @throws JsonParseException
-     * @throws JsonMappingException
-     * @throws IOException
      */
-    public static void addDummyPatient(CbioPortalStudy study, String sampleId)
-            throws JsonParseException, JsonMappingException, IOException {
+    public static void addDummyPatient(CbioPortalStudy study, String sampleId) {
         ClinicalPatient cp = new ClinicalPatient();
         String patientId = FhirResolver.resolvePatientFromSample(sampleId.replaceAll("_TD", ""));
         cp.setPatientId(patientId);
@@ -261,12 +257,8 @@ public final class AddClinicalData {
      * Adds multiple dummy patients.
      * @param study
      * @param sampleIds
-     * @throws JsonParseException
-     * @throws JsonMappingException
-     * @throws IOException
      */
-    public static void addDummyPatient(CbioPortalStudy study, Collection<String> sampleIds)
-            throws JsonParseException, JsonMappingException, IOException {
+    public static void addDummyPatient(CbioPortalStudy study, Collection<String> sampleIds) {
         for (String sampleId : sampleIds) {
             ClinicalPatient cp = new ClinicalPatient();
             String patientId = FhirResolver.resolvePatientFromSample(sampleId.replaceAll("_TD", ""));

@@ -30,6 +30,7 @@ import java.util.concurrent.ExecutionException;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.codehaus.groovy.control.CompilationFailedException;
+import org.tinylog.Logger;
 
 /**
  * Class providing the cronjob for scheduled data processing.
@@ -51,12 +52,12 @@ public class CheckDropzone extends TimerTask {
         CbioPortalStudy newStudy = new CbioPortalStudy();
         newStudy.setStudyId(study.getStudyId());
 
-        System.out.println("Checking for files!");
+        Logger.info("Checking for files!");
         for (InputFolder inputfolder : Settings.getInputFolders()) {
             File[] files = new File(inputfolder.getSource()).listFiles();
 
             if (files.length == 0 || files.length == 1 && files[0].getName().equals(".gitkeep")) {
-                System.out.println("No new files at " + inputfolder.getSource() + ".");
+                Logger.info("No new files at " + inputfolder.getSource() + ".");
                 continue;
             } else {
                 count++;
@@ -66,7 +67,7 @@ public class CheckDropzone extends TimerTask {
                 if (f.getName().equals(".gitkeep")) {
                     continue;
                 }
-                System.out.println("Found " + f.getAbsolutePath());
+                Logger.info("Found " + f.getAbsolutePath());
                 try {
                     Binding b = new Binding();
                     GroovyShell s = new GroovyShell(b);
@@ -74,11 +75,14 @@ public class CheckDropzone extends TimerTask {
                     b.setVariable("study", newStudy);
                     s.evaluate(new File("mapper/prepare.groovy"));
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    Logger.error("Could not access file mapper/prepare.groovy");
+                    Logger.debug(e);
                 } catch (CompilationFailedException e) {
-                    e.printStackTrace();
+                    Logger.error("Could not compile Groovy script mapper/prepare.groovy");
+                    Logger.debug(e);
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    Logger.error("Error executing Groovy script mapper/prepare.groovy");
+                    Logger.debug(e);
                 }
                 try {
                     switch (FilenameUtils.getExtension(f.getName())) {
@@ -126,9 +130,10 @@ public class CheckDropzone extends TimerTask {
                                 new File(inputfolder.getTarget() + "/" + newState + "/" + f.getName()).toPath(),
                                 StandardCopyOption.REPLACE_EXISTING);
                     }
-                    System.out.println("Processed file " + f.getAbsolutePath());
+                    Logger.info("Processed file " + f.getAbsolutePath());
                 } catch (IOException | ExecutionException | MdrConnectionException | MdrInvalidResponseException e) {
-                    System.err.println("Could not process file " + f.getAbsolutePath());
+                    Logger.error("Could not process file " + f.getAbsolutePath());
+                    Logger.debug("Received following exception:", e);
                 }
             }
         }
@@ -175,8 +180,8 @@ public class CheckDropzone extends TimerTask {
                     ImportStudy.importStudy(s.getStudyId(), newState, Settings.getOverrideWarnings());
                 }
             } catch (IOException | InterruptedException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+                Logger.error("Importing study failed with timestamp", newState);
+                Logger.debug(e);
                 Thread.currentThread().interrupt();
             }
         }

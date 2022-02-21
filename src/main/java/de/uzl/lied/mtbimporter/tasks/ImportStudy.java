@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import org.tinylog.Logger;
 
 /**
  * Class to import a study into cBioPortal.
@@ -81,8 +82,8 @@ public final class ImportStudy {
         String importResult = new String(process.getInputStream().readAllBytes());
         String importError = new String(process.getErrorStream().readAllBytes());
 
-        System.out.println(importResult);
-        System.out.println(importError);
+        Logger.debug(importResult);
+        Logger.error(importError);
 
         if (Settings.getRestartAfterImport()) {
             args.clear();
@@ -100,9 +101,9 @@ public final class ImportStudy {
             final Process restartProcess = pb.start();
             String restartResult = new String(restartProcess.getInputStream().readAllBytes());
             String restartError = new String(restartProcess.getErrorStream().readAllBytes());
-            System.out.println(restartResult);
-            System.out.println(restartError);
-            System.out.println("Restarted cBioPortal!");
+            Logger.debug(restartResult);
+            Logger.error(restartError);
+            Logger.info("Restarted cBioPortal!");
         }
 
     }
