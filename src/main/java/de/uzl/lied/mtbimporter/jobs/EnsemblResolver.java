@@ -5,7 +5,6 @@ import de.uzl.lied.mtbimporter.settings.Settings;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -38,8 +37,11 @@ public final class EnsemblResolver {
         UriComponentsBuilder builder = UriComponentsBuilder
                 .fromHttpUrl(Settings.getEnsemblUrl() + "/variant_recoder/human/" + m.getHugoSymbol() + ":"
                         + mutation + "?content-type=application/json");
-        ResponseEntity<List> response = rt.getForEntity(builder.build().encode().toUri(), List.class);
-        Map<String, Object> map = (Map<String, Object>) response.getBody().get(0);
+        List l = rt.getForEntity(builder.build().encode().toUri(), List.class).getBody();
+        if (l == null || l.isEmpty()) {
+            return m;
+        }
+        Map<String, Object> map = (Map<String, Object>) l.get(0);
         if (map.size() != 2) {
             return m;
         }

@@ -425,10 +425,6 @@ public class CbioPortalStudy {
         return cnaSampleIds;
     }
 
-    public <T> Collection<Timeline> getTimeline(Class<T> newTimeline) {
-        return this.timeline.getOrDefault(newTimeline, new ArrayList<Timeline>());
-    }
-
     /**
      * Filter timelines in study by a specific patient id.
      * @param patientId patient id for filtering
@@ -545,12 +541,15 @@ public class CbioPortalStudy {
     /**
      * Set a new timestamp as last modficiation. Used as starting point after restart.
      * @param newState timestamp representing the last modification
-     * @throws IOException
      */
-    public void setState(Long newState) throws IOException {
-        FileOutputStream fos = new FileOutputStream(Settings.getStudyFolder() + studyId + "/.state");
-        fos.write(String.valueOf(newState).getBytes());
-        fos.close();
+    public void setState(Long newState) {
+        try (FileOutputStream fos = new FileOutputStream(Settings.getStudyFolder() + studyId + "/.state")) {
+            fos.write(String.valueOf(newState).getBytes());
+            fos.close();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
         state = newState;
     }
 

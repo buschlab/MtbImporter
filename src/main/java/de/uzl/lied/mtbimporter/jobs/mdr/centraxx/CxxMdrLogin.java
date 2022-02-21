@@ -33,8 +33,10 @@ public final class CxxMdrLogin {
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(mdr.getUrl() + "/oauth/token");
         builder.queryParams(form);
         MdrToken token = rt.postForObject(builder.build().encode().toUri(), null, MdrToken.class);
-        mdr.setToken(token.getAccessToken(), token.getExpiresIn());
-
+        if (token != null) {
+            System.out.println("CXX MDR token not set. Login returned null.");
+            mdr.setToken(token.getAccessToken(), token.getExpiresIn());
+        }
         return mdr;
     }
 

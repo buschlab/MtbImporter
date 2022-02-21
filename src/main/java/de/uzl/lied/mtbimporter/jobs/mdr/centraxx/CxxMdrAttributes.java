@@ -53,7 +53,7 @@ public final class CxxMdrAttributes {
             ResponseEntity<CxxList> response = rt.exchange(builder.build().encode().toUri(), HttpMethod.GET,
                     new HttpEntity<>(headers), CxxList.class);
             CxxList l = response.getBody();
-            if (l.getContent() != null) {
+            if (l != null && l.getContent() != null) {
                 ClinicalHeader ch = new ClinicalHeader();
                 for (CxxAttributeValue av : l.getContent()) {
                     switch (av.getAttribute()) {

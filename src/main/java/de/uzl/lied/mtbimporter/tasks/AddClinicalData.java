@@ -2,6 +2,7 @@ package de.uzl.lied.mtbimporter.tasks;
 
 import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.MappingIterator;
 import com.fasterxml.jackson.databind.ObjectReader;
@@ -165,12 +166,12 @@ public final class AddClinicalData {
     }
 
     private static <T> void writeClinical(File inputFile, Collection<T> clinicals, Class<T> cl,
-            Map<String, ClinicalHeader> clinicalAttributes, String mdrProfile) throws IOException {
+            Map<String, ClinicalHeader> clinicalAttributes, String mdrProfile) throws JsonProcessingException {
         CsvMapper om = new CsvMapper().enable(CsvParser.Feature.ALLOW_COMMENTS);
 
         Set<String> keys = new LinkedHashSet<String>();
         keys.add("PATIENT_ID");
-        if (cl.getSimpleName().equals("ClinicalSample")) {
+        if (cl.isAssignableFrom(ClinicalSample.class)) {
             keys.add("SAMPLE_ID");
         }
 
@@ -207,25 +208,29 @@ public final class AddClinicalData {
         CsvSchema schema = schemaBuilder.setColumnSeparator('\t').setUseHeader(true).build().withoutQuoteChar();
 
         String clinicalString = om.writer(schema).writeValueAsString(clinicals);
-        FileOutputStream fos = new FileOutputStream(inputFile);
-        String displayNameString = "#";
-        String descriptionString = "#";
-        String dataTypesString = "#";
-        String priorityString = "#";
-        for (ClinicalHeader ch : attributes.values()) {
-            displayNameString += "\t" + ch.getDisplayName();
-            descriptionString += "\t" + ch.getDescription();
-            dataTypesString += "\t" + ch.getDatatype();
-            priorityString += "\t" + ch.getPriority();
+        try (FileOutputStream fos = new FileOutputStream(inputFile)) {
+            String displayNameString = "#";
+            String descriptionString = "#";
+            String dataTypesString = "#";
+            String priorityString = "#";
+            for (ClinicalHeader ch : attributes.values()) {
+                displayNameString += "\t" + ch.getDisplayName();
+                descriptionString += "\t" + ch.getDescription();
+                dataTypesString += "\t" + ch.getDatatype();
+                priorityString += "\t" + ch.getPriority();
+            }
+            displayNameString = displayNameString.replaceFirst("\t", "");
+            descriptionString = descriptionString.replaceFirst("\t", "");
+            dataTypesString = dataTypesString.replaceFirst("\t", "");
+            priorityString = priorityString.replaceFirst("\t", "");
+            clinicalString = displayNameString + "\n" + descriptionString + "\n" + dataTypesString + "\n"
+                    + priorityString + "\n" + clinicalString;
+            fos.write(String.valueOf(clinicalString).getBytes());
+            fos.close();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
         }
-        displayNameString = displayNameString.replaceFirst("\t", "");
-        descriptionString = descriptionString.replaceFirst("\t", "");
-        dataTypesString = dataTypesString.replaceFirst("\t", "");
-        priorityString = priorityString.replaceFirst("\t", "");
-        clinicalString = displayNameString + "\n" + descriptionString + "\n" + dataTypesString + "\n" + priorityString
-                + "\n" + clinicalString;
-        fos.write(String.valueOf(clinicalString).getBytes());
-        fos.close();
     }
 
     /**
