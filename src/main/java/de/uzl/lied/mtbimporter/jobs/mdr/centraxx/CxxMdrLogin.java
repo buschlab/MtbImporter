@@ -7,6 +7,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
+import org.tinylog.Logger;
 
 /**
  * Class handling the login into a Kairos CentraXX MDR.
@@ -34,7 +35,7 @@ public final class CxxMdrLogin {
         builder.queryParams(form);
         MdrToken token = rt.postForObject(builder.build().encode().toUri(), null, MdrToken.class);
         if (token != null) {
-            System.out.println("CXX MDR token not set. Login returned null.");
+            Logger.warn("CXX MDR token not set. Login returned null.");
             mdr.setToken(token.getAccessToken(), token.getExpiresIn());
         }
         return mdr;

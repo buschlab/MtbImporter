@@ -33,6 +33,7 @@ import java.util.Map.Entry;
 import java.util.concurrent.ExecutionException;
 import org.hl7.fhir.r4.model.Coding;
 import org.mozilla.universalchardet.ReaderFactory;
+import org.tinylog.Logger;
 
 /**
  * Process files and objects from hospital information system.
@@ -142,7 +143,7 @@ public final class AddHisData {
         List<CxxItem> inputItems = CxxMdrItemSet.getItemList(CxxMdrItemSet.get(mdr, input.getSourceProfileCode()));
         for (CxxItem inputItem : inputItems) {
             if (inputItem.getMandatory() && !input.getValues().containsKey(inputItem.getId())) {
-                System.out.println("Does not fulfil criteria for source " + input.getSourceProfileCode());
+                Logger.debug("Does not fulfil criteria for source " + input.getSourceProfileCode());
                 return null;
             }
         }
@@ -150,12 +151,12 @@ public final class AddHisData {
         List<CxxItem> outputItems = CxxMdrItemSet.getItemList(CxxMdrItemSet.get(mdr, input.getTargetProfileCode()));
         for (CxxItem outputItem : outputItems) {
             if (outputItem.getMandatory() && !output.getValues().containsKey(outputItem.getId())) {
-                System.out.println("Does not fulfil criteria for target " + input.getTargetProfileCode());
+                Logger.debug("Does not fulfil criteria for target " + input.getTargetProfileCode());
                 return null;
             }
         }
         if (!output.getValues().isEmpty()) {
-            System.out.println("Successfully mapped object from " + input.getSourceProfileCode() + " to "
+            Logger.info("Successfully mapped object from " + input.getSourceProfileCode() + " to "
                     + input.getTargetProfileCode());
             return readClass(c, output);
         }
@@ -167,13 +168,13 @@ public final class AddHisData {
         Map<String, Map<String, String>> inputItems = SamplyMdrItems.get(mdr, mdr.getSourceNamespace(),
                 input.getSourceProfileCode());
         if (inputItems == null) {
-            System.out.println("Does not fulfil criteria for source " + input.getSourceProfileCode());
+            Logger.debug("Does not fulfil criteria for source " + input.getSourceProfileCode());
             return null;
         }
         for (Entry<String, Map<String, String>> inputItem : inputItems.entrySet()) {
             if (inputItem.getValue().containsKey("mandatory") && inputItem.getValue().get("mandatory").equals("true")
                     && !input.getValues().containsKey(inputItem.getKey())) {
-                System.out.println("Does not fulfil criteria for source " + input.getSourceProfileCode());
+                Logger.debug("Does not fulfil criteria for source " + input.getSourceProfileCode());
                 return null;
             }
         }
@@ -181,18 +182,18 @@ public final class AddHisData {
         Map<String, Map<String, String>> outputItems = SamplyMdrItems.get(mdr, mdr.getTargetNamespace(),
                 input.getTargetProfileCode());
         if (outputItems == null) {
-            System.out.println("Does not fulfil criteria for target " + input.getTargetProfileCode());
+            Logger.debug("Does not fulfil criteria for target " + input.getTargetProfileCode());
             return null;
         }
         for (Entry<String, Map<String, String>> outputItem : outputItems.entrySet()) {
             if (outputItem.getValue().containsKey("mandatory") && outputItem.getValue().get("mandatory").equals("true")
                     && !output.getValues().containsKey(outputItem.getKey())) {
-                System.out.println("Does not fulfil criteria for target " + input.getTargetProfileCode());
+                Logger.debug("Does not fulfil criteria for target " + input.getTargetProfileCode());
                 return null;
             }
         }
         if (!output.getValues().isEmpty()) {
-            System.out.println("Successfully mapped object from " + input.getSourceProfileCode() + " to "
+            Logger.info("Successfully mapped object from " + input.getSourceProfileCode() + " to "
                     + input.getTargetProfileCode());
             return readClass(c, output);
         }
