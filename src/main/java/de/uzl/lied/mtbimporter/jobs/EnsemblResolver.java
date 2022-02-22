@@ -29,7 +29,7 @@ public final class EnsemblResolver {
     public static Maf enrich(Maf m) {
 
         String mutation = m.getTxChange() != null ? m.getTxChange() : m.getHgvspShort();
-        if (mutation == null || "".equals(mutation) || "MUTATED".equals(mutation)) {
+        if (mutation == null || mutation.isEmpty() || "MUTATED".equals(mutation)) {
             return m;
         }
 

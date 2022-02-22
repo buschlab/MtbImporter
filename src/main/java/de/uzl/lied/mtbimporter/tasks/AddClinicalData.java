@@ -56,7 +56,7 @@ public final class AddClinicalData {
     }
 
     private static Map<String, ClinicalHeader> readClinicalAttributes(File clinicalFile) throws FileNotFoundException {
-        Map<String, ClinicalHeader> clinicalHeaders = new HashMap<String, ClinicalHeader>();
+        Map<String, ClinicalHeader> clinicalHeaders = new HashMap<>();
         Scanner scanner = new Scanner(clinicalFile);
         String[] displayName = new String[0];
         String[] description = new String[0];
@@ -169,7 +169,7 @@ public final class AddClinicalData {
             Map<String, ClinicalHeader> clinicalAttributes, String mdrProfile) throws JsonProcessingException {
         CsvMapper om = new CsvMapper().enable(CsvParser.Feature.ALLOW_COMMENTS);
 
-        Set<String> keys = new LinkedHashSet<String>();
+        Set<String> keys = new LinkedHashSet<>();
         keys.add("PATIENT_ID");
         if (cl.isAssignableFrom(ClinicalSample.class)) {
             keys.add("SAMPLE_ID");
@@ -180,7 +180,7 @@ public final class AddClinicalData {
             keys.addAll(c.getAdditionalAttributes().keySet());
         }
 
-        Map<String, ClinicalHeader> attributes = new LinkedHashMap<String, ClinicalHeader>();
+        Map<String, ClinicalHeader> attributes = new LinkedHashMap<>();
         for (String key : keys) {
             ClinicalHeader ch = null;
             Iterator<Mdr> mdrIterator = Settings.getMdr().iterator();

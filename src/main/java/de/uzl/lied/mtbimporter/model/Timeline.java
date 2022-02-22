@@ -43,7 +43,7 @@ public class Timeline {
     @JsonIgnore
     private Date tmpBaseDate;
     @JsonIgnore
-    private Map<String, Object> additionalAttributes = new HashMap<String, Object>();
+    private Map<String, Object> additionalAttributes = new HashMap<>();
 
     public String getPatientId() {
         return this.patientId;
@@ -123,7 +123,7 @@ public class Timeline {
      * Merge to timeline objects.
      */
     public static <T> List<T> merge(Collection<T> timeline1, Collection<T> timeline2) {
-        return new ArrayList<T>(
+        return new ArrayList<>(
                 Stream.of(timeline1, timeline2).flatMap(Collection::stream).collect(Collectors.toMap(r -> {
                     Timeline t = (Timeline) r;
                     return t.getPatientId() + ";" + t.getEventType() + ";" + t.getStartDate() + ";" + t.getStopDate();

@@ -55,7 +55,6 @@ public final class AddTimelineData {
 
     /**
      * Writes jvm Timeline objects to tsv files.
-     * @param <T>
      * @param timelines
      * @param type
      * @param target
@@ -63,7 +62,7 @@ public final class AddTimelineData {
      * @throws JsonMappingException
      * @throws IOException
      */
-    public static <T> void writeTimelineFile(Collection<Timeline> timelines, String type, File target)
+    public static void writeTimelineFile(Collection<Timeline> timelines, String type, File target)
             throws JsonGenerationException, JsonMappingException, IOException {
         Class<?> c = getTimelineClass(type);
         CsvMapper om = new CsvMapper().enable(CsvParser.Feature.ALLOW_COMMENTS);
@@ -71,7 +70,7 @@ public final class AddTimelineData {
         om.writer(s.withHeader().withColumnSeparator('\t').withoutQuoteChar()).writeValue(target, timelines);
     }
 
-    private static <T> void processTimelineClass(CbioPortalStudy study, Timeline t, String type)
+    private static void processTimelineClass(CbioPortalStudy study, Timeline t, String type)
             throws JsonGenerationException, JsonMappingException, IOException {
 
         if (t.getStartDate() == null || t.getStopDate() == null) {

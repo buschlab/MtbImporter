@@ -21,15 +21,15 @@ import org.tinylog.Logger;
  */
 public class CbioPortalStudy {
 
-    private List<Maf> maf = new ArrayList<Maf>();
+    private List<Maf> maf = new ArrayList<>();
     private Map<String, ClinicalPatient> patients = new HashMap<>();
     private Map<String, ClinicalHeader> patientAttributes = new HashMap<>();
     private Map<String, ClinicalSample> samples = new HashMap<>();
     private Map<String, ClinicalHeader> sampleAttributes = new HashMap<>();
     private Map<String, List<Timeline>> timeline = new HashMap<>();
-    private Map<String, Cna> cna = new HashMap<String, Cna>();
-    private Set<String> cnaSampleIds = new HashSet<String>();
-    private List<ContinuousCna> seg = new ArrayList<ContinuousCna>();
+    private Map<String, Cna> cna = new HashMap<>();
+    private Set<String> cnaSampleIds = new HashSet<>();
+    private List<ContinuousCna> seg = new ArrayList<>();
     private Map<String, Map<String, String>> preparation = new HashMap<>();
     private Map<String, GenePanelMatrix> genePanelMatrix = new HashMap<>();
     private Map<String, SampleResource> sampleResources = new HashMap<>();
@@ -454,7 +454,7 @@ public class CbioPortalStudy {
                 Timeline.merge(this.timeline.getOrDefault(type, new ArrayList<>()), List.of(entry)));
     }
 
-    public <T> void addTimeline(String type, Collection<Timeline> entries) {
+    public void addTimeline(String type, Collection<Timeline> entries) {
         this.timeline.put(type,
                 Timeline.merge(this.timeline.getOrDefault(type, new ArrayList<>()), entries));
     }

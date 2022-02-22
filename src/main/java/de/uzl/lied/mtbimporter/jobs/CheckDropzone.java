@@ -121,9 +121,7 @@ public class CheckDropzone extends TimerTask {
                     }
 
                     if (inputfolder.getTarget() == null || inputfolder.getTarget().length() == 0) {
-                        if (!f.delete()) {
-                            throw new IOException("Could not delete file " + f.getAbsolutePath());
-                        }
+                        Files.delete(f.toPath());
                     } else {
                         File folder = new File(inputfolder.getTarget(), Long.toString(newState));
                         folder.mkdirs();
@@ -181,7 +179,7 @@ public class CheckDropzone extends TimerTask {
                     s.setState(newState);
                     ImportStudy.importStudy(s.getStudyId(), newState, Settings.getOverrideWarnings());
                 }
-            } catch (IOException | InterruptedException e) {
+            } catch (IOException e) {
                 Logger.error("Importing study failed with timestamp", newState);
                 Logger.debug(e);
                 Thread.currentThread().interrupt();

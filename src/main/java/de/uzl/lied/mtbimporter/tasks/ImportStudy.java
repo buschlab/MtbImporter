@@ -15,7 +15,7 @@ public final class ImportStudy {
     private ImportStudy() {
     }
 
-    public static void importStudy(String studyId, Long state) throws IOException, InterruptedException {
+    public static void importStudy(String studyId, Long state) throws IOException {
         importStudy(studyId, state, false);
     }
 
@@ -25,10 +25,9 @@ public final class ImportStudy {
      * @param state
      * @param overrideWarnings
      * @throws IOException
-     * @throws InterruptedException
      */
     public static void importStudy(String studyId, Long state, Boolean overrideWarnings)
-            throws IOException, InterruptedException {
+            throws IOException {
         ProcessBuilder pb = new ProcessBuilder();
         String[] portal = getPortal();
         List<String> args = new ArrayList<String>();

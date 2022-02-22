@@ -82,7 +82,7 @@ public class ContinuousCna {
      * @return Merged list of continuous cna.
      */
     public static List<ContinuousCna> merge(List<ContinuousCna> continuous1, List<ContinuousCna> continuous2) {
-        return new ArrayList<ContinuousCna>(Stream.of(continuous1, continuous2).flatMap(List::stream)
+        return new ArrayList<>(Stream.of(continuous1, continuous2).flatMap(List::stream)
                 .collect(Collectors.toMap(
                         c -> c.getId() + ";" + c.getChrom() + ";" + c.getLocStart() + ";" + c.getLocEnd(),
                         Function.identity(), (ContinuousCna x, ContinuousCna y) -> y))
