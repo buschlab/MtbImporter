@@ -1,8 +1,6 @@
 package de.uzl.lied.mtbimporter.tasks;
 
-import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.MappingIterator;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
@@ -95,8 +93,7 @@ public final class AddClinicalData {
     }
 
     public static void writeClinicalPatient(Collection<ClinicalPatient> clinicalPatients,
-            Map<String, ClinicalHeader> patientAttributes, File target)
-            throws JsonGenerationException, JsonMappingException, IOException {
+            Map<String, ClinicalHeader> patientAttributes, File target) throws IOException {
         writeClinical(target, clinicalPatients, ClinicalPatient.class, patientAttributes, "cbioportal_patient");
     }
 
@@ -115,10 +112,8 @@ public final class AddClinicalData {
     }
 
     public static void writeClinicalSample(Collection<ClinicalSample> clinicalSamples,
-            Map<String, ClinicalHeader> sampleAttributes, File target)
-            throws JsonGenerationException, JsonMappingException, IOException {
+            Map<String, ClinicalHeader> sampleAttributes, File target) throws IOException {
         writeClinical(target, clinicalSamples, ClinicalSample.class, sampleAttributes, "cbioportal_sample");
-
     }
 
     public static void processClinicalSample(CbioPortalStudy study, File clinicalSample) throws IOException {

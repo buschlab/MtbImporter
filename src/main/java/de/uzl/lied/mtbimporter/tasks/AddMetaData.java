@@ -42,7 +42,7 @@ public final class AddMetaData {
         String tmb = runRscriptCommand(getTmb);
         String msiScore = runRscriptCommand(getMsiScore);
         String msiStatus = runRscriptCommand(getMsiStatus);
-        if (msiStatus == null || msiStatus.isEmpty()) {
+        if (msiStatus.isEmpty()) {
             msiStatus = "NA";
         } else if ("Non-MSI-H".equals(msiStatus)) {
             msiStatus = "Stable";

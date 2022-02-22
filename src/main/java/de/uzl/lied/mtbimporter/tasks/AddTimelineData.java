@@ -1,7 +1,7 @@
 package de.uzl.lied.mtbimporter.tasks;
 
-import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.core.exc.StreamWriteException;
+import com.fasterxml.jackson.databind.DatabindException;
 import com.fasterxml.jackson.databind.MappingIterator;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
@@ -26,12 +26,9 @@ public final class AddTimelineData {
      * Adds timeline data files to study.
      * @param study
      * @param timeline
-     * @throws JsonGenerationException
-     * @throws JsonMappingException
      * @throws IOException
      */
-    public static void processTimelineFile(CbioPortalStudy study, File timeline)
-            throws JsonGenerationException, JsonMappingException, IOException {
+    public static void processTimelineFile(CbioPortalStudy study, File timeline) throws IOException {
         Class<?> c = getTimelineClass(timeline.getName().replaceFirst("data_timeline_", "").replace(".txt", ""));
         processTimelineClass(study, readTimelineFile(timeline, c),
                 timeline.getName().replaceFirst("data_timeline_", "").replace(".txt", ""));
@@ -58,20 +55,18 @@ public final class AddTimelineData {
      * @param timelines
      * @param type
      * @param target
-     * @throws JsonGenerationException
-     * @throws JsonMappingException
+     * @throws DatabindException
+     * @throws StreamWriteException
      * @throws IOException
      */
-    public static void writeTimelineFile(Collection<Timeline> timelines, String type, File target)
-            throws JsonGenerationException, JsonMappingException, IOException {
+    public static void writeTimelineFile(Collection<Timeline> timelines, String type, File target) throws IOException {
         Class<?> c = getTimelineClass(type);
         CsvMapper om = new CsvMapper().enable(CsvParser.Feature.ALLOW_COMMENTS);
         CsvSchema s = om.schemaFor(c).withHeader().withColumnSeparator('\t').withoutQuoteChar();
         om.writer(s.withHeader().withColumnSeparator('\t').withoutQuoteChar()).writeValue(target, timelines);
     }
 
-    private static void processTimelineClass(CbioPortalStudy study, Timeline t, String type)
-            throws JsonGenerationException, JsonMappingException, IOException {
+    private static void processTimelineClass(CbioPortalStudy study, Timeline t, String type) {
 
         if (t.getStartDate() == null || t.getStopDate() == null) {
             return;
@@ -79,8 +74,7 @@ public final class AddTimelineData {
         study.addTimeline(type, t);
     }
 
-    private static <T> void processTimelineClass(CbioPortalStudy study, Collection<T> t, String type)
-            throws JsonGenerationException, JsonMappingException, IOException {
+    private static <T> void processTimelineClass(CbioPortalStudy study, Collection<T> t, String type) {
         for (T line : t) {
             processTimelineClass(study, (Timeline) line, type);
         }
