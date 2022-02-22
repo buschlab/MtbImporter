@@ -25,7 +25,7 @@ public class MutationalSignature {
     @JsonProperty("DESCRIPTION")
     private String description;
     @JsonIgnore
-    private Map<String, Number> samples = new HashMap<String, Number>();
+    private Map<String, Number> samples = new HashMap<>();
 
     public String getEntityStableId() {
         return entityStableId;

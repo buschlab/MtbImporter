@@ -19,7 +19,7 @@ public class Cna {
     @JsonProperty("Entrez_Gene_Id")
     private String entrezGeneId;
     @JsonIgnore
-    private Map<String, String> samples = new HashMap<String, String>();
+    private Map<String, String> samples = new HashMap<>();
 
     public String getHugoSymbol() {
         return this.hugoSymbol;

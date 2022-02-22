@@ -101,7 +101,7 @@ public class Maf {
     private Integer nAltCount;
 
     @JsonIgnore
-    private Map<String, Object> additionalProperties = new HashMap<String, Object>();
+    private Map<String, Object> additionalProperties = new HashMap<>();
 
     public String getTumorSampleBarcode() {
         return this.tumorSampleBarcode;
@@ -159,7 +159,7 @@ public class Maf {
      * @return Merged list of mutations
      */
     public static List<Maf> merge(Collection<Maf> maf1, Collection<Maf> maf2) {
-        return new ArrayList<Maf>(Stream.of(maf1, maf2).flatMap(Collection::stream).collect(Collectors.toMap(m -> {
+        return new ArrayList<>(Stream.of(maf1, maf2).flatMap(Collection::stream).collect(Collectors.toMap(m -> {
             String s = m.getTumorSampleBarcode() + ";";
             s += m.getStartPosition() + ";";
             s += m.getEndPosition() + ";";

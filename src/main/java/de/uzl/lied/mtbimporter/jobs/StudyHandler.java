@@ -85,20 +85,6 @@ public final class StudyHandler {
     }
 
     /**
-     * Merging multiple study objects.
-     * @param study old study where the new studies will be merged into
-     * @param studies the new studies that will be merged one after the other
-     * @return the updated study object
-     */
-    public static CbioPortalStudy merge(CbioPortalStudy study, CbioPortalStudy... studies) {
-        CbioPortalStudy newStudy = study;
-        for (CbioPortalStudy s : studies) {
-            newStudy = merge(newStudy, s);
-        }
-        return newStudy;
-    }
-
-    /**
      * Merge two study objects into one.
      * Merging multiple study objects.
      * @param study old study where the new studies will be merged into

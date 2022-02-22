@@ -15,7 +15,7 @@ public class Meta {
     @JsonProperty("cancer_study_identifier")
     private String cancerStudyIdentifier;
     @JsonIgnore
-    private Map<String, String> additionalAttributes = new HashMap<String, String>();
+    private Map<String, String> additionalAttributes = new HashMap<>();
 
     public String getCancerStudyIdentifier() {
         return cancerStudyIdentifier;
