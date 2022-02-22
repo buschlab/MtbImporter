@@ -3,6 +3,7 @@ package de.uzl.lied.mtbimporter.model;
 import de.uzl.lied.mtbimporter.jobs.EnsemblResolver;
 import de.uzl.lied.mtbimporter.settings.Settings;
 import de.uzl.lied.mtbimporter.tasks.AddClinicalData;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -21,21 +22,21 @@ import org.tinylog.Logger;
 public class CbioPortalStudy {
 
     private List<Maf> maf = new ArrayList<Maf>();
-    private Map<String, ClinicalPatient> patients = new HashMap<String, ClinicalPatient>();
-    private Map<String, ClinicalHeader> patientAttributes = new HashMap<String, ClinicalHeader>();
-    private Map<String, ClinicalSample> samples = new HashMap<String, ClinicalSample>();
-    private Map<String, ClinicalHeader> sampleAttributes = new HashMap<String, ClinicalHeader>();
-    private Map<String, List<Timeline>> timeline = new HashMap<String, List<Timeline>>();
+    private Map<String, ClinicalPatient> patients = new HashMap<>();
+    private Map<String, ClinicalHeader> patientAttributes = new HashMap<>();
+    private Map<String, ClinicalSample> samples = new HashMap<>();
+    private Map<String, ClinicalHeader> sampleAttributes = new HashMap<>();
+    private Map<String, List<Timeline>> timeline = new HashMap<>();
     private Map<String, Cna> cna = new HashMap<String, Cna>();
     private Set<String> cnaSampleIds = new HashSet<String>();
     private List<ContinuousCna> seg = new ArrayList<ContinuousCna>();
-    private Map<String, Map<String, String>> preparation = new HashMap<String, Map<String, String>>();
-    private Map<String, GenePanelMatrix> genePanelMatrix = new HashMap<String, GenePanelMatrix>();
-    private Map<String, SampleResource> sampleResources = new HashMap<String, SampleResource>();
-    private Map<String, MutationalSignature> mutationalLimit = new HashMap<String, MutationalSignature>();
-    private Map<String, MutationalSignature> mutationalContribution = new HashMap<String, MutationalSignature>();
+    private Map<String, Map<String, String>> preparation = new HashMap<>();
+    private Map<String, GenePanelMatrix> genePanelMatrix = new HashMap<>();
+    private Map<String, SampleResource> sampleResources = new HashMap<>();
+    private Map<String, MutationalSignature> mutationalLimit = new HashMap<>();
+    private Map<String, MutationalSignature> mutationalContribution = new HashMap<>();
     private String studyId = "";
-    private Map<String, Meta> metaFiles = new HashMap<String, Meta>();
+    private Map<String, Meta> metaFiles = new HashMap<>();
     private long state;
 
     public List<Maf> getMaf() {
@@ -48,7 +49,7 @@ public class CbioPortalStudy {
      * @return all mutations for specified patient
      */
     public List<Maf> getMafBySampleId(String sampleId) {
-        List<Maf> l = new ArrayList<Maf>();
+        List<Maf> l = new ArrayList<>();
         for (Maf m : maf) {
             if (m.getTumorSampleBarcode().equals(sampleId)) {
                 l.add(m);
@@ -75,7 +76,7 @@ public class CbioPortalStudy {
      * @return all continuous cna for specified patient
      */
     public List<ContinuousCna> getSegBySampleId(String sampleId) {
-        List<ContinuousCna> l = new ArrayList<ContinuousCna>();
+        List<ContinuousCna> l = new ArrayList<>();
         for (ContinuousCna s : seg) {
             if (s.getId().equals(sampleId)) {
                 l.add(s);
@@ -140,7 +141,7 @@ public class CbioPortalStudy {
      * @return specified patient
      */
     public Collection<ClinicalSample> getSamplesByPatient(String patientId) {
-        Collection<ClinicalSample> patientSamples = new ArrayList<ClinicalSample>();
+        Collection<ClinicalSample> patientSamples = new ArrayList<>();
         for (ClinicalSample cs : samples.values()) {
             if (cs.getPatientId().equals(patientId)) {
                 patientSamples.add(cs);
@@ -281,7 +282,7 @@ public class CbioPortalStudy {
      * @return all mutational contributions for specified patient
      */
     public Collection<MutationalSignature> getMutationalContributionBySampleId(String sampleId) {
-        Collection<MutationalSignature> l = new ArrayList<MutationalSignature>();
+        Collection<MutationalSignature> l = new ArrayList<>();
         for (MutationalSignature c : mutationalContribution.values()) {
             if (c.getSamples().containsKey(sampleId)) {
                 MutationalSignature n = new MutationalSignature();
@@ -305,7 +306,7 @@ public class CbioPortalStudy {
      * @return all mutational limits for specified patient
      */
     public Collection<MutationalSignature> getMutationalLimitBySampleId(String sampleId) {
-        Collection<MutationalSignature> l = new ArrayList<MutationalSignature>();
+        Collection<MutationalSignature> l = new ArrayList<>();
         for (MutationalSignature c : mutationalLimit.values()) {
             if (c.getSamples().containsKey(sampleId)) {
                 MutationalSignature n = new MutationalSignature();
@@ -330,14 +331,14 @@ public class CbioPortalStudy {
 
     private void addMutationalSignature(Collection<MutationalSignature> mutationalSignature,
             Map<String, MutationalSignature> map, int defaultValue) {
-        Set<String> sampleIds = new HashSet<String>();
+        Set<String> sampleIds = new HashSet<>();
         for (MutationalSignature m : mutationalSignature) {
             MutationalSignature m2 = new MutationalSignature();
             m2.setEntityStableId(m.getEntityStableId());
             m2.setName(m.getName());
             m2.setDescription(m.getDescription());
             for (Entry<String, Number> e : m.getSamples().entrySet()) {
-                m2.getSamples().put(e.getKey().replaceAll("_TD", ""), e.getValue());
+                m2.getSamples().put(e.getKey().replace("_TD", ""), e.getValue());
             }
             if (map.containsKey(m.getEntityStableId())) {
                 sampleIds.addAll(m2.getSamples().keySet());
@@ -367,7 +368,7 @@ public class CbioPortalStudy {
      * @return all samples for specified patient
      */
     public Collection<Cna> getCnaBySampleId(String sampleId) {
-        Collection<Cna> l = new ArrayList<Cna>();
+        Collection<Cna> l = new ArrayList<>();
         for (Cna c : cna.values()) {
             if (c.getSamples().containsKey(sampleId)) {
                 Cna n = new Cna();
@@ -390,7 +391,7 @@ public class CbioPortalStudy {
             c2.setEntrezGeneId(c.getEntrezGeneId());
             c2.setHugoSymbol(c.getHugoSymbol());
             for (Entry<String, String> e : c.getSamples().entrySet()) {
-                c2.getSamples().put(e.getKey().replaceAll("_TD", ""), e.getValue());
+                c2.getSamples().put(e.getKey().replace("_TD", ""), e.getValue());
             }
             cnaSampleIds.addAll(c2.getSamples().keySet());
             if (this.cna.containsKey(c2.getHugoSymbol())) {
@@ -419,10 +420,10 @@ public class CbioPortalStudy {
      * @return all timeline entries for specified patient
      */
     public Map<String, List<Timeline>> getTimelinesByPatient(String patientId) {
-        Map<String, List<Timeline>> m = new HashMap<String, List<Timeline>>();
+        Map<String, List<Timeline>> m = new HashMap<>();
 
         for (Entry<String, List<Timeline>> e : timeline.entrySet()) {
-            List<Timeline> l = new ArrayList<Timeline>();
+            List<Timeline> l = new ArrayList<>();
             for (Timeline t : e.getValue()) {
                 if (t.getPatientId().equals(patientId)) {
                     l.add(t);
@@ -450,12 +451,12 @@ public class CbioPortalStudy {
             return;
         }
         this.timeline.put(type,
-                Timeline.merge(this.timeline.getOrDefault(type, new ArrayList<Timeline>()), List.of(entry)));
+                Timeline.merge(this.timeline.getOrDefault(type, new ArrayList<>()), List.of(entry)));
     }
 
     public <T> void addTimeline(String type, Collection<Timeline> entries) {
         this.timeline.put(type,
-                Timeline.merge(this.timeline.getOrDefault(type, new ArrayList<Timeline>()), entries));
+                Timeline.merge(this.timeline.getOrDefault(type, new ArrayList<>()), entries));
     }
 
     public Map<String, List<Timeline>> getTimelines() {
@@ -517,7 +518,7 @@ public class CbioPortalStudy {
         metaFiles.put(type, meta);
     }
 
-    public long getState() throws IOException {
+    public long getState() {
         return state;
     }
 
@@ -526,7 +527,7 @@ public class CbioPortalStudy {
      * @param newState timestamp representing the last modification
      */
     public void setState(Long newState) {
-        try (FileOutputStream fos = new FileOutputStream(Settings.getStudyFolder() + studyId + "/.state")) {
+        try (FileOutputStream fos = new FileOutputStream(new File(Settings.getStudyFolder(), studyId + "/.state"))) {
             fos.write(String.valueOf(newState).getBytes());
             fos.close();
         } catch (IOException e) {

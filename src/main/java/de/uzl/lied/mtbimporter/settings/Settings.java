@@ -2,6 +2,8 @@ package de.uzl.lied.mtbimporter.settings;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import java.io.File;
+import java.net.URL;
 import java.util.List;
 
 /**
@@ -11,25 +13,25 @@ import java.util.List;
 public class Settings {
 
     @JsonProperty("portalUrl")
-    private static String portalUrl;
+    private static URL portalUrl;
     @JsonProperty("portalInfo")
-    private static String portalInfo;
+    private static File portalInfo;
     @JsonProperty("importScriptPath")
-    private static String importScriptPath;
+    private static File importScriptPath;
     @JsonProperty("inputFolders")
     private static InputFolder[] inputFolders;
     @JsonProperty("cronIntervall")
     private static Integer cronIntervall;
     @JsonProperty("studyFolder")
-    private static String studyFolder;
+    private static File studyFolder;
     @JsonProperty("studyTemplate")
     private static String studyTemplate;
     @JsonProperty("mainStudyId")
     private static String mainStudyId;
     @JsonProperty("urlBase")
-    private static String urlBase;
+    private static URL urlBase;
     @JsonProperty("resourceFolder")
-    private static String resourceFolder;
+    private static File resourceFolder;
     @JsonProperty("overrideWarnings")
     private static Boolean overrideWarnings = false;
     @JsonProperty("restartAfterImport")
@@ -37,7 +39,7 @@ public class Settings {
     @JsonProperty("restartCommand")
     private static String restartCommand;
     @JsonProperty("ensemblUrl")
-    private static String ensemblUrl;
+    private static URL ensemblUrl;
     @JsonProperty("fhir")
     private static FhirSettings fhir;
     @JsonProperty("docker")
@@ -51,46 +53,30 @@ public class Settings {
     @JsonProperty("mapping")
     private static List<Mapping> mapping;
 
-    public static String getPortalUrl() {
+    public static URL getPortalUrl() {
         return portalUrl;
     }
 
     @JsonProperty("portalUrl")
-    public void setPortalUrl(String newPortalUrl) {
+    public void setPortalUrl(URL newPortalUrl) {
         portalUrl = newPortalUrl;
     }
 
-    public static String getPortalInfo() {
+    public static File getPortalInfo() {
         return portalInfo;
     }
 
-    /**
-     * Sets path for portal info.
-     * @param portalInfo
-     */
     @JsonProperty("portalInfo")
-    public void setPortalInfo(String portalInfo) {
-        String newPortalInfo = portalInfo;
-        if (!newPortalInfo.endsWith("/")) {
-            newPortalInfo = newPortalInfo + "/";
-        }
+    public void setPortalInfo(File newPortalInfo) {
         Settings.portalInfo = newPortalInfo;
     }
 
-    public static String getImportScriptPath() {
+    public static File getImportScriptPath() {
         return importScriptPath;
     }
 
-    /**
-     * Sets path for import script.
-     * @param importScriptPath
-     */
     @JsonProperty("importScriptPath")
-    public void setImportScriptPath(String importScriptPath) {
-        String newImportScriptPath = importScriptPath;
-        if (!newImportScriptPath.endsWith("/")) {
-            newImportScriptPath = newImportScriptPath + "/";
-        }
+    public void setImportScriptPath(File newImportScriptPath) {
         Settings.importScriptPath = newImportScriptPath;
     }
 
@@ -112,19 +98,12 @@ public class Settings {
         cronIntervall = newCronIntervall;
     }
 
-    public static String getStudyFolder() {
+    public static File getStudyFolder() {
         return studyFolder;
     }
 
-    /**
-     * Sets path for study folder.
-     */
     @JsonProperty("studyFolder")
-    public void setStudyFolder(String studyFolder) {
-        String newStudyFolder = studyFolder;
-        if (!newStudyFolder.endsWith("/")) {
-            newStudyFolder = newStudyFolder + "/";
-        }
+    public void setStudyFolder(File newStudyFolder) {
         Settings.studyFolder = newStudyFolder;
     }
 
@@ -146,29 +125,21 @@ public class Settings {
         mainStudyId = newMainStudyId;
     }
 
-    public static String getUrlBase() {
+    public static URL getUrlBase() {
         return urlBase;
     }
 
     @JsonProperty("urlBase")
-    public void setUrlBase(String newUrlBase) {
+    public void setUrlBase(URL newUrlBase) {
         urlBase = newUrlBase;
     }
 
-    public static String getResourceFolder() {
+    public static File getResourceFolder() {
         return resourceFolder;
     }
 
-    /**
-     * Sets path for resource folder.
-     * @param resourceFolder
-     */
     @JsonProperty("resourceFolder")
-    public void setResourceFolder(String resourceFolder) {
-        String newResourceFolder = resourceFolder;
-        if (!newResourceFolder.endsWith("/")) {
-            newResourceFolder = newResourceFolder + "/";
-        }
+    public void setResourceFolder(File newResourceFolder) {
         Settings.resourceFolder = newResourceFolder;
     }
 
@@ -199,12 +170,12 @@ public class Settings {
         restartCommand = newRestartCommand;
     }
 
-    public static String getEnsemblUrl() {
+    public static URL getEnsemblUrl() {
         return ensemblUrl;
     }
 
     @JsonProperty("ensemblUrl")
-    public void setEnsemblUrl(String newEnsemblUrl) {
+    public void setEnsemblUrl(URL newEnsemblUrl) {
         ensemblUrl = newEnsemblUrl;
     }
 

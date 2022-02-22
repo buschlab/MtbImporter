@@ -19,6 +19,7 @@ import java.nio.file.attribute.PosixFilePermissions;
 import java.util.Collection;
 import java.util.List;
 import org.apache.commons.io.FileUtils;
+import org.tinylog.Logger;
 
 /**
  * Adds resource files to study.
@@ -38,7 +39,7 @@ public final class AddResourceData {
         String sampleId = pdf.getName().replaceAll("somaticGermline_|somatic_|tumorOnly_|_Report|.pdf", "");
         String patientId = FhirResolver.resolvePatientFromSample(sampleId);
         File target = new File(
-                Settings.getResourceFolder() + "/" + study.getStudyId() + "/" + patientId + "/" + pdf.getName());
+                Settings.getResourceFolder(), study.getStudyId() + "/" + patientId + "/" + pdf.getName());
         FileUtils.copyFile(pdf, target);
         Files.setPosixFilePermissions(target.toPath(), PosixFilePermissions.fromString("rw-r--r--"));
         SampleResource sr = new SampleResource();
@@ -48,7 +49,7 @@ public final class AddResourceData {
         try {
             sr.setUrl(Settings.getUrlBase() + "/" + study.getStudyId() + "/" + patientId + "/" + pdf.getName());
         } catch (MalformedURLException e) {
-            System.err.println("Skipped resource file due to invalid URL:" + Settings.getUrlBase() + "/" + patientId
+            Logger.error("Skipped resource file due to invalid URL:" + Settings.getUrlBase() + "/" + patientId
                     + "/" + sampleId + "/" + pdf.getName());
         }
         study.addSampleResource(sr);

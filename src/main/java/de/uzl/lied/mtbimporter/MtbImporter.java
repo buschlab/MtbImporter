@@ -28,10 +28,9 @@ public final class MtbImporter {
     /**
      * Entry point method for MtbImporter.
      * @param args The arguments of the program.
-     * @throws InterruptedException
      * @throws IOException
      */
-    public static void main(String[] args) throws InterruptedException, IOException {
+    public static void main(String[] args) throws IOException {
         InputStream settingsYaml = ClassLoader.getSystemClassLoader().getResourceAsStream("settings.yaml");
         if (args.length == 1) {
             settingsYaml = new FileInputStream(args[0]);

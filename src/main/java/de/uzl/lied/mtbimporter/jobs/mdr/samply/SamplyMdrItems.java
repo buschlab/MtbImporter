@@ -45,11 +45,11 @@ public final class SamplyMdrItems {
             return null;
         }
         List<Result> dataelements = client.getMembers(nameSpaceMap.get(targetProfile).getId(), mdrLanguage);
-        Map<String, Map<String, String>> m = new HashMap<String, Map<String, String>>();
+        Map<String, Map<String, String>> m = new HashMap<>();
         for (Result r : dataelements) {
             String key = r.getDesignations().get(0).getDesignation();
             List<Slot> ls = client.getDataElement(r.getId(), mdrLanguage).getSlots();
-            Map<String, String> n = new HashMap<String, String>();
+            Map<String, String> n = new HashMap<>();
             for (Slot s : ls) {
                 n.put(s.getSlotName(), s.getSlotValue());
             }

@@ -14,6 +14,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
+import org.tinylog.Logger;
 
 /**
  * Class to fetch attributes from a Kairos CentraXX MDR.
@@ -36,7 +37,7 @@ public final class CxxMdrAttributes {
             CxxMdrLogin.login(mdr);
         }
 
-        MultiValueMap<String, String> form = new LinkedMultiValueMap<String, String>();
+        MultiValueMap<String, String> form = new LinkedMultiValueMap<>();
         form.set("code", mdrProfile);
         form.set("domainCode", "cbioportal");
         form.set("itemCode", key);
@@ -78,7 +79,7 @@ public final class CxxMdrAttributes {
             return null;
 
         } catch (final HttpClientErrorException e) {
-            System.err.println("Object " + form.get("itemCode") + " not found in MDR!");
+            Logger.error("Object " + form.get("itemCode") + " not found in MDR!");
             return null;
         }
     }

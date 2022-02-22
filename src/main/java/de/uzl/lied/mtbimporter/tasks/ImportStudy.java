@@ -58,14 +58,13 @@ public final class ImportStudy {
         if (Settings.getDocker() != null) {
             args.add("metaImport.py");
             args.add("-s");
-            args.add(Settings.getDocker().getStudyFolder() + studyId + "/" + state);
+            args.add(Settings.getDocker().getStudyFolder() + "/" + studyId + "/" + state);
         } else {
-            args.add(Settings.getImportScriptPath());
+            args.add(Settings.getImportScriptPath().getPath());
             args.add("metaImport.py");
             args.add("-s");
-            args.add(Settings.getStudyFolder() + state);
-            File f = new File(Settings.getImportScriptPath());
-            pb.directory(f.getParentFile());
+            args.add(Settings.getStudyFolder().getPath() + state);
+            pb.directory(Settings.getImportScriptPath().getParentFile());
         }
 
         args.add(portal[0]);
@@ -114,10 +113,10 @@ public final class ImportStudy {
      */
     private static String[] getPortal() {
         if (Settings.getPortalInfo() != null) {
-            return new String[] {"-p", Settings.getPortalInfo()};
+            return new String[] {"-p", Settings.getPortalInfo().getPath()};
         }
         if (Settings.getPortalUrl() != null) {
-            return new String[] {"-u", Settings.getPortalUrl()};
+            return new String[] {"-u", Settings.getPortalUrl().toString()};
         }
         return new String[] {"", ""};
     }

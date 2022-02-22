@@ -22,7 +22,7 @@ import org.springframework.web.client.RestTemplate;
  */
 public final class CxxMdrItemSet {
 
-    private static final Map<String, CxxItemSet> CACHE = new HashMap<String, CxxItemSet>();
+    private static final Map<String, CxxItemSet> CACHE = new HashMap<>();
 
     private CxxMdrItemSet() {
     }
@@ -58,7 +58,7 @@ public final class CxxMdrItemSet {
      * @return List of CxxItem
      */
     public static List<CxxItem> getItemList(CxxItemSet itemSet) {
-        List<CxxItem> items = new ArrayList<CxxItem>();
+        List<CxxItem> items = new ArrayList<>();
         items.addAll(itemSet.getItems());
         return items;
     }
@@ -69,7 +69,7 @@ public final class CxxMdrItemSet {
      * @return List of CxxItem
      */
     public static List<CxxItem> getItemList(CxxForm form) {
-        List<CxxItem> items = new ArrayList<CxxItem>();
+        List<CxxItem> items = new ArrayList<>();
         for (CxxField f : form.getFields()) {
             items.add(f.getItem());
         }
@@ -78,7 +78,7 @@ public final class CxxMdrItemSet {
     }
 
     private static List<CxxItem> extractFromSections(List<CxxSection> sections) {
-        List<CxxItem> items = new ArrayList<CxxItem>();
+        List<CxxItem> items = new ArrayList<>();
         for (CxxSection s : sections) {
             for (CxxField f : s.getFields()) {
                 items.add(f.getItem());

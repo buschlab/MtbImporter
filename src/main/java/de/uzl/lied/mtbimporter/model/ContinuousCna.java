@@ -32,7 +32,7 @@ public class ContinuousCna {
     }
 
     public void setId(String id) {
-        this.id = id.replaceAll("_TD", "");
+        this.id = id.replace("_TD", "");
     }
 
     public String getChrom() {

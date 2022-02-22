@@ -26,7 +26,7 @@ public final class CxxMdrLogin {
 
         RestTemplate rt = new RestTemplate();
         rt.getInterceptors().add(new BasicAuthenticationInterceptor(mdr.getBasicUsername(), mdr.getBasicPassword()));
-        MultiValueMap<String, String> form = new LinkedMultiValueMap<String, String>();
+        MultiValueMap<String, String> form = new LinkedMultiValueMap<>();
         form.set("grant_type", "password");
         form.set("scope", "anyscope");
         form.set("username", mdr.getUsername());
