@@ -12,6 +12,9 @@ import java.io.IOException;
  */
 public final class AddMetaData {
 
+    private static final String[] RSCRIPT = {"Rscript", "--vanilla", "-e", "replaceme"};
+    private static final int CATCOMMAND = 3;
+
     private AddMetaData() {
     }
 
@@ -22,26 +25,17 @@ public final class AddMetaData {
      * @throws IOException
      */
     public static void processRData(CbioPortalStudy study, File rData) throws IOException {
-        String[] getPatientId = {"Rscript", "--vanilla", "-e",
-            "options(warn = -1); load(\"" + rData.getAbsolutePath() + "\"); cat(id);"};
-        String[] getTmb = {"Rscript", "--vanilla", "-e",
-            "options(warn = -1); load(\"" + rData.getAbsolutePath()
-                + "\"); cat(round(x = filt_result_td$tmb, digits = 2));"};
-        String[] getMsiStatus = {"Rscript", "--vanilla", "-e",
-            "options(warn = -1); load(\"" + rData.getAbsolutePath()
-                + "\"); cat(as.character(filt_result_td$msi$result$MSI_status));"};
-        String[] getMsiScore = {"Rscript", "--vanilla", "-e",
-            "options(warn = -1); load(\"" + rData.getAbsolutePath()
-                + "\"); cat(as.character(filt_result_td$msi$scores$ratio*100));"};
-        String[] getPanel = {"Rscript", "--vanilla", "-e",
-            "options(warn = -1); load(\"" + rData.getAbsolutePath()
-                + "\"); cat(sureselect_type);"};
-        String[] getProtocol = {"Rscript", "--vanilla", "-e",
-            "options(warn = -1); load(\"" + rData.getAbsolutePath() + "\"); cat(protocol);"};
-        String[] getCoveredRegion = {"Rscript", "--vanilla", "-e",
-            "options(warn = -1); load(\"" + rData.getAbsolutePath() + "\"); cat(covered_region);"};
+        String load = "options(warn = -1); load(\"" + rData.getAbsolutePath() + "\"); ";
 
-        String sampleId = runRscriptCommand(getPatientId);
+        String getSampleId = load + "cat(id);";
+        String getTmb = load + "cat(round(x = filt_result_td$tmb, digits = 2));";
+        String getMsiStatus = load + "cat(as.character(filt_result_td$msi$result$MSI_status));";
+        String getMsiScore = load + "cat(as.character(filt_result_td$msi$scores$ratio*100));";
+        String getPanel = load + "cat(sureselect_type);";
+        String getProtocol = load + "cat(protocol);";
+        String getCoveredRegion = load + "cat(covered_region);";
+
+        String sampleId = runRscriptCommand(getSampleId);
         String patientId = FhirResolver.resolvePatientFromSample(sampleId);
         String protocol = runRscriptCommand(getProtocol);
         String panel = runRscriptCommand(getPanel);
@@ -71,9 +65,10 @@ public final class AddMetaData {
         study.addGenePanelMatrix(new GenePanelMatrix(sampleId, panel));
     }
 
-    private static String runRscriptCommand(String[] cmd) throws IOException {
+    private static String runRscriptCommand(String s) throws IOException {
+        RSCRIPT[CATCOMMAND] = s;
         ProcessBuilder pb;
-        pb = new ProcessBuilder(cmd);
+        pb = new ProcessBuilder(RSCRIPT);
         String path = System.getenv("PATH");
         pb.environment().put("PATH", path);
         final Process process = pb.start();

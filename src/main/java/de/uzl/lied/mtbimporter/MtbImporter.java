@@ -28,7 +28,6 @@ public final class MtbImporter {
     /**
      * Entry point method for MtbImporter.
      * @param args The arguments of the program.
-     * @throws InterruptedException
      * @throws IOException
      */
     public static void main(String[] args) throws IOException {
