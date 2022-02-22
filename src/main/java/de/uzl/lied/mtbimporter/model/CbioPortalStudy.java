@@ -3,6 +3,7 @@ package de.uzl.lied.mtbimporter.model;
 import de.uzl.lied.mtbimporter.jobs.EnsemblResolver;
 import de.uzl.lied.mtbimporter.settings.Settings;
 import de.uzl.lied.mtbimporter.tasks.AddClinicalData;
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -526,7 +527,7 @@ public class CbioPortalStudy {
      * @param newState timestamp representing the last modification
      */
     public void setState(Long newState) {
-        try (FileOutputStream fos = new FileOutputStream(Settings.getStudyFolder() + studyId + "/.state")) {
+        try (FileOutputStream fos = new FileOutputStream(new File(Settings.getStudyFolder(), studyId + "/.state"))) {
             fos.write(String.valueOf(newState).getBytes());
             fos.close();
         } catch (IOException e) {

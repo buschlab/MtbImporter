@@ -43,37 +43,37 @@ public final class StudyHandler {
      */
     public static CbioPortalStudy load(String studyId) throws FileNotFoundException, IOException {
         CbioPortalStudy study = new CbioPortalStudy();
-        File stateFile = new File(Settings.getStudyFolder() + studyId + "/.state");
+        File stateFile = new File(Settings.getStudyFolder(), studyId + "/.state");
         study.setStudyId(studyId);
         if (!stateFile.exists()) {
             FileUtils.copyDirectory(new File(Settings.getStudyTemplate()),
-                    new File(Settings.getStudyFolder() + study.getStudyId() + "/0"));
+                    new File(Settings.getStudyFolder(), study.getStudyId() + "/0"));
             study.setState(0L);
         }
         InputStream stateStream = new FileInputStream(stateFile);
         long state = Long.parseLong(new String(ByteStreams.toByteArray(stateStream)));
         study.setState(state);
         AddGeneticData.processMafFile(study,
-                new File(Settings.getStudyFolder() + studyId + "/" + state + "/data_mutation_extended.maf"));
+                new File(Settings.getStudyFolder(), studyId + "/" + state + "/data_mutation_extended.maf"));
         AddGeneticData.processSegFile(study,
-                new File(Settings.getStudyFolder() + studyId + "/" + state + "/data_cna.seg"));
+                new File(Settings.getStudyFolder(), studyId + "/" + state + "/data_cna.seg"));
         AddGeneticData.processGenePanelFile(study,
-                new File(Settings.getStudyFolder() + studyId + "/" + state + "/data_gene_panel_matrix.txt"));
+                new File(Settings.getStudyFolder(), studyId + "/" + state + "/data_gene_panel_matrix.txt"));
         AddClinicalData.processClinicalPatient(study,
-                new File(Settings.getStudyFolder() + studyId + "/" + state + "/data_clinical_patient.txt"));
+                new File(Settings.getStudyFolder(), studyId + "/" + state + "/data_clinical_patient.txt"));
         AddClinicalData.processClinicalSample(study,
-                new File(Settings.getStudyFolder() + studyId + "/" + state + "/data_clinical_sample.txt"));
+                new File(Settings.getStudyFolder(), studyId + "/" + state + "/data_clinical_sample.txt"));
         study.setSampleResources(AddResourceData.readResourceFile(
-                new File(Settings.getStudyFolder() + studyId + "/" + state + "/data_resource_sample.txt")));
+                new File(Settings.getStudyFolder(), studyId + "/" + state + "/data_resource_sample.txt")));
         AddSignatureData.processContribution(study, new File(
-                Settings.getStudyFolder() + studyId + "/" + state + "/data_mutational_signature_contribution.txt"));
+                Settings.getStudyFolder(), studyId + "/" + state + "/data_mutational_signature_contribution.txt"));
         AddSignatureData.processLimit(study,
-                new File(Settings.getStudyFolder() + studyId + "/" + state + "/data_mutational_signature_limit.txt"));
+                new File(Settings.getStudyFolder(), studyId + "/" + state + "/data_mutational_signature_limit.txt"));
         AddGeneticData.processCnaFile(study,
-                new File(Settings.getStudyFolder() + studyId + "/" + state + "/data_cna.txt"));
-        File[] timelines = new File(Settings.getStudyFolder() + studyId + "/" + state)
+                new File(Settings.getStudyFolder(), studyId + "/" + state + "/data_cna.txt"));
+        File[] timelines = new File(Settings.getStudyFolder(), studyId + "/" + state)
                 .listFiles((File f) -> f.getName().startsWith("data_timeline"));
-        File[] metaFiles = new File(Settings.getStudyFolder() + studyId + "/" + state)
+        File[] metaFiles = new File(Settings.getStudyFolder(), studyId + "/" + state)
                 .listFiles((File f) -> f.getName().startsWith("meta_"));
         for (File t : timelines) {
             AddTimelineData.processTimelineFile(study, t);
@@ -133,35 +133,35 @@ public final class StudyHandler {
     public static void write(CbioPortalStudy study, Long state)
             throws JsonGenerationException, JsonMappingException, IOException {
         AddGeneticData.writeMafFile(study.getMaf(),
-                new File(Settings.getStudyFolder() + study.getStudyId() + "/" + state + "/data_mutation_extended.maf"));
+                new File(Settings.getStudyFolder(), study.getStudyId() + "/" + state + "/data_mutation_extended.maf"));
         AddGeneticData.writeSegFile(study.getSeg(),
-                new File(Settings.getStudyFolder() + study.getStudyId() + "/" + state + "/data_cna.seg"));
+                new File(Settings.getStudyFolder(), study.getStudyId() + "/" + state + "/data_cna.seg"));
         AddGeneticData.writeCnaFile(study.getCna(),
-                new File(Settings.getStudyFolder() + study.getStudyId() + "/" + state + "/data_cna.txt"));
+                new File(Settings.getStudyFolder(), study.getStudyId() + "/" + state + "/data_cna.txt"));
         AddGeneticData.writeGenePanelFile(study.getGenePanelMatrix(),
-                new File(Settings.getStudyFolder() + study.getStudyId() + "/" + state + "/data_gene_panel_matrix.txt"));
+                new File(Settings.getStudyFolder(), study.getStudyId() + "/" + state + "/data_gene_panel_matrix.txt"));
 
         AddResourceData.writeResourceFile(study.getSampleResources(),
-                new File(Settings.getStudyFolder() + study.getStudyId() + "/" + state + "/data_resource_sample.txt"));
+                new File(Settings.getStudyFolder(), study.getStudyId() + "/" + state + "/data_resource_sample.txt"));
 
         AddSignatureData.writeSignatureData(study.getMutationalLimit(), new File(
-                Settings.getStudyFolder() + study.getStudyId() + "/" + state + "/data_mutational_signature_limit.txt"));
-        AddSignatureData.writeSignatureData(study.getMutationalContribution(), new File(Settings.getStudyFolder()
-                + study.getStudyId() + "/" + state + "/data_mutational_signature_contribution.txt"));
+                Settings.getStudyFolder(), study.getStudyId() + "/" + state + "/data_mutational_signature_limit.txt"));
+        AddSignatureData.writeSignatureData(study.getMutationalContribution(), new File(Settings.getStudyFolder(),
+                study.getStudyId() + "/" + state + "/data_mutational_signature_contribution.txt"));
 
         Set<String> caseListSequenced = new HashSet<>();
         for (Maf m : study.getMaf()) {
             caseListSequenced.add(m.getTumorSampleBarcode());
         }
         AddGeneticData.writeCaseList(new File(
-                Settings.getStudyFolder() + study.getStudyId() + "/" + state + "/case_lists/cases_sequenced.txt"),
+                Settings.getStudyFolder(), study.getStudyId() + "/" + state + "/case_lists/cases_sequenced.txt"),
                 study.getStudyId(), caseListSequenced);
         AddGeneticData.writeCaseList(
-                new File(Settings.getStudyFolder() + study.getStudyId() + "/" + state + "/case_lists/cases_cna.txt"),
+                new File(Settings.getStudyFolder(), study.getStudyId() + "/" + state + "/case_lists/cases_cna.txt"),
                 study.getStudyId(), study.getCnaSampleIds());
         caseListSequenced.retainAll(study.getCnaSampleIds());
         AddGeneticData.writeCaseList(
-                new File(Settings.getStudyFolder() + study.getStudyId() + "/" + state + "/case_lists/cases_cnaseq.txt"),
+                new File(Settings.getStudyFolder(), study.getStudyId() + "/" + state + "/case_lists/cases_cnaseq.txt"),
                 study.getStudyId(), caseListSequenced);
 
         Set<String> caseListAll = new HashSet<>();
@@ -169,7 +169,7 @@ public final class StudyHandler {
             caseListAll.add(s.getSampleId());
         }
         AddGeneticData.writeCaseList(
-                new File(Settings.getStudyFolder() + study.getStudyId() + "/" + state + "/case_lists/cases_all.txt"),
+                new File(Settings.getStudyFolder(), study.getStudyId() + "/" + state + "/case_lists/cases_all.txt"),
                 study.getStudyId(), caseListAll);
 
         for (Entry<String, List<Timeline>> e : study.getTimelines().entrySet()) {
@@ -179,13 +179,13 @@ public final class StudyHandler {
 
         for (Entry<String, Meta> e : study.getMetaFiles().entrySet()) {
             AddMetaFile.writeMetaFile(e.getValue(),
-                    new File(Settings.getStudyFolder() + study.getStudyId() + "/" + state + "/" + e.getKey()));
+                    new File(Settings.getStudyFolder(), study.getStudyId() + "/" + state + "/" + e.getKey()));
         }
 
         AddClinicalData.writeClinicalPatient(study.getPatients(), study.getPatientAttributes(),
-                new File(Settings.getStudyFolder() + study.getStudyId() + "/" + state + "/data_clinical_patient.txt"));
+                new File(Settings.getStudyFolder(), study.getStudyId() + "/" + state + "/data_clinical_patient.txt"));
         AddClinicalData.writeClinicalSample(study.getSamples(), study.getSampleAttributes(),
-                new File(Settings.getStudyFolder() + study.getStudyId() + "/" + state + "/data_clinical_sample.txt"));
+                new File(Settings.getStudyFolder(), study.getStudyId() + "/" + state + "/data_clinical_sample.txt"));
     }
 
     /**

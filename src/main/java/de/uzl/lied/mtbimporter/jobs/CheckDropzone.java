@@ -125,9 +125,10 @@ public class CheckDropzone extends TimerTask {
                             throw new IOException("Could not delete file " + f.getAbsolutePath());
                         }
                     } else {
-                        new File(inputfolder.getTarget() + "/" + newState).mkdirs();
+                        File folder = new File(inputfolder.getTarget(), Long.toString(newState));
+                        folder.mkdirs();
                         Files.move(f.toPath(),
-                                new File(inputfolder.getTarget() + "/" + newState + "/" + f.getName()).toPath(),
+                                new File(folder, f.getName()).toPath(),
                                 StandardCopyOption.REPLACE_EXISTING);
                     }
                     Logger.info("Processed file " + f.getAbsolutePath());
@@ -140,9 +141,10 @@ public class CheckDropzone extends TimerTask {
 
         if (count > 0) {
             try {
+                File folder = new File(Settings.getStudyFolder(), study.getStudyId());
                 FileUtils.copyDirectory(
-                        new File(Settings.getStudyFolder() + study.getStudyId() + "/" + study.getState()),
-                        new File(Settings.getStudyFolder() + study.getStudyId() + "/" + newState));
+                        new File(folder, Long.toString(study.getState())),
+                        new File(Long.toString(newState)));
 
                 StudyHandler.merge(study, newStudy);
                 StudyHandler.write(study, newState);
@@ -164,8 +166,8 @@ public class CheckDropzone extends TimerTask {
                 }
                 for (Entry<String, List<String>> e : patientsByDate.entrySet()) {
                     CbioPortalStudy s = StudyHandler.load(study.getStudyId() + "_" + e.getKey());
-                    FileUtils.copyDirectory(new File(Settings.getStudyFolder() + s.getStudyId() + "/" + s.getState()),
-                            new File(Settings.getStudyFolder() + s.getStudyId() + "/" + newState));
+                    FileUtils.copyDirectory(new File(Settings.getStudyFolder(), s.getStudyId() + "/" + s.getState()),
+                            new File(Settings.getStudyFolder(), s.getStudyId() + "/" + newState));
                     s.getMetaFile("meta_study.txt").setAdditionalAttributes("name", e.getKey() + " "
                             + study.getMetaFile("meta_study.txt").getAdditionalAttributes().get("name"));
                     s.getMetaFile("meta_study.txt").setAdditionalAttributes("short_name", e.getKey() + " "

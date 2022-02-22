@@ -67,10 +67,8 @@ public final class AddMetaData {
 
     private static String runRscriptCommand(String s) throws IOException {
         RSCRIPT[CATCOMMAND] = s;
-        ProcessBuilder pb;
-        pb = new ProcessBuilder(RSCRIPT);
-        String path = System.getenv("PATH");
-        pb.environment().put("PATH", path);
+        ProcessBuilder pb = new ProcessBuilder(RSCRIPT);
+        pb.environment().put("PATH", System.getenv("PATH"));
         final Process process = pb.start();
         String result = new String(process.getInputStream().readAllBytes());
         return result;
