@@ -1,7 +1,5 @@
 package de.uzl.lied.mtbimporter.tasks;
 
-import com.fasterxml.jackson.core.exc.StreamReadException;
-import com.fasterxml.jackson.databind.DatabindException;
 import com.fasterxml.jackson.dataformat.javaprop.JavaPropsMapper;
 import com.fasterxml.jackson.dataformat.javaprop.JavaPropsSchema;
 import de.uzl.lied.mtbimporter.model.CbioPortalStudy;
@@ -22,12 +20,9 @@ public final class AddMetaFile {
      * Adds information of meta files to a study.
      * @param study
      * @param m
-     * @throws StreamReadException
-     * @throws DatabindException
      * @throws IOException
      */
-    public static void processMetaFile(CbioPortalStudy study, File m)
-            throws StreamReadException, DatabindException, IOException {
+    public static void processMetaFile(CbioPortalStudy study, File m) throws IOException {
         JavaPropsMapper jpm = new JavaPropsMapper();
         Meta meta = jpm.readValue(m, Meta.class);
         study.addMeta(m.getName(), meta);

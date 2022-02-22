@@ -1,7 +1,5 @@
 package de.uzl.lied.mtbimporter.jobs;
 
-import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.google.common.io.ByteStreams;
 import de.uzl.lied.mtbimporter.model.CbioPortalStudy;
 import de.uzl.lied.mtbimporter.model.ClinicalSample;
@@ -17,7 +15,6 @@ import de.uzl.lied.mtbimporter.tasks.AddSignatureData;
 import de.uzl.lied.mtbimporter.tasks.AddTimelineData;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashSet;
@@ -38,10 +35,9 @@ public final class StudyHandler {
      * Load a study from files into memory.
      * @param studyId id of the study that will be loaded
      * @return corresponding jvm object of the study
-     * @throws FileNotFoundException
      * @throws IOException
      */
-    public static CbioPortalStudy load(String studyId) throws FileNotFoundException, IOException {
+    public static CbioPortalStudy load(String studyId) throws IOException {
         CbioPortalStudy study = new CbioPortalStudy();
         File stateFile = new File(Settings.getStudyFolder(), studyId + "/.state");
         study.setStudyId(studyId);
@@ -112,12 +108,9 @@ public final class StudyHandler {
      * Writes a study to disk.
      * @param study study that is being written to disk
      * @param state state that will be assined to the study and its path on disk
-     * @throws JsonGenerationException
-     * @throws JsonMappingException
      * @throws IOException
      */
-    public static void write(CbioPortalStudy study, Long state)
-            throws JsonGenerationException, JsonMappingException, IOException {
+    public static void write(CbioPortalStudy study, Long state) throws IOException {
         AddGeneticData.writeMafFile(study.getMaf(),
                 new File(Settings.getStudyFolder(), study.getStudyId() + "/" + state + "/data_mutation_extended.maf"));
         AddGeneticData.writeSegFile(study.getSeg(),

@@ -1,7 +1,5 @@
 package de.uzl.lied.mtbimporter.tasks;
 
-import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.MappingIterator;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
@@ -43,12 +41,9 @@ public final class AddGeneticData {
      * Write mutation pojos to tsv.
      * @param mafs
      * @param maf
-     * @throws JsonGenerationException
-     * @throws JsonMappingException
      * @throws IOException
      */
-    public static void writeMafFile(List<Maf> mafs, File maf)
-            throws JsonGenerationException, JsonMappingException, IOException {
+    public static void writeMafFile(List<Maf> mafs, File maf) throws IOException {
         CsvMapper om = new CsvMapper().enable(CsvParser.Feature.ALLOW_COMMENTS);
         CsvSchema s = om.schemaFor(Maf.class).withHeader().withColumnSeparator('\t').withoutQuoteChar();
         om.writer(s).writeValue(maf, mafs);
@@ -58,12 +53,9 @@ public final class AddGeneticData {
      * Write continuous cna pojos to tsv.
      * @param segs
      * @param seg
-     * @throws JsonGenerationException
-     * @throws JsonMappingException
      * @throws IOException
      */
-    public static void writeSegFile(List<ContinuousCna> segs, File seg)
-            throws JsonGenerationException, JsonMappingException, IOException {
+    public static void writeSegFile(List<ContinuousCna> segs, File seg) throws IOException {
         CsvMapper om = new CsvMapper().enable(CsvParser.Feature.ALLOW_COMMENTS);
         CsvSchema s = om.schemaFor(ContinuousCna.class).withHeader().withColumnSeparator('\t').withoutQuoteChar();
         om.writer(s).writeValue(seg, segs);
@@ -109,12 +101,9 @@ public final class AddGeneticData {
      * Write gene panel pojo to tsv.
      * @param panels
      * @param target
-     * @throws JsonGenerationException
-     * @throws JsonMappingException
      * @throws IOException
      */
-    public static void writeGenePanelFile(Collection<GenePanelMatrix> panels, File target)
-            throws JsonGenerationException, JsonMappingException, IOException {
+    public static void writeGenePanelFile(Collection<GenePanelMatrix> panels, File target) throws IOException {
         CsvMapper om = new CsvMapper().enable(CsvParser.Feature.ALLOW_COMMENTS);
         CsvSchema s = om.schemaFor(GenePanelMatrix.class).withHeader().withColumnSeparator('\t').withoutQuoteChar();
         om.writer(s).writeValue(target, panels);
@@ -145,7 +134,7 @@ public final class AddGeneticData {
         CsvMapper om = new CsvMapper().enable(CsvParser.Feature.ALLOW_COMMENTS);
         CsvSchema s = om.schemaFor(Cna.class).withHeader().withColumnSeparator('\t').withoutQuoteChar();
 
-        if (cnas.size() > 0) {
+        if (!cnas.isEmpty()) {
             for (String id : cnas.iterator().next().getSamples().keySet()) {
                 s = CsvSchema.builder().addColumnsFrom(s).addColumn(id).build();
             }

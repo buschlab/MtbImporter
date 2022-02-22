@@ -154,7 +154,7 @@ public class CheckDropzone extends TimerTask {
                 for (ClinicalPatient patient : newStudy.getPatients()) {
                     if (patient.getAdditionalAttributes().containsKey("PRESENTATION_DATE")) {
                         List<String> al = patientsByDate.getOrDefault(
-                                (String) patient.getAdditionalAttributes().get("PRESENTATION_DATE"),
+                                patient.getAdditionalAttributes().get("PRESENTATION_DATE"),
                                 new ArrayList<>());
                         al.add(patient.getPatientId());
                         patientsByDate.put((String) patient.getAdditionalAttributes().get("PRESENTATION_DATE"), al);

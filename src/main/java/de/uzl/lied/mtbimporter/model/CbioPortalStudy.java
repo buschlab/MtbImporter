@@ -429,7 +429,7 @@ public class CbioPortalStudy {
                     l.add(t);
                 }
             }
-            if (l.size() > 0) {
+            if (!l.isEmpty()) {
                 m.put(e.getKey(), l);
             }
         }

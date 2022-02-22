@@ -1,7 +1,5 @@
 package de.uzl.lied.mtbimporter.tasks;
 
-import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.MappingIterator;
 import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
@@ -50,12 +48,10 @@ public final class AddSignatureData {
      * Writes signature data das tsv file.
      * @param signatures
      * @param target
-     * @throws JsonGenerationException
-     * @throws JsonMappingException
      * @throws IOException
      */
     public static void writeSignatureData(Collection<MutationalSignature> signatures, File target)
-            throws JsonGenerationException, JsonMappingException, IOException {
+            throws IOException {
         CsvMapper om = new CsvMapper().enable(CsvParser.Feature.ALLOW_COMMENTS);
         CsvSchema s = om.schemaFor(MutationalSignature.class).withHeader().withColumnSeparator('\t').withoutQuoteChar();
 

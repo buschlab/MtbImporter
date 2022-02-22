@@ -30,7 +30,7 @@ public final class ImportStudy {
             throws IOException {
         ProcessBuilder pb = new ProcessBuilder();
         String[] portal = getPortal();
-        List<String> args = new ArrayList<String>();
+        List<String> args = new ArrayList<>();
 
         if (Settings.getDocker() != null && Settings.getDocker().getCompose() != null) {
             pb.directory(new File(Settings.getDocker().getCompose().getWorkdir()));
@@ -69,7 +69,7 @@ public final class ImportStudy {
         args.add(portal[0]);
         args.add(portal[1]);
 
-        if (overrideWarnings) {
+        if (Boolean.TRUE.equals(overrideWarnings)) {
             args.add("-o");
         }
 
@@ -83,7 +83,7 @@ public final class ImportStudy {
         Logger.debug(importResult);
         Logger.error(importError);
 
-        if (Settings.getRestartAfterImport()) {
+        if (Boolean.TRUE.equals(Settings.getRestartAfterImport())) {
             args.clear();
             if (Settings.getDocker() != null && Settings.getDocker().getCompose() != null) {
                 args.add("docker-compose");

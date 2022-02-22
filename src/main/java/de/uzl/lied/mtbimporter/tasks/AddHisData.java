@@ -1,6 +1,5 @@
 package de.uzl.lied.mtbimporter.tasks;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.MappingIterator;
 import com.fasterxml.jackson.databind.ObjectReader;
@@ -124,11 +123,10 @@ public final class AddHisData {
      * @param c Target jvm pojo class
      * @param relation Relation used as input
      * @return relation converted to an object of class c
-     * @throws JsonProcessingException
      * @throws IOException
      */
     @SuppressWarnings("unchecked")
-    private static <T> T readClass(Class<T> c, RelationConvert relation) throws JsonProcessingException, IOException {
+    private static <T> T readClass(Class<T> c, RelationConvert relation) throws IOException {
         CsvMapper om = new CsvMapper().enable(CsvParser.Feature.ALLOW_COMMENTS);
         ObjectReader or = om.readerFor(c)
                 .with(CsvSchema.emptySchema().withHeader().withComments().withColumnSeparator('\t'));
@@ -139,10 +137,10 @@ public final class AddHisData {
     }
 
     private static <T> T cxxMap(Class<T> c, CxxMdrSettings mdr, RelationConvert input)
-            throws JsonProcessingException, IOException {
+            throws IOException {
         List<CxxItem> inputItems = CxxMdrItemSet.getItemList(CxxMdrItemSet.get(mdr, input.getSourceProfileCode()));
         for (CxxItem inputItem : inputItems) {
-            if (inputItem.getMandatory() && !input.getValues().containsKey(inputItem.getId())) {
+            if (Boolean.TRUE.equals(inputItem.getMandatory()) && !input.getValues().containsKey(inputItem.getId())) {
                 Logger.debug("Does not fulfil criteria for source " + input.getSourceProfileCode());
                 return null;
             }
@@ -150,7 +148,7 @@ public final class AddHisData {
         RelationConvert output = CxxMdrConvert.convert(mdr, input);
         List<CxxItem> outputItems = CxxMdrItemSet.getItemList(CxxMdrItemSet.get(mdr, input.getTargetProfileCode()));
         for (CxxItem outputItem : outputItems) {
-            if (outputItem.getMandatory() && !output.getValues().containsKey(outputItem.getId())) {
+            if (Boolean.TRUE.equals(outputItem.getMandatory()) && !output.getValues().containsKey(outputItem.getId())) {
                 Logger.debug("Does not fulfil criteria for target " + input.getTargetProfileCode());
                 return null;
             }
@@ -164,7 +162,7 @@ public final class AddHisData {
     }
 
     private static <T> T samplyMap(Class<T> c, SamplyMdrSettings mdr, RelationConvert input) throws ExecutionException,
-            MdrConnectionException, MdrInvalidResponseException, JsonProcessingException, IOException {
+            MdrConnectionException, MdrInvalidResponseException, IOException {
         Map<String, Map<String, String>> inputItems = SamplyMdrItems.get(mdr, mdr.getSourceNamespace(),
                 input.getSourceProfileCode());
         if (inputItems == null) {
