@@ -337,7 +337,7 @@ public class CbioPortalStudy {
             m2.setName(m.getName());
             m2.setDescription(m.getDescription());
             for (Entry<String, Number> e : m.getSamples().entrySet()) {
-                m2.getSamples().put(e.getKey().replaceAll("_TD", ""), e.getValue());
+                m2.getSamples().put(e.getKey().replace("_TD", ""), e.getValue());
             }
             if (map.containsKey(m.getEntityStableId())) {
                 sampleIds.addAll(m2.getSamples().keySet());
@@ -390,7 +390,7 @@ public class CbioPortalStudy {
             c2.setEntrezGeneId(c.getEntrezGeneId());
             c2.setHugoSymbol(c.getHugoSymbol());
             for (Entry<String, String> e : c.getSamples().entrySet()) {
-                c2.getSamples().put(e.getKey().replaceAll("_TD", ""), e.getValue());
+                c2.getSamples().put(e.getKey().replace("_TD", ""), e.getValue());
             }
             cnaSampleIds.addAll(c2.getSamples().keySet());
             if (this.cna.containsKey(c2.getHugoSymbol())) {
