@@ -149,7 +149,7 @@ public final class StudyHandler {
         AddSignatureData.writeSignatureData(study.getMutationalContribution(), new File(Settings.getStudyFolder()
                 + study.getStudyId() + "/" + state + "/data_mutational_signature_contribution.txt"));
 
-        Set<String> caseListSequenced = new HashSet<String>();
+        Set<String> caseListSequenced = new HashSet<>();
         for (Maf m : study.getMaf()) {
             caseListSequenced.add(m.getTumorSampleBarcode());
         }
@@ -164,7 +164,7 @@ public final class StudyHandler {
                 new File(Settings.getStudyFolder() + study.getStudyId() + "/" + state + "/case_lists/cases_cnaseq.txt"),
                 study.getStudyId(), caseListSequenced);
 
-        Set<String> caseListAll = new HashSet<String>();
+        Set<String> caseListAll = new HashSet<>();
         for (ClinicalSample s : study.getSamples()) {
             caseListAll.add(s.getSampleId());
         }

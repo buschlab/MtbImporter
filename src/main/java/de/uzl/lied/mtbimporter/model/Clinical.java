@@ -17,7 +17,7 @@ public abstract class Clinical {
     @JsonProperty("PATIENT_ID")
     private String patientId;
     @JsonIgnore
-    private Map<String, Object> additionalAttributes = new HashMap<String, Object>();
+    private Map<String, Object> additionalAttributes = new HashMap<>();
 
     public String getPatientId() {
         return patientId;

@@ -23,7 +23,7 @@ public class CaseList {
     private String caseListName;
     @JsonProperty("case_list_description")
     private String caseListDescription;
-    private Set<String> caseListIds = new HashSet<String>();
+    private Set<String> caseListIds = new HashSet<>();
 
     public String getCancerStudyIdentifier() {
         return cancerStudyIdentifier;

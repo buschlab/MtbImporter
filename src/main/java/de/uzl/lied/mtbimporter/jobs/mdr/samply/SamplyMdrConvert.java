@@ -46,7 +46,7 @@ public final class SamplyMdrConvert {
         RelationConvert output = new RelationConvert();
         output.setTargetProfileVersion(input.getTargetProfileVersion());
         output.setTargetProfileCode(input.getTargetProfileCode());
-        output.setValues(new HashMap<String, Object>());
+        output.setValues(new HashMap<>());
 
         String mdrLanguage = mdr.getLanguage();
 

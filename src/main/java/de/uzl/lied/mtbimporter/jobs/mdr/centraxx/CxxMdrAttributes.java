@@ -36,7 +36,7 @@ public final class CxxMdrAttributes {
             CxxMdrLogin.login(mdr);
         }
 
-        MultiValueMap<String, String> form = new LinkedMultiValueMap<String, String>();
+        MultiValueMap<String, String> form = new LinkedMultiValueMap<>();
         form.set("code", mdrProfile);
         form.set("domainCode", "cbioportal");
         form.set("itemCode", key);
