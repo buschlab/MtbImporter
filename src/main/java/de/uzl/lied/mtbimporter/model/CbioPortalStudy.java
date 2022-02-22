@@ -517,7 +517,7 @@ public class CbioPortalStudy {
         metaFiles.put(type, meta);
     }
 
-    public long getState() throws IOException {
+    public long getState() {
         return state;
     }
 
