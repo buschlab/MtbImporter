@@ -70,8 +70,7 @@ public final class AddMetaData {
         ProcessBuilder pb = new ProcessBuilder(RSCRIPT);
         pb.environment().put("PATH", System.getenv("PATH"));
         final Process process = pb.start();
-        String result = new String(process.getInputStream().readAllBytes());
-        return result;
+        return new String(process.getInputStream().readAllBytes());
     }
 
 }

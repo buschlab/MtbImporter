@@ -204,24 +204,21 @@ public final class AddClinicalData {
 
         String clinicalString = om.writer(schema).writeValueAsString(clinicals);
         try (FileOutputStream fos = new FileOutputStream(inputFile)) {
-            String displayNameString = "#";
-            String descriptionString = "#";
-            String dataTypesString = "#";
-            String priorityString = "#";
+            StringBuilder displayNameString = new StringBuilder("#");
+            StringBuilder descriptionString = new StringBuilder("#");
+            StringBuilder dataTypesString = new StringBuilder("#");
+            StringBuilder priorityString = new StringBuilder("#");
             for (ClinicalHeader ch : attributes.values()) {
-                displayNameString += "\t" + ch.getDisplayName();
-                descriptionString += "\t" + ch.getDescription();
-                dataTypesString += "\t" + ch.getDatatype();
-                priorityString += "\t" + ch.getPriority();
+                displayNameString.append("\t" + ch.getDisplayName());
+                descriptionString.append("\t" + ch.getDescription());
+                dataTypesString.append("\t" + ch.getDatatype());
+                priorityString.append("\t" + ch.getPriority());
             }
-            displayNameString = displayNameString.replaceFirst("\t", "");
-            descriptionString = descriptionString.replaceFirst("\t", "");
-            dataTypesString = dataTypesString.replaceFirst("\t", "");
-            priorityString = priorityString.replaceFirst("\t", "");
-            clinicalString = displayNameString + "\n" + descriptionString + "\n" + dataTypesString + "\n"
-                    + priorityString + "\n" + clinicalString;
+            clinicalString = displayNameString.toString().replaceFirst("\t", "") + "\n"
+                    + descriptionString.toString().replaceFirst("\t", "") + "\n"
+                    + dataTypesString.toString().replaceFirst("\t", "") + "\n"
+                    + priorityString.toString().replaceFirst("\t", "") + "\n" + clinicalString;
             fos.write(String.valueOf(clinicalString).getBytes());
-            fos.close();
         } catch (IOException e) {
             Logger.error("Cloud not write clinical file to disk.");
             Logger.debug(e);
