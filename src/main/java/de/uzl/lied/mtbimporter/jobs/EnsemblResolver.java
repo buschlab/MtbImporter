@@ -46,9 +46,7 @@ public final class EnsemblResolver {
             return m;
         }
         for (Entry<String, Object> o : map.entrySet()) {
-            if (o.getKey().equals("warnings")) {
-                continue;
-            } else {
+            if (!o.getKey().equals("warnings")) {
                 Map<String, List<String>> content = (Map<String, List<String>>) o.getValue();
                 String s = content.get("hgvsg").get(0);
                 String s2 = s.split("g.")[1].replaceAll("[a-zA-Z>]", "");

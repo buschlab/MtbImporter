@@ -529,7 +529,6 @@ public class CbioPortalStudy {
     public void setState(Long newState) {
         try (FileOutputStream fos = new FileOutputStream(new File(Settings.getStudyFolder(), studyId + "/.state"))) {
             fos.write(String.valueOf(newState).getBytes());
-            fos.close();
         } catch (IOException e) {
             Logger.error("Unable to write state file to disk");
             Logger.debug(e);

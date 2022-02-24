@@ -79,8 +79,7 @@ public final class AddResourceData {
      * @throws JsonMappingException
      * @throws IOException
      */
-    public static void writeResourceFile(Collection<SampleResource> resources, File target)
-            throws JsonGenerationException, JsonMappingException, IOException {
+    public static void writeResourceFile(Collection<SampleResource> resources, File target) throws IOException {
         CsvMapper om = new CsvMapper().enable(CsvParser.Feature.ALLOW_COMMENTS);
         CsvSchema s = om.schemaFor(SampleResource.class).withHeader().withColumnSeparator('\t').withoutQuoteChar();
 

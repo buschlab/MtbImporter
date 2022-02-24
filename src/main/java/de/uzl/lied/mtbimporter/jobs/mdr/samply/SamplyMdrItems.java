@@ -41,11 +41,11 @@ public final class SamplyMdrItems {
         List<Result> namespace = client.getNamespaceMembers(mdrLanguage, targetNamespace);
         Map<String, Result> nameSpaceMap = namespace.stream()
                 .collect(Collectors.toMap(r -> r.getDesignations().get(0).getDesignation(), Function.identity()));
+        Map<String, Map<String, String>> m = new HashMap<>();
         if (nameSpaceMap.get(targetProfile) == null) {
-            return null;
+            return m;
         }
         List<Result> dataelements = client.getMembers(nameSpaceMap.get(targetProfile).getId(), mdrLanguage);
-        Map<String, Map<String, String>> m = new HashMap<>();
         for (Result r : dataelements) {
             String key = r.getDesignations().get(0).getDesignation();
             List<Slot> ls = client.getDataElement(r.getId(), mdrLanguage).getSlots();

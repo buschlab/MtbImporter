@@ -166,7 +166,7 @@ public final class AddHisData {
             MdrConnectionException, MdrInvalidResponseException, IOException {
         Map<String, Map<String, String>> inputItems = SamplyMdrItems.get(mdr, mdr.getSourceNamespace(),
                 input.getSourceProfileCode());
-        if (inputItems == null) {
+        if (inputItems.isEmpty()) {
             Logger.debug("Does not fulfil criteria for source " + input.getSourceProfileCode());
             return null;
         }
@@ -182,7 +182,7 @@ public final class AddHisData {
         RelationConvert output = SamplyMdrConvert.convert(mdr, input);
         Map<String, Map<String, String>> outputItems = SamplyMdrItems.get(mdr, mdr.getTargetNamespace(),
                 input.getTargetProfileCode());
-        if (outputItems == null) {
+        if (outputItems.isEmpty()) {
             Logger.debug("Does not fulfil criteria for target " + input.getTargetProfileCode());
             return null;
         }
