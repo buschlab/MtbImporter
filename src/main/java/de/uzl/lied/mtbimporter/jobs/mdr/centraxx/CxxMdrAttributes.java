@@ -58,16 +58,16 @@ public final class CxxMdrAttributes {
                 ClinicalHeader ch = new ClinicalHeader();
                 for (CxxAttributeValue av : l.getContent()) {
                     switch (av.getAttribute()) {
-                        case "display-name":
+                        case DISPLAYNAME:
                             ch.setDisplayName(av.getValue());
                             break;
-                        case "datatype":
+                        case DATATYPE:
                             ch.setDatatype(av.getValue());
                             break;
-                        case "priority":
+                        case PRIORITY:
                             ch.setPriority((int) Double.parseDouble(av.getValue()));
                             break;
-                        case "description":
+                        case DESCRIPTION:
                             ch.setDescription(av.getValue());
                             break;
                         default:

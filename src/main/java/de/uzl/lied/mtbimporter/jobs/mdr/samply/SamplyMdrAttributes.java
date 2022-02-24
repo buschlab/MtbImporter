@@ -7,6 +7,7 @@ import de.samply.common.mdrclient.domain.DataElement;
 import de.samply.common.mdrclient.domain.Result;
 import de.samply.common.mdrclient.domain.Slot;
 import de.uzl.lied.mtbimporter.model.ClinicalHeader;
+import de.uzl.lied.mtbimporter.model.mdr.MdrAttributes;
 import de.uzl.lied.mtbimporter.settings.SamplyMdrSettings;
 import java.util.List;
 import java.util.Map;
@@ -54,17 +55,17 @@ public final class SamplyMdrAttributes {
 
         ClinicalHeader ch = new ClinicalHeader();
         for (Slot s : de.getSlots()) {
-            switch (s.getSlotName()) {
-                case "display-name":
+            switch (MdrAttributes.valueOf(s.getSlotName())) {
+                case DISPLAYNAME:
                     ch.setDisplayName(s.getSlotValue());
                     break;
-                case "datatype":
+                case DATATYPE:
                     ch.setDatatype(s.getSlotValue());
                     break;
-                case "priority":
+                case PRIORITY:
                     ch.setPriority((int) Double.parseDouble(s.getSlotValue()));
                     break;
-                case "description":
+                case DESCRIPTION:
                     ch.setDescription(s.getSlotValue());
                     break;
                 default:
