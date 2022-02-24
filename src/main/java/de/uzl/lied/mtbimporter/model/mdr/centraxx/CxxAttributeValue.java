@@ -1,5 +1,6 @@
 package de.uzl.lied.mtbimporter.model.mdr.centraxx;
 
+import de.uzl.lied.mtbimporter.model.mdr.MdrAttributes;
 import java.util.List;
 
 /**
@@ -8,7 +9,7 @@ import java.util.List;
 public class CxxAttributeValue {
 
     private String domain;
-    private String attribute;
+    private MdrAttributes attribute;
     private String value;
     private List<CxxLinks> links;
 
@@ -16,7 +17,7 @@ public class CxxAttributeValue {
         return domain;
     }
 
-    public String getAttribute() {
+    public MdrAttributes getAttribute() {
         return attribute;
     }
 

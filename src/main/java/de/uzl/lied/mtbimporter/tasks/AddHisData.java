@@ -16,6 +16,7 @@ import de.uzl.lied.mtbimporter.jobs.mdr.samply.SamplyMdrConvert;
 import de.uzl.lied.mtbimporter.jobs.mdr.samply.SamplyMdrItems;
 import de.uzl.lied.mtbimporter.model.CbioPortalStudy;
 import de.uzl.lied.mtbimporter.model.ClinicalPatient;
+import de.uzl.lied.mtbimporter.model.mdr.MdrAttributes;
 import de.uzl.lied.mtbimporter.model.mdr.centraxx.CxxItem;
 import de.uzl.lied.mtbimporter.model.mdr.centraxx.RelationConvert;
 import de.uzl.lied.mtbimporter.settings.CxxMdrSettings;
@@ -170,7 +171,9 @@ public final class AddHisData {
             return null;
         }
         for (Entry<String, Map<String, String>> inputItem : inputItems.entrySet()) {
-            if (inputItem.getValue().containsKey("mandatory") && inputItem.getValue().get("mandatory").equals("true")
+            if (inputItem.getValue().containsKey(MdrAttributes.MANDATORY.toString())
+                    && Boolean.TRUE
+                            .equals(Boolean.parseBoolean(inputItem.getValue().get(MdrAttributes.MANDATORY.toString())))
                     && !input.getValues().containsKey(inputItem.getKey())) {
                 Logger.debug("Does not fulfil criteria for source " + input.getSourceProfileCode());
                 return null;
@@ -184,7 +187,9 @@ public final class AddHisData {
             return null;
         }
         for (Entry<String, Map<String, String>> outputItem : outputItems.entrySet()) {
-            if (outputItem.getValue().containsKey("mandatory") && outputItem.getValue().get("mandatory").equals("true")
+            if (outputItem.getValue().containsKey(MdrAttributes.MANDATORY.toString())
+                    && Boolean.TRUE
+                            .equals(Boolean.parseBoolean(outputItem.getValue().get(MdrAttributes.MANDATORY.toString())))
                     && !output.getValues().containsKey(outputItem.getKey())) {
                 Logger.debug("Does not fulfil criteria for target " + input.getTargetProfileCode());
                 return null;
