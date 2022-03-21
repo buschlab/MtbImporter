@@ -233,6 +233,9 @@ public final class AddClinicalData {
     public static void addDummyPatient(CbioPortalStudy study, String sampleId) {
         ClinicalPatient cp = new ClinicalPatient();
         String patientId = FhirResolver.resolvePatientFromSample(sampleId.replace("_TD", ""));
+        if (patientId == null) {
+            return;
+        }
         cp.setPatientId(patientId);
         cp.setAdditionalAttributes("PATIENT_DISPLAY_NAME", "Unknown");
         ClinicalSample cs = new ClinicalSample();
@@ -254,6 +257,9 @@ public final class AddClinicalData {
         for (String sampleId : sampleIds) {
             ClinicalPatient cp = new ClinicalPatient();
             String patientId = FhirResolver.resolvePatientFromSample(sampleId.replace("_TD", ""));
+            if (patientId == null) {
+                return;
+            }
             cp.setPatientId(patientId);
             cp.setAdditionalAttributes("PATIENT_DISPLAY_NAME", "Unknown");
             ClinicalSample cs = new ClinicalSample();

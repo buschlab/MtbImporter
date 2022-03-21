@@ -53,7 +53,7 @@ public class CaseList {
     @JsonProperty("case_list_ids")
     public String getCaseListIdsString() {
         return caseListIds.stream()
-                .map(n -> String.valueOf(n))
+                .map(String::valueOf)
                 .collect(Collectors.joining("\t"));
     }
 
