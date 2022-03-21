@@ -55,7 +55,7 @@ public final class SamplyMdrAttributes {
 
         ClinicalHeader ch = new ClinicalHeader();
         for (Slot s : de.getSlots()) {
-            switch (MdrAttributes.valueOf(s.getSlotName())) {
+            switch (MdrAttributes.fromString(s.getSlotName())) {
                 case DISPLAYNAME:
                     ch.setDisplayName(s.getSlotValue());
                     break;

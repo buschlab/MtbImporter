@@ -6,8 +6,9 @@ import ca.uhn.fhir.rest.client.api.IGenericClient;
 import ca.uhn.fhir.rest.gclient.TokenClientParam;
 import de.uzl.lied.mtbimporter.settings.Regex;
 import de.uzl.lied.mtbimporter.settings.Settings;
+import java.util.ArrayList;
+import java.util.List;
 import org.hl7.fhir.r4.model.Bundle;
-import org.hl7.fhir.r4.model.Bundle.BundleEntryComponent;
 import org.hl7.fhir.r4.model.Coding;
 import org.hl7.fhir.r4.model.Parameters;
 import org.hl7.fhir.r4.model.Parameters.ParametersParameterComponent;
@@ -56,13 +57,14 @@ public final class FhirResolver {
             return null;
         }
 
-        BundleEntryComponent bec = bSpecimenPatient.getEntryFirstRep();
-        if (bec.getResource() instanceof Patient) {
-            Patient p = (Patient) bec.getResource();
-            return p.getIdentifierFirstRep().getValue();
-        }
+        List<String> patientId = new ArrayList<>();
+        bSpecimenPatient.getEntry().forEach(e -> {
+            if (e.getResource() instanceof Patient) {
+                patientId.add(((Patient) e.getResource()).getIdentifierFirstRep().getValue());
+            }
+        });
 
-        return null;
+        return patientId.size() == 1 ? patientId.get(0) : null;
 
     }
 

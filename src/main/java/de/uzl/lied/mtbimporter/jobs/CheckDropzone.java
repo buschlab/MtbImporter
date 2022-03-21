@@ -142,7 +142,7 @@ public class CheckDropzone extends TimerTask {
                 File folder = new File(Settings.getStudyFolder(), study.getStudyId());
                 FileUtils.copyDirectory(
                         new File(folder, Long.toString(study.getState())),
-                        new File(Long.toString(newState)));
+                        new File(folder, Long.toString(newState)));
 
                 StudyHandler.merge(study, newStudy);
                 StudyHandler.write(study, newState);
