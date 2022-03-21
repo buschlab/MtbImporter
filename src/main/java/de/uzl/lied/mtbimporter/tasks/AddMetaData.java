@@ -45,14 +45,33 @@ public final class AddMetaData {
         String tmb = runRscriptCommand(getTmb);
         String msiScore = runRscriptCommand(getMsiScore);
         String msiStatus = runRscriptCommand(getMsiStatus);
-        if (msiStatus.isEmpty()) {
-            msiStatus = "NA";
-        } else if ("Non-MSI-H".equals(msiStatus)) {
-            msiStatus = "Stable";
-        } else if ("MSI-H".equals(msiStatus)) {
-            msiStatus = "Instable";
-        }
         String coveredRegion = runRscriptCommand(getCoveredRegion);
+        if (msiStatus.isEmpty()) {
+            // for MIRACUM-Pipe v4.0.0
+            getMsiScore = load + "cat(mutation_analysis_result$msi)";
+            getMsiStatus = load + "cat(mutation_analysis_result$msi >= 10)";
+            getCoveredRegion = load + "cat(filt_result_td$covered_region)";
+            msiScore = runRscriptCommand(getMsiScore);
+            msiStatus = runRscriptCommand(getMsiStatus);
+            coveredRegion = runRscriptCommand(getCoveredRegion);
+        }
+        switch (msiStatus) {
+            case "Non-MSI-H":
+                msiStatus = "Stable";
+                break;
+            case "MSI-H":
+                msiStatus = "Instable";
+                break;
+            case "TRUE":
+                msiStatus = "Instable";
+                break;
+            case "FALSE":
+                msiStatus = "Stable";
+                break;
+            default:
+                msiStatus = "NA";
+        }
+
         String hrdScore = runRscriptCommand(getHrdScore);
         String purity = runRscriptCommand(getPurity);
         String ploidy = runRscriptCommand(getPloidy);
