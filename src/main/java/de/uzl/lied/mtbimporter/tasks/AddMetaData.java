@@ -34,6 +34,9 @@ public final class AddMetaData {
         String getPanel = load + "cat(sureselect_type);";
         String getProtocol = load + "cat(protocol);";
         String getCoveredRegion = load + "cat(covered_region);";
+        String getHrdScore = load + "cat(cnv_analysis_results$hrd$score)";
+        String getPurity = load + "cat(cnv_analysis_results$purity$purity*100)";
+        String getPloidy = load + "cat(cnv_analysis_results$purity$ploidy)";
 
         String sampleId = runRscriptCommand(getSampleId);
         String patientId = FhirResolver.resolvePatientFromSample(sampleId);
@@ -50,6 +53,9 @@ public final class AddMetaData {
             msiStatus = "Instable";
         }
         String coveredRegion = runRscriptCommand(getCoveredRegion);
+        String hrdScore = runRscriptCommand(getHrdScore);
+        String purity = runRscriptCommand(getPurity);
+        String ploidy = runRscriptCommand(getPloidy);
 
         AddClinicalData.addDummyPatient(study, sampleId);
         ClinicalSample cs = new ClinicalSample();
@@ -60,6 +66,9 @@ public final class AddMetaData {
         cs.setAdditionalAttributes("MSI_TYPE", msiStatus);
         cs.setAdditionalAttributes("ANALYSIS_TYPE", protocol.startsWith("somatic") ? "WES" : protocol);
         cs.setAdditionalAttributes("COVERED_BASES", coveredRegion);
+        cs.setAdditionalAttributes("HRD_SCORE", hrdScore);
+        cs.setAdditionalAttributes("TUMOR_PURITY", purity);
+        cs.setAdditionalAttributes("TUMOR_PLOIDY", ploidy);
 
         study.addSample(cs);
         study.addGenePanelMatrix(new GenePanelMatrix(sampleId, panel));
