@@ -1,7 +1,5 @@
 package de.uzl.lied.mtbimporter.settings;
 
-import java.util.UUID;
-
 /**
  * Settings for Kairos CentraXX MDR.
  */
@@ -9,7 +7,7 @@ public class CxxMdrSettings {
 
     private static final int SECONDMILLISECOND = 1000;
     private String url;
-    private UUID token;
+    private String token;
     private Long tokenExpiration;
     private String username;
     private String password;
@@ -21,11 +19,11 @@ public class CxxMdrSettings {
         return url;
     }
 
-    public UUID getToken() {
+    public String getToken() {
         return token;
     }
 
-    public void setToken(UUID newToken, int expiresIn) {
+    public void setToken(String newToken, int expiresIn) {
         this.token = newToken;
         tokenExpiration = System.currentTimeMillis() + SECONDMILLISECOND * expiresIn;
     }
