@@ -1,5 +1,8 @@
 package de.uzl.lied.mtbimporter.model.mdr;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonValue;
+
 /**
  * Enum for Attributes queried from MDR.
  */
@@ -32,6 +35,7 @@ public enum MdrAttributes {
     }
 
     @Override
+    @JsonValue
     public String toString() {
         return this.label;
     }
@@ -41,6 +45,7 @@ public enum MdrAttributes {
      * @param s string to be looked up
      * @return corresponding Enum
      */
+    @JsonCreator
     public static MdrAttributes fromString(String s) {
         for (MdrAttributes a : MdrAttributes.values()) {
             if (a.label.equalsIgnoreCase(s)) {
