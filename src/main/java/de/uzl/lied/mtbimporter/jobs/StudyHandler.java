@@ -152,8 +152,8 @@ public final class StudyHandler {
                 study.getStudyId(), caseListAll);
 
         for (Entry<String, List<Timeline>> e : study.getTimelines().entrySet()) {
-            AddTimelineData.writeTimelineFile(e.getValue(), e.getKey(), new File(Settings.getStudyFolder()
-                    + study.getStudyId() + "/" + state + "/data_timeline_" + e.getKey() + ".txt"));
+            AddTimelineData.writeTimelineFile(e.getValue(), e.getKey(), new File(Settings.getStudyFolder(),
+                    study.getStudyId() + "/" + state + "/data_timeline_" + e.getKey() + ".txt"));
         }
 
         for (Entry<String, Meta> e : study.getMetaFiles().entrySet()) {
