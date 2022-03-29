@@ -226,6 +226,18 @@ public final class AddClinicalData {
     }
 
     /**
+     * Adds dummy sample.
+     * @param study
+     * @param patientId
+     */
+    public static void addDummySample(CbioPortalStudy study, String patientId) {
+        ClinicalSample cs = new ClinicalSample();
+        cs.setPatientId(patientId);
+        cs.setSampleId("_" + patientId);
+        study.add(cs);
+    }
+
+    /**
      * Adds dummy patient.
      * @param study
      * @param sampleId

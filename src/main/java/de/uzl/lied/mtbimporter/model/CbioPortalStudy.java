@@ -107,6 +107,9 @@ public class CbioPortalStudy {
      */
     public void addPatient(ClinicalPatient patient) {
         ClinicalPatient newPatient = patient;
+        if (getSamplesByPatient(patient.getPatientId()).isEmpty()) {
+            AddClinicalData.addDummySample(this, patient.getPatientId());
+        }
         if (patients.containsKey(newPatient.getPatientId())) {
             newPatient = AddClinicalData.mergePatients(patients.get(newPatient.getPatientId()), newPatient);
         }
@@ -157,6 +160,9 @@ public class CbioPortalStudy {
     public void addSample(ClinicalSample sample) {
         if (sample == null) {
             return;
+        }
+        if (samples.containsKey("_" + sample.getPatientId())) {
+            samples.remove("_" + sample.getPatientId());
         }
         ClinicalSample newSample = sample;
         if (samples.containsKey(newSample.getSampleId())) {
