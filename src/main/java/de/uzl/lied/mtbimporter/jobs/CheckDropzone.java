@@ -64,10 +64,6 @@ public class CheckDropzone extends TimerTask {
             }
 
             for (File f : files) {
-                if (f.getName().equals(".gitkeep")) {
-                    continue;
-                }
-                Logger.info("Found " + f.getAbsolutePath());
                 try {
                     Binding b = new Binding();
                     GroovyShell s = new GroovyShell(b);
@@ -84,6 +80,13 @@ public class CheckDropzone extends TimerTask {
                     Logger.error("Error executing Groovy script mapper/prepare.groovy");
                     Logger.debug(e);
                 }
+            }
+
+            for (File f : files) {
+                if (f.getName().equals(".gitkeep")) {
+                    continue;
+                }
+                Logger.info("Found " + f.getAbsolutePath());
                 try {
                     switch (FilenameUtils.getExtension(f.getName())) {
                         case "maf":
