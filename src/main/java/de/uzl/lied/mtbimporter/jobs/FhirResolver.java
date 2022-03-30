@@ -3,6 +3,7 @@ package de.uzl.lied.mtbimporter.jobs;
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.model.api.Include;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
+import ca.uhn.fhir.rest.client.exceptions.FhirClientConnectionException;
 import ca.uhn.fhir.rest.gclient.TokenClientParam;
 import de.uzl.lied.mtbimporter.settings.Regex;
 import de.uzl.lied.mtbimporter.settings.Settings;
@@ -16,6 +17,7 @@ import org.hl7.fhir.r4.model.Patient;
 import org.hl7.fhir.r4.model.Specimen;
 import org.hl7.fhir.r4.model.StringType;
 import org.hl7.fhir.r4.model.UriType;
+import org.tinylog.Logger;
 
 /**
  * Class to query a FHIR server for data.
@@ -40,7 +42,8 @@ public final class FhirResolver {
     }
 
     /**
-     * Searchs on the FHIR server for the patient the sample belongs to and returns its id.
+     * Searchs on the FHIR server for the patient the sample belongs to and returns
+     * its id.
      * @param sampleId Given sample
      * @return Patient, the sample belongs to
      */
@@ -81,27 +84,32 @@ public final class FhirResolver {
         params.addParameter("conceptMap",
                 new UriType(Settings.getFhir().getTerminology().getIcdO3ToOncoTreeConceptMapUrl()));
         params.addParameter("code", topography.split(" ")[0] + " " + morphology.split(" ")[0]);
-        Parameters result = terminologyClient.operation()
-                .onInstance("ConceptMap/" + Settings.getFhir().getTerminology().getIcdO3ToOncoTreeConceptMapId())
-                .named("translate").withParameters(params).execute();
+        try {
+            Parameters result = terminologyClient.operation()
+                    .onInstance("ConceptMap/" + Settings.getFhir().getTerminology().getIcdO3ToOncoTreeConceptMapId())
+                    .named("translate").withParameters(params).execute();
 
-        for (ParametersParameterComponent p : result.getParameter()) {
-            if (!p.getName().equals("match")) {
-                continue;
-            }
-            Coding coding = null;
-            String str = null;
-            for (ParametersParameterComponent c : p.getPart()) {
-                if (c.getValue() instanceof Coding) {
-                    coding = (Coding) c.getValue();
+            for (ParametersParameterComponent p : result.getParameter()) {
+                if (!p.getName().equals("match")) {
+                    continue;
                 }
-                if (c.getValue() instanceof StringType && c.getName().equals("source")) {
-                    str = ((StringType) c.getValue()).getValue();
+                Coding coding = null;
+                String str = null;
+                for (ParametersParameterComponent c : p.getPart()) {
+                    if (c.getValue() instanceof Coding) {
+                        coding = (Coding) c.getValue();
+                    }
+                    if (c.getValue() instanceof StringType && c.getName().equals("source")) {
+                        str = ((StringType) c.getValue()).getValue();
+                    }
+                }
+                if (str != null && str.equals(Settings.getFhir().getTerminology().getIcdO3ToOncoTreeConceptMapUrl())) {
+                    return coding;
                 }
             }
-            if (str != null && str.equals(Settings.getFhir().getTerminology().getIcdO3ToOncoTreeConceptMapUrl())) {
-                return coding;
-            }
+
+        } catch (FhirClientConnectionException e) {
+            Logger.error("Could not connect to FHIR Terminology Server", e);
         }
 
         return new Coding();
