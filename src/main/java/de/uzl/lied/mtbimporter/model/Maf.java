@@ -30,9 +30,9 @@ public class Maf {
     @JsonProperty("Chromosome")
     private String chromosome;
     @JsonProperty("Start_Position")
-    private Integer startPosition;
+    private Integer startPosition = 0;
     @JsonProperty("End_Position")
-    private Integer endPosition;
+    private Integer endPosition = 0;
     @JsonProperty("Strand")
     private Character strand;
     @JsonProperty("Variant_Classification")

@@ -486,7 +486,7 @@ public class CbioPortalStudy {
         }
         if (o instanceof Maf) {
             Maf m = (Maf) o;
-            if (m.getChromosome() == null || m.getStartPosition() == null || m.getEndPosition() == null) {
+            if (m.getChromosome() == null || m.getStartPosition() == 0 || m.getEndPosition() == 0) {
                 m = EnsemblResolver.enrich(m);
             }
             addMaf(m);
