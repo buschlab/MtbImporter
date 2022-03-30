@@ -61,7 +61,7 @@ public final class EnsemblResolver {
                         m.setStartPosition(Integer.parseInt(s2));
                         m.setEndPosition(Integer.parseInt(s2));
                     }
-                    Integer chr = Integer.parseInt(s.replace("NC_", "").split("\\.")[0]);
+                    Integer chr = Integer.parseInt(s.replace("NC_", "").split("\\.")[0].split(":")[0]);
                     switch (chr) {
                         case CHRX:
                             m.setChromosome("chrX");
