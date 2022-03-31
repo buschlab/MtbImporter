@@ -1,5 +1,6 @@
 package de.uzl.lied.mtbimporter.model;
 
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -147,9 +148,22 @@ public class Maf {
         this.chromosome = chromosome;
     }
 
+    /**
+     * Accepts only prefixed entries.
+     * @param name Column name
+     * @param value Column value
+     */
     @JsonAnySetter
     public void setAdditionalProperty(String name, Object value) {
+        if (!name.contains(".")) {
+            return;
+        }
         this.additionalProperties.put(name, value);
+    }
+
+    @JsonAnyGetter
+    public Object getAdditionalProperty(String name) {
+        return this.additionalProperties.get(name);
     }
 
     /**
