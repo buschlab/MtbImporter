@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.ObjectReader;
 import com.fasterxml.jackson.dataformat.csv.CsvMapper;
 import com.fasterxml.jackson.dataformat.csv.CsvParser;
 import com.fasterxml.jackson.dataformat.csv.CsvSchema;
+import com.fasterxml.jackson.dataformat.csv.CsvSchema.ColumnType;
 import com.fasterxml.jackson.dataformat.javaprop.JavaPropsMapper;
 import com.fasterxml.jackson.dataformat.javaprop.JavaPropsSchema;
 import de.uzl.lied.mtbimporter.model.CaseList;
@@ -17,6 +18,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -46,6 +48,10 @@ public final class AddGeneticData {
     public static void writeMafFile(List<Maf> mafs, File maf) throws IOException {
         CsvMapper om = new CsvMapper().enable(CsvParser.Feature.ALLOW_COMMENTS);
         CsvSchema s = om.schemaFor(Maf.class).withHeader().withColumnSeparator('\t').withoutQuoteChar();
+        Set<String> columns = new HashSet<>();
+        mafs.forEach(m -> columns.addAll(m.getAdditionalProperties()));
+        CsvSchema schema = CsvSchema.builder().addColumns(columns, ColumnType.STRING).build();
+        s = s.withColumnsFrom(schema);
         om.writer(s).writeValue(maf, mafs);
     }
 

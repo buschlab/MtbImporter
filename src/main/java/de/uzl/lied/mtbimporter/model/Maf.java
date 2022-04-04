@@ -162,8 +162,13 @@ public class Maf {
     }
 
     @JsonAnyGetter
-    public Object getAdditionalProperty(String name) {
-        return this.additionalProperties.get(name);
+    public Map<String, Object> getAdditionalProperty() {
+        return this.additionalProperties;
+    }
+
+    @JsonIgnore
+    public Collection<String> getAdditionalProperties() {
+        return this.additionalProperties.keySet();
     }
 
     /**
