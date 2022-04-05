@@ -1,4 +1,4 @@
-FROM maven:3.8.4-openjdk-11-slim as build
+FROM maven:3.8.5-openjdk-11-slim as build
 
 COPY $PWD /mtbimporter
 WORKDIR /mtbimporter
