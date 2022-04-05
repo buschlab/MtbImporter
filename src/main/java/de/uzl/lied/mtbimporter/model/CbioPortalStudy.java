@@ -502,6 +502,11 @@ public class CbioPortalStudy {
             }
             addCna(List.of(c));
         }
+
+        if (o instanceof GenePanelMatrix) {
+            GenePanelMatrix gpm = (GenePanelMatrix) o;
+            addGenePanelMatrix(gpm);
+        }
     }
 
     public String getStudyId() {
