@@ -90,11 +90,11 @@ public final class AddHisData {
                     Object o = cxxMap(mapping.getModelClass(), cxxMdr, input);
                     if (o instanceof ClinicalPatient
                             && Settings.getFhir().getTerminology() != null
-                            && ((ClinicalPatient) o).getAdditionalAttributes().containsKey("ICD_O_3_SITE")
-                            && ((ClinicalPatient) o).getAdditionalAttributes().containsKey("ICD_O_3_HISTOLOGY")) {
+                            && ((ClinicalPatient) o).getAdditionalAttributes().containsKey("ICD_O_3_SITE")) {
                         Coding oncoTree = FhirResolver.resolveOncoTree(
                                 (String) ((ClinicalPatient) o).getAdditionalAttributes().get("ICD_O_3_SITE"),
-                                (String) ((ClinicalPatient) o).getAdditionalAttributes().get("ICD_O_3_HISTOLOGY"));
+                                (String) ((ClinicalPatient) o).getAdditionalAttributes()
+                                        .getOrDefault("ICD_O_3_HISTOLOGY", ""));
                         ((ClinicalPatient) o).getAdditionalAttributes().put("ONCOTREE_CODE", oncoTree.getCode());
                         ((ClinicalPatient) o).getAdditionalAttributes().put("CANCER_TYPE", oncoTree.getDisplay());
                     }
