@@ -55,8 +55,8 @@ public final class EnsemblResolver {
                     String s = content.get("hgvsg").get(0);
                     String s2 = s.split("g.")[1].replaceAll("[a-zA-Z>]", "");
                     if (s2.contains("_")) {
-                        m.setStartPosition(Integer.parseInt(s2.split("-")[0]));
-                        m.setEndPosition(Integer.parseInt(s2.split("-")[1]));
+                        m.setStartPosition(Integer.parseInt(s2.split("_")[0]));
+                        m.setEndPosition(Integer.parseInt(s2.split("_")[1]));
                     } else {
                         m.setStartPosition(Integer.parseInt(s2));
                         m.setEndPosition(Integer.parseInt(s2));
