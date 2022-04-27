@@ -27,12 +27,19 @@ if (csv.name.contains('Diagnosen_Vorst')) {
     for (m in l) {
         if (pMap.containsKey(m.get(pid))) {
             Map<String, String> n = pMap.get(m.get(pid))
+            if (!m.containsKey(jahrText) || !m.containsKey(monatText)
+                || m.get(jahrText) == '' || m.get(monatText) == '') {
+                continue
+            }
             if (Integer.parseInt(m.get(jahrText)) < Integer.parseInt(n.get(jahrText))
                     && Integer.parseInt(m.get(monatText)) < Integer.parseInt(n.get(monatText))) {
                 pMap.put(m.get(pid), m)
                     }
         } else {
-            pMap.put(m.get(pid), m)
+            if (m.containsKey(jahrText) && m.containsKey(monatText)
+                && m.get(jahrText) == '' && !m.get(monatText) == '') {
+                pMap.put(m.get(pid), m)
+            }
         }
     }
     pMap.each { k, v -> study.addPreparation(k, v) }
