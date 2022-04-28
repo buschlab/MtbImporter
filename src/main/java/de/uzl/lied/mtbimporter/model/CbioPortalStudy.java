@@ -505,7 +505,9 @@ public class CbioPortalStudy {
 
         if (o instanceof GenePanelMatrix) {
             GenePanelMatrix gpm = (GenePanelMatrix) o;
-            addGenePanelMatrix(gpm);
+            if (gpm.getMutations() != null && !"".equals(gpm.getMutations())) {
+                addGenePanelMatrix(gpm);
+            }
         }
     }
 
