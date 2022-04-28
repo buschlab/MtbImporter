@@ -60,7 +60,8 @@ public final class StudyHandler {
         if (!gpm.exists()) {
             Files.copy(new File(Settings.getStudyTemplate(), "data_gene_panel_matrix.txt").toPath(), gpm.toPath());
             Files.copy(new File(Settings.getStudyTemplate(), "meta_gene_panel_matrix.txt").toPath(),
-                    new File(Settings.getStudyFolder(), studyId + "/" + state + "/meta_gene_panel_matrix.txt").toPath());
+                    new File(Settings.getStudyFolder(),
+                            studyId + "/" + state + "/meta_gene_panel_matrix.txt").toPath());
         }
         AddGeneticData.processGenePanelFile(study, gpm);
 
