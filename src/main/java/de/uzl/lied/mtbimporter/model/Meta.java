@@ -5,7 +5,6 @@ import com.fasterxml.jackson.annotation.JsonAnySetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -16,7 +15,7 @@ import java.util.stream.Collectors;
 /**
  * Pojo for meta files.
  */
-@JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 public class Meta {
 
     @JsonProperty("cancer_study_identifier")
@@ -33,6 +32,10 @@ public class Meta {
                 .collect(Collectors.joining(","));
     }
 
+    /**
+     * adds Namespaces to meta_mutations_extended.
+     * @param n Namespaced columns from Maf
+     */
     @JsonIgnore
     public void addNamespace(Collection<String> n) {
         if (n != null && n.size() > 0) {
@@ -53,6 +56,11 @@ public class Meta {
         return this.additionalAttributes;
     }
 
+    /**
+     * Prevents namespace from being read as an additional attribute.
+     * @param name
+     * @param value
+     */
     @JsonAnySetter
     public void setAdditionalAttributes(String name, String value) {
         if (!"namespaces".equals(name)) {
