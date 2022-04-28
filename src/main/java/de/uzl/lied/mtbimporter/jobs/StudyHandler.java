@@ -247,6 +247,8 @@ public final class StudyHandler {
                     study.getStudyId() + "/" + state + "/data_timeline_" + e.getKey() + ".txt"));
         }
 
+        study.getMaf().forEach(m -> study.getMetaFile("meta_mutations_extended.txt").addNamespace(m.getAdditionalProperties()));
+
         for (Entry<String, Meta> e : study.getMetaFiles().entrySet()) {
             AddMetaFile.writeMetaFile(e.getValue(),
                     new File(Settings.getStudyFolder(), study.getStudyId() + "/" + state + "/" + e.getKey()));
