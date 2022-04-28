@@ -14,6 +14,7 @@ import de.uzl.lied.mtbimporter.model.Cna;
 import de.uzl.lied.mtbimporter.model.ContinuousCna;
 import de.uzl.lied.mtbimporter.model.GenePanelMatrix;
 import de.uzl.lied.mtbimporter.model.Maf;
+import de.uzl.lied.mtbimporter.settings.Settings;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -163,6 +164,10 @@ public final class AddGeneticData {
     public static void writeCaseList(File caseList, String studyId, Set<String> sampleIds) throws IOException {
         JavaPropsMapper jpm = new JavaPropsMapper();
         JavaPropsSchema jps = JavaPropsSchema.emptySchema().withKeyValueSeparator(": ");
+        if (!caseList.exists()) {
+            Files.copy(new File(Settings.getStudyTemplate(), "case_lists/" + caseList.getName()).toPath(),
+                    caseList.toPath());
+        }
         CaseList seq = jpm.readValue(caseList, CaseList.class);
         seq.setCancerStudyIdentifier(studyId);
         seq.setStableId(studyId + "_" + seq.getStableId().split("_")[seq.getStableId().split("_").length - 1]);
