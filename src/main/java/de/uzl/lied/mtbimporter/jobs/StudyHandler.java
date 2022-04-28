@@ -160,29 +160,28 @@ public final class StudyHandler {
             empty = empty && c.getSamples().isEmpty();
         }
         if (empty) {
-            cnas.delete();
+            Files.delete(cnas.toPath());
             study.getMetaFiles().remove("meta_cna.txt");
-            new File(Settings.getStudyFolder(),
-                    study.getStudyId() + "/" + state + "/meta_cna.txt").delete();
+            Files.delete(new File(Settings.getStudyFolder(),
+                    study.getStudyId() + "/" + state + "/meta_cna.txt").toPath());
         }
         File gpm = new File(
                 Settings.getStudyFolder(), study.getStudyId() + "/" + state + "/data_gene_panel_matrix.txt");
         AddGeneticData.writeGenePanelFile(study.getGenePanelMatrix(), gpm);
         if (study.getGenePanelMatrix().isEmpty()) {
-            gpm.delete();
+            Files.delete(gpm.toPath());
             study.getMetaFiles().remove("meta_gene_panel_matrix.txt");
-            new File(
-                    Settings.getStudyFolder(), study.getStudyId() + "/" + state + "/meta_gene_panel_matrix.txt")
-                            .delete();
+            Files.delete(new File(
+                Settings.getStudyFolder(), study.getStudyId() + "/" + state + "/meta_gene_panel_matrix.txt").toPath());
         }
         File resourceSample = new File(
                     Settings.getStudyFolder(), study.getStudyId() + "/" + state + "/data_resource_sample.txt");
         AddResourceData.writeResourceFile(study.getSampleResources(), resourceSample);
         if (study.getSampleResources().isEmpty()) {
-            resourceSample.delete();
+            Files.delete(resourceSample.toPath());
             study.getMetaFiles().remove("meta_resource_sample.txt");
-            new File(Settings.getStudyFolder(),
-                    study.getStudyId() + "/" + state + "/meta_resource_sample.txt").delete();
+            Files.delete(new File(Settings.getStudyFolder(),
+                    study.getStudyId() + "/" + state + "/meta_resource_sample.txt").toPath());
         }
         File mutLimit = new File(
                 Settings.getStudyFolder(), study.getStudyId() + "/" + state + "/data_mutational_signature_limit.txt");
@@ -195,20 +194,20 @@ public final class StudyHandler {
             empty = empty && m.getSamples().isEmpty();
         }
         if (empty) {
-            mutLimit.delete();
+            Files.delete(mutLimit.toPath());
             study.getMetaFiles().remove("meta_mutational_signature_limit.txt");
-            new File(Settings.getStudyFolder(),
-                    study.getStudyId() + "/" + state + "/meta_mutational_signature_limit.txt").delete();
+            Files.delete(new File(Settings.getStudyFolder(),
+                    study.getStudyId() + "/" + state + "/meta_mutational_signature_limit.txt").toPath());
         }
         empty = true;
         for (MutationalSignature m : study.getMutationalContribution()) {
             empty = empty && m.getSamples().isEmpty();
         }
         if (empty) {
-            mutCon.delete();
+            Files.delete(mutCon.toPath());
             study.getMetaFiles().remove("meta_mutational_signature_contribution.txt");
-            new File(Settings.getStudyFolder(),
-                    study.getStudyId() + "/" + state + "/meta_mutational_signature_contribution.txt").delete();
+            Files.delete(new File(Settings.getStudyFolder(),
+                    study.getStudyId() + "/" + state + "/meta_mutational_signature_contribution.txt").toPath());
         }
 
         Set<String> caseListAll = new HashSet<>();
@@ -233,14 +232,14 @@ public final class StudyHandler {
                 Settings.getStudyFolder(), study.getStudyId() + "/" + state + "/case_lists/cases_cna.txt");
         AddGeneticData.writeCaseList(cnaCases, study.getStudyId(), study.getCnaSampleIds());
         if (study.getCnaSampleIds().isEmpty()) {
-            cnaCases.delete();
+            Files.delete(cnaCases.toPath());
         }
         caseListSequenced.retainAll(study.getCnaSampleIds());
         File cnaSeqCases = new File(
                     Settings.getStudyFolder(), study.getStudyId() + "/" + state + "/case_lists/cases_cnaseq.txt");
         AddGeneticData.writeCaseList(cnaSeqCases, study.getStudyId(), caseListSequenced);
         if (caseListSequenced.isEmpty()) {
-            cnaSeqCases.delete();
+            Files.delete(cnaSeqCases.toPath());
         }
 
         for (Entry<String, List<Timeline>> e : study.getTimelines().entrySet()) {
