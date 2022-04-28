@@ -37,7 +37,7 @@ if (csv.name.contains('Diagnosen_Vorst')) {
                     }
         } else {
             if (m.containsKey(jahrText) && m.containsKey(monatText)
-                && m.get(jahrText) == '' && !m.get(monatText) == '') {
+                && m.get(jahrText) != '' && m.get(monatText) != '') {
                 pMap.put(m.get(pid), m)
             }
         }
