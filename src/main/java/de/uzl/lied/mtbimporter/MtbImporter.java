@@ -50,7 +50,7 @@ public final class MtbImporter {
 
         Timer t = new Timer();
         CheckDropzone checkDropzone = new CheckDropzone(study);
-        t.scheduleAtFixedRate(checkDropzone, 0, Settings.getCronIntervall());
+        t.schedule(checkDropzone, 0, Settings.getCronIntervall());
 
         Logger.info("MtbImporter started!");
     }

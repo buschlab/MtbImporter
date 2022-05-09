@@ -21,7 +21,7 @@ public class Meta {
     @JsonProperty("cancer_study_identifier")
     private String cancerStudyIdentifier;
     @JsonIgnore
-    private Set<String> namespaces = new HashSet<String>();
+    private Set<String> namespaces = new HashSet<>();
     @JsonIgnore
     private Map<String, String> additionalAttributes = new HashMap<>();
 
@@ -38,7 +38,7 @@ public class Meta {
      */
     @JsonIgnore
     public void addNamespace(Collection<String> n) {
-        if (n != null && n.size() > 0) {
+        if (n != null && !n.isEmpty()) {
             n.forEach(a -> namespaces.add(a.split("\\.")[0]));
         }
     }
