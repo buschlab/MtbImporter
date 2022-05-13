@@ -78,8 +78,11 @@ public final class AddHisData {
 
         for (Map<String, Object> m : l) {
             input.setValues(m);
-            for (Entry<String, String> e : study.getPreparation((String) m.get("PID")).entrySet()) {
-                input.getValues().put("_" + e.getKey(), e.getValue());
+            Map<String, String> preparation = study.getPreparation((String) m.get("PID"));
+            if (preparation != null) {
+                for (Entry<String, String> e : preparation.entrySet()) {
+                    input.getValues().put("_" + e.getKey(), e.getValue());
+                }
             }
 
             if (Settings.getMappingMethod().equals("cxx") && cxxMdr != null) {
