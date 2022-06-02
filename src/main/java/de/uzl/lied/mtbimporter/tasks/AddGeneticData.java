@@ -171,6 +171,7 @@ public final class AddGeneticData {
         CaseList seq = jpm.readValue(caseList, CaseList.class);
         seq.setCancerStudyIdentifier(studyId);
         seq.setStableId(studyId + "_" + seq.getStableId().split("_")[seq.getStableId().split("_").length - 1]);
+        seq.getCaseListIds().clear();
         seq.getCaseListIds().addAll(sampleIds);
 
         String seqStr = jpm.writer(jps).writeValueAsString(seq).replace("\\t", "\t");
