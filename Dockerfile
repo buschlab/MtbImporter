@@ -5,7 +5,7 @@ WORKDIR /mtbimporter
 
 RUN mvn install -Dmaven.javadoc.skip=true -Dmaven.test.skip=true
 
-FROM r-base:4.2.0
+FROM r-base:4.2.1
 
 RUN apt-get update && apt-get install -y default-jre
 
