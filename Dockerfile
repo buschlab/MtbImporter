@@ -1,5 +1,32 @@
 FROM maven:3.8.6-openjdk-11-slim as build
 
+RUN apt-get update && apt-get -y install git
+
+RUN git clone https://github.com/mig-frankfurt/maven.git /maven
+WORKDIR /maven
+RUN mvn install -Dmaven.javadoc.skip=true -Dmaven.test.skip=true
+
+RUN git clone https://github.com/mig-frankfurt/maven.spring.git /maven-spring
+WORKDIR /maven-spring
+RUN mvn install -Dmaven.javadoc.skip=true -Dmaven.test.skip=true
+
+RUN git clone https://github.com/mig-frankfurt/dataelementhub.maven.git /dehub-parent
+WORKDIR /dehub-parent
+RUN mvn install -Dmaven.javadoc.skip=true -Dmaven.test.skip=true
+
+RUN git clone https://github.com/mig-frankfurt/dataelementhub.maven.spring.git /dehub-maven-spring
+WORKDIR /dehub-maven-spring
+RUN git checkout develop && mvn install -Dmaven.javadoc.skip=true -Dmaven.test.skip=true
+
+RUN git clone https://github.com/mig-frankfurt/dataelementhub.dal.git /dehub-dal
+WORKDIR /dehub-dal
+RUN git checkout develop && mvn install -Dmaven.javadoc.skip=true -Dmaven.test.skip=true
+
+RUN git clone https://github.com/mig-frankfurt/dataelementhub.model.git /dehub-model
+WORKDIR /dehub-model
+RUN git checkout develop && sed -i 's/2.2.0/2.3.0-SNAPSHOT/' pom.xml
+RUN mvn install -Dmaven.javadoc.skip=true -Dmaven.test.skip=true
+
 COPY $PWD /mtbimporter
 WORKDIR /mtbimporter
 

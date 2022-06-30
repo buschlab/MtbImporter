@@ -11,6 +11,7 @@ import de.samply.common.mdrclient.MdrConnectionException;
 import de.samply.common.mdrclient.MdrInvalidResponseException;
 import de.uzl.lied.mtbimporter.jobs.FhirResolver;
 import de.uzl.lied.mtbimporter.jobs.mdr.centraxx.CxxMdrAttributes;
+import de.uzl.lied.mtbimporter.jobs.mdr.dataelementhub.DataElementHubAttributes;
 import de.uzl.lied.mtbimporter.jobs.mdr.samply.SamplyMdrAttributes;
 import de.uzl.lied.mtbimporter.model.CbioPortalStudy;
 import de.uzl.lied.mtbimporter.model.Clinical;
@@ -191,6 +192,9 @@ public final class AddClinicalData {
                         Logger.error("Could not get data from Samply MDR.");
                         Logger.debug(e);
                     }
+                }
+                if (m.getDataelementhub() != null) {
+                    ch = DataElementHubAttributes.getAttributes(m.getDataelementhub(), mdrProfile, key);
                 }
             }
             attributes.put(key, ch != null ? ch : clinicalAttributes.get(key));
