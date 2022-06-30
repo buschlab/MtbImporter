@@ -30,6 +30,48 @@ jobs:
           path: ~/.m2
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
+      - name: Checkout MIG Maven Parent
+        uses: actions/checkout@v3
+        with:
+          repository: mig-frankfurt/maven
+          ref: master
+      - name: Build MIG Maven Parent
+        run: mvn install -Dmaven.javadoc.skip=true -Dmaven.test.skip=true
+      - name: Checkout MIG Spring Parent
+        uses: actions/checkout@v3
+        with:
+          repository: mig-frankfurt/maven.spring
+          ref: master
+      - name: Build MIG Spring Parent
+        run: mvn install -Dmaven.javadoc.skip=true -Dmaven.test.skip=true
+      - name: Checkout DataElementHub Parent
+        uses: actions/checkout@v3
+        with:
+          repository: mig-frankfurt/dataelementhub.maven
+          ref: master
+      - name: Build Build DataElementHub Parent
+        run: mvn install -Dmaven.javadoc.skip=true -Dmaven.test.skip=true
+      - name: Checkout DataElementHub Spring Parent
+        uses: actions/checkout@v3
+        with:
+          repository: mig-frankfurt/dataelementhub.maven.spring
+          ref: develop
+      - name: Build DataElementHub Spring Parent
+        run: mvn install -Dmaven.javadoc.skip=true -Dmaven.test.skip=true
+      - name: Checkout DataElementHub DAL
+        uses: actions/checkout@v3
+        with:
+          repository: mig-frankfurt/dataelementhub.dal
+          ref: develop
+      - name: Build DataElementHub DAL
+        run: mvn install -Dmaven.javadoc.skip=true -Dmaven.test.skip=true
+      - name: Checkout DataElementHub Model
+        uses: actions/checkout@v3
+        with:
+          repository: mig-frankfurt/dataelementhub.model
+          ref: develop
+      - name: Build DataElementHub Model
+        run: sed -i 's/2.2.0/2.3.0-SNAPSHOT/' pom.xml && mvn install -Dmaven.javadoc.skip=true -Dmaven.test.skip=true
       - name: Build and analyze
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
