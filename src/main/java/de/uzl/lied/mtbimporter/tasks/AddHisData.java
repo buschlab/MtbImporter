@@ -12,6 +12,8 @@ import de.samply.common.mdrclient.MdrInvalidResponseException;
 import de.uzl.lied.mtbimporter.jobs.FhirResolver;
 import de.uzl.lied.mtbimporter.jobs.mdr.centraxx.CxxMdrConvert;
 import de.uzl.lied.mtbimporter.jobs.mdr.centraxx.CxxMdrItemSet;
+import de.uzl.lied.mtbimporter.jobs.mdr.dataelementhub.DataElementHubConvert;
+import de.uzl.lied.mtbimporter.jobs.mdr.dataelementhub.DataElementHubDataElements;
 import de.uzl.lied.mtbimporter.jobs.mdr.samply.SamplyMdrConvert;
 import de.uzl.lied.mtbimporter.jobs.mdr.samply.SamplyMdrItems;
 import de.uzl.lied.mtbimporter.model.CbioPortalStudy;
@@ -20,6 +22,7 @@ import de.uzl.lied.mtbimporter.model.mdr.MdrAttributes;
 import de.uzl.lied.mtbimporter.model.mdr.centraxx.CxxItem;
 import de.uzl.lied.mtbimporter.model.mdr.centraxx.RelationConvert;
 import de.uzl.lied.mtbimporter.settings.CxxMdrSettings;
+import de.uzl.lied.mtbimporter.settings.DataElementHubSettings;
 import de.uzl.lied.mtbimporter.settings.Mapping;
 import de.uzl.lied.mtbimporter.settings.Mdr;
 import de.uzl.lied.mtbimporter.settings.SamplyMdrSettings;
@@ -45,6 +48,7 @@ public final class AddHisData {
 
     /**
      * Process a csv file from hospital information system.
+     *
      * @param study
      * @param csv
      * @throws IOException
@@ -67,12 +71,15 @@ public final class AddHisData {
 
         CxxMdrSettings cxxMdr = null;
         SamplyMdrSettings samplyMdr = null;
+        DataElementHubSettings dataElementHub = null;
 
         for (Mdr m : Settings.getMdr()) {
             if (m.getCxx() != null && m.getCxx().isMappingEnabled()) {
                 cxxMdr = m.getCxx();
             } else if (m.getSamply() != null && m.getSamply().isMappingEnabled()) {
                 samplyMdr = m.getSamply();
+            } else if (m.getDataelementhub() != null && m.getDataelementhub().isMappingEnabled()) {
+                dataElementHub = m.getDataelementhub();
             }
         }
 
@@ -116,6 +123,14 @@ public final class AddHisData {
 
                 // // TODO
 
+            } else if (Settings.getMappingMethod().equals("groovy") && dataElementHub != null) {
+
+                for (Mapping mapping : Settings.getMapping()) {
+                    input.setSourceProfileCode(mapping.getSource());
+                    input.setTargetProfileCode(mapping.getTarget());
+                    study.add(dataElementHubMap(mapping.getModelClass(), dataElementHub, input));
+                }
+
             }
         }
 
@@ -123,8 +138,9 @@ public final class AddHisData {
 
     /**
      * Converts a relation for MDR to a specific jvm pojo object.
-     * @param <T> Target pojo object
-     * @param c Target jvm pojo class
+     *
+     * @param <T>      Target pojo object
+     * @param c        Target jvm pojo class
      * @param relation Relation used as input
      * @return relation converted to an object of class c
      * @throws IOException
@@ -184,6 +200,47 @@ public final class AddHisData {
         }
         RelationConvert output = SamplyMdrConvert.convert(mdr, input);
         Map<String, Map<String, String>> outputItems = SamplyMdrItems.get(mdr, mdr.getTargetNamespace(),
+                input.getTargetProfileCode());
+        if (outputItems.isEmpty()) {
+            Logger.debug("Does not fulfil criteria for target " + input.getTargetProfileCode());
+            return null;
+        }
+        for (Entry<String, Map<String, String>> outputItem : outputItems.entrySet()) {
+            if (outputItem.getValue().containsKey(MdrAttributes.MANDATORY.toString())
+                    && Boolean.TRUE
+                            .equals(Boolean.parseBoolean(outputItem.getValue().get(MdrAttributes.MANDATORY.toString())))
+                    && !output.getValues().containsKey(outputItem.getKey())) {
+                Logger.debug("Does not fulfil criteria for target " + input.getTargetProfileCode());
+                return null;
+            }
+        }
+        if (!output.getValues().isEmpty()) {
+            Logger.info("Successfully mapped object from " + input.getSourceProfileCode() + " to "
+                    + input.getTargetProfileCode());
+            return readClass(c, output);
+        }
+        return null;
+    }
+
+    private static <T> T dataElementHubMap(Class<T> c, DataElementHubSettings mdr, RelationConvert input)
+            throws IOException {
+        Map<String, Map<String, String>> inputItems = DataElementHubDataElements.get(mdr, mdr.getSourceNamespace(),
+                input.getSourceProfileCode());
+        if (inputItems.isEmpty()) {
+            Logger.debug("Does not fulfil criteria for source " + input.getSourceProfileCode());
+            return null;
+        }
+        for (Entry<String, Map<String, String>> inputItem : inputItems.entrySet()) {
+            if (inputItem.getValue().containsKey(MdrAttributes.MANDATORY.toString())
+                    && Boolean.TRUE
+                            .equals(Boolean.parseBoolean(inputItem.getValue().get(MdrAttributes.MANDATORY.toString())))
+                    && !input.getValues().containsKey(inputItem.getKey())) {
+                Logger.debug("Does not fulfil criteria for source " + input.getSourceProfileCode());
+                return null;
+            }
+        }
+        RelationConvert output = DataElementHubConvert.convert(mdr, input);
+        Map<String, Map<String, String>> outputItems = DataElementHubDataElements.get(mdr, mdr.getTargetNamespace(),
                 input.getTargetProfileCode());
         if (outputItems.isEmpty()) {
             Logger.debug("Does not fulfil criteria for target " + input.getTargetProfileCode());
