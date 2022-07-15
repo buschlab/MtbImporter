@@ -33,11 +33,10 @@ public final class DataElementHubAttributes {
      * Extracts clinical header information for cBioPortal using DataElementHub.
      *
      * @param oldMdr
-     * @param mdrProfile
      * @param key
      * @return
      */
-    public static ClinicalHeader getAttributes(DataElementHubSettings oldMdr, String mdrProfile, String key) {
+    public static ClinicalHeader getAttributes(DataElementHubSettings oldMdr, String key) {
 
         DataElementHubSettings mdr = oldMdr;
 
@@ -64,15 +63,15 @@ public final class DataElementHubAttributes {
             Map<AccessLevelType, List<Namespace>> ns = response.getBody();
 
             List<Namespace> namespaces = new ArrayList<>();
-            ns.values().forEach(v -> namespaces.addAll(v));
+            ns.values().forEach(namespaces::addAll);
             List<Namespace> l = new ArrayList<>();
-            namespaces.forEach(n -> {
+            namespaces.forEach(n ->
                 n.getDefinitions().forEach(d -> {
                     if (d.getDesignation().equals(mdrNamespace)) {
                         l.add(n);
                     }
-                });
-            });
+                })
+            );
             if (l.size() != 1) {
                 return null;
             }
@@ -90,13 +89,13 @@ public final class DataElementHubAttributes {
                     new HttpEntity<>(headersMembers), namespaceMembersType);
             List<NamespaceMember> elements = elementsE.getBody();
             List<NamespaceMember> el = new ArrayList<>();
-            elements.forEach(e -> {
+            elements.forEach(e ->
                 e.getDefinitions().forEach(d -> {
                     if (key.equals(d.getDesignation())) {
                         el.add(e);
                     }
-                });
-            });
+                })
+            );
             if (el.size() != 1) {
                 return null;
             }

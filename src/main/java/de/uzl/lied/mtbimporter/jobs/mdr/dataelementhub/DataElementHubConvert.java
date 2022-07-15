@@ -77,15 +77,15 @@ public final class DataElementHubConvert {
             Map<AccessLevelType, List<Namespace>> ns = response.getBody();
 
             List<Namespace> namespaces = new ArrayList<>();
-            ns.values().forEach(v -> namespaces.addAll(v));
+            ns.values().forEach(namespaces::addAll);
             List<Namespace> l = new ArrayList<>();
-            namespaces.forEach(n -> {
+            namespaces.forEach(n ->
                 n.getDefinitions().forEach(d -> {
                     if (d.getDesignation().equals(mdrNamespace)) {
                         l.add(n);
                     }
-                });
-            });
+                })
+            );
             if (l.size() != 1) {
                 return null;
             }
@@ -104,15 +104,15 @@ public final class DataElementHubConvert {
                     new HttpEntity<>(headersMembers), namespaceMembersType);
             List<NamespaceMember> elements = elementsE.getBody();
 
-            ns.values().forEach(v -> namespaces.addAll(v));
+            ns.values().forEach(namespaces::addAll);
             List<NamespaceMember> l2 = new ArrayList<>();
-            elements.forEach(n -> {
+            elements.forEach(n ->
                 n.getDefinitions().forEach(d -> {
                     if (d.getDesignation().equals(input.getSourceProfileCode())) {
                         l2.add(n);
                     }
-                });
-            });
+                })
+            );
             if (l2.size() != 1) {
                 return null;
             }

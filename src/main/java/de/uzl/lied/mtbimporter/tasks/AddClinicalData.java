@@ -194,7 +194,7 @@ public final class AddClinicalData {
                     }
                 }
                 if (m.getDataelementhub() != null) {
-                    ch = DataElementHubAttributes.getAttributes(m.getDataelementhub(), mdrProfile, key);
+                    ch = DataElementHubAttributes.getAttributes(m.getDataelementhub(), key);
                 }
             }
             attributes.put(key, ch != null ? ch : clinicalAttributes.get(key));

@@ -47,31 +47,31 @@ public final class DataElementHubLogin {
         return mdr;
     }
 
-    /**
-     * Refreshed access token for DataElementHub.
-     *
-     * @param mdr Configuration for MDR.
-     * @return Updated configuration with access token and expiration timestamp.
-     */
-    public static DataElementHubSettings refresh(DataElementHubSettings mdr) {
-        RestTemplate rt = new RestTemplate();
-        rt.getInterceptors().add(new BasicAuthenticationInterceptor(mdr.getClientId(), mdr.getClientSecret()));
-        MultiValueMap<String, String> form = new LinkedMultiValueMap<>();
-        form.set("grant_type", "password");
-        form.set("scope", "openid");
-        form.set("username", mdr.getUsername());
-        form.set("password", mdr.getPassword());
-        UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(mdr.getTokenUrl().toString());
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
-        HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(form, headers);
-        MdrToken token = rt.postForObject(builder.build().encode().toUri(), entity, MdrToken.class);
-        if (token != null) {
-            Logger.warn("DataElementHub MDR token not set. Login returned null.");
-            mdr.setToken(token.getAccessToken(), token.getExpiresIn());
-            mdr.setRefreshToken(token.getRefreshToken(), token.getRefreshExpiresIn());
-        }
-        return mdr;
-    }
+    // /**
+    //  * Refreshed access token for DataElementHub.
+    //  *
+    //  * @param mdr Configuration for MDR.
+    //  * @return Updated configuration with access token and expiration timestamp.
+    //  */
+    // public static DataElementHubSettings refresh(DataElementHubSettings mdr) {
+    //     RestTemplate rt = new RestTemplate();
+    //     rt.getInterceptors().add(new BasicAuthenticationInterceptor(mdr.getClientId(), mdr.getClientSecret()));
+    //     MultiValueMap<String, String> form = new LinkedMultiValueMap<>();
+    //     form.set("grant_type", "password");
+    //     form.set("scope", "openid");
+    //     form.set("username", mdr.getUsername());
+    //     form.set("password", mdr.getPassword());
+    //     UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(mdr.getTokenUrl().toString());
+    //     HttpHeaders headers = new HttpHeaders();
+    //     headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+    //     HttpEntity<MultiValueMap<String, String>> entity = new HttpEntity<>(form, headers);
+    //     MdrToken token = rt.postForObject(builder.build().encode().toUri(), entity, MdrToken.class);
+    //     if (token != null) {
+    //         Logger.warn("DataElementHub MDR token not set. Login returned null.");
+    //         mdr.setToken(token.getAccessToken(), token.getExpiresIn());
+    //         mdr.setRefreshToken(token.getRefreshToken(), token.getRefreshExpiresIn());
+    //     }
+    //     return mdr;
+    // }
 
 }

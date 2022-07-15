@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -25,6 +26,8 @@ import org.tinylog.Logger;
  */
 public final class DataElementHubDataElements {
 
+    private static final Map<String, Map<String, Map<String, String>>> CACHE = new HashMap<>();
+
     private DataElementHubDataElements() {
     }
 
@@ -39,78 +42,88 @@ public final class DataElementHubDataElements {
     public static Map<String, Map<String, String>> get(DataElementHubSettings oldMdr, String targetNamespace,
             String targetProfile) {
 
-        DataElementHubSettings mdr = oldMdr;
+        if (!CACHE.containsKey(targetNamespace + "_" + targetProfile)) {
 
-        if (mdr.isTokenExpired()) {
-            mdr = DataElementHubLogin.login(mdr);
-        }
+            DataElementHubSettings mdr = oldMdr;
 
-        RestTemplate rt = new RestTemplate();
-        HttpHeaders headers = new HttpHeaders();
-        UriComponentsBuilder builder = UriComponentsBuilder
-                .fromHttpUrl(mdr.getUrl() + "/namespaces");
-        headers.add(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON.toString());
-        headers.add("Authorization", "Bearer " + mdr.getToken());
-        try {
-            ParameterizedTypeReference<Map<AccessLevelType, List<Namespace>>> responseType =
-                    new ParameterizedTypeReference<Map<AccessLevelType, List<Namespace>>>() {};
-            ResponseEntity<Map<AccessLevelType, List<Namespace>>> response = rt.exchange(
-                    builder.build().encode().toUri(), HttpMethod.GET,
-                    new HttpEntity<>(headers), responseType);
+            if (mdr.isTokenExpired()) {
+                mdr = DataElementHubLogin.login(mdr);
+            }
 
-            Map<AccessLevelType, List<Namespace>> ns = response.getBody();
+            RestTemplate rt = new RestTemplate();
+            HttpHeaders headers = new HttpHeaders();
+            UriComponentsBuilder builder = UriComponentsBuilder
+                    .fromHttpUrl(mdr.getUrl() + "/namespaces");
+            headers.add(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON.toString());
+            headers.add("Authorization", "Bearer " + mdr.getToken());
+            try {
+                ParameterizedTypeReference<Map<AccessLevelType, List<Namespace>>> responseType =
+                        new ParameterizedTypeReference<Map<AccessLevelType, List<Namespace>>>() {};
+                ResponseEntity<Map<AccessLevelType, List<Namespace>>> response = rt.exchange(
+                        builder.build().encode().toUri(), HttpMethod.GET,
+                        new HttpEntity<>(headers), responseType);
+                Map<AccessLevelType, List<Namespace>> ns = response.getBody();
+                if (ns == null) {
+                    return null;
+                }
+                List<Namespace> namespaces = new ArrayList<>();
+                ns.values().forEach(namespaces::addAll);
+                List<Namespace> l = new ArrayList<>();
+                namespaces.forEach(n ->
+                    n.getDefinitions().forEach(d -> {
+                        if (d.getDesignation().equals(targetNamespace)) {
+                            l.add(n);
+                        }
+                    })
+                );
+                if (l.size() != 1) {
+                    return null;
+                }
+                int id = l.get(0).getIdentification().getIdentifier();
 
-            List<Namespace> namespaces = new ArrayList<>();
-            ns.values().forEach(v -> namespaces.addAll(v));
-            List<Namespace> l = new ArrayList<>();
-            namespaces.forEach(n -> {
-                n.getDefinitions().forEach(d -> {
-                    if (d.getDesignation().equals(targetNamespace)) {
-                        l.add(n);
+                ParameterizedTypeReference<List<NamespaceMember>> namespaceMembersType =
+                        new ParameterizedTypeReference<List<NamespaceMember>>() {};
+                UriComponentsBuilder builderMember = UriComponentsBuilder
+                        .fromHttpUrl(mdr.getUrl() + "/namespaces/" + id + "/members?elementType=DATAELEMENT");
+                HttpHeaders headersMembers = new HttpHeaders();
+                headersMembers.add(HttpHeaders.ACCEPT, "application/vnd+de.dataelementhub.listview+json");
+                headersMembers.add("Authorization", "Bearer " + mdr.getToken());
+                Optional<ResponseEntity<List<NamespaceMember>>> elementsE = Optional.of(rt.exchange(builderMember
+                        .build().toUri(), HttpMethod.GET, new HttpEntity<>(headersMembers), namespaceMembersType));
+                List<NamespaceMember> elements = elementsE.get().getBody();
+                if (elements == null) {
+                    return null;
+                }
+                Map<String, Map<String, String>> m = new HashMap<>();
+                elements.forEach(e -> {
+                    Map<String, String> n = new HashMap<>();
+                    String dataElement = "urn:" + id + ":dataelement:" + e.getIdentifier() + ":"
+                            + e.getRevision();
+
+                    UriComponentsBuilder builderSlots = UriComponentsBuilder
+                            .fromHttpUrl(oldMdr.getUrl() + "/element/" + dataElement + "/slots");
+                    ParameterizedTypeReference<List<Slot>> slotsType = new ParameterizedTypeReference<List<Slot>>() {
+                    };
+                    ResponseEntity<List<Slot>> slotsE = rt.exchange(builderSlots.build().toUri(), HttpMethod.GET,
+                            new HttpEntity<>(headersMembers), slotsType);
+                    for (Slot s : slotsE.getBody()) {
+                        n.put(s.getName(), s.getValue());
                     }
+                    m.put(e.getDefinitions().get(0).getDesignation(), n);
                 });
-            });
-            if (l.size() != 1) {
+
+                CACHE.put(targetNamespace + "_" + targetProfile, m);
+
+            } catch (
+
+            final HttpClientErrorException e) {
+                Logger.error("Object not found in MDR!");
                 return null;
             }
-            int id = l.get(0).getIdentification().getIdentifier();
-
-            ParameterizedTypeReference<List<NamespaceMember>> namespaceMembersType =
-                    new ParameterizedTypeReference<List<NamespaceMember>>() {};
-            UriComponentsBuilder builderMember = UriComponentsBuilder
-                    .fromHttpUrl(mdr.getUrl() + "/namespaces/" + id + "/members?elementType=DATAELEMENT");
-            HttpHeaders headersMembers = new HttpHeaders();
-            headersMembers.add(HttpHeaders.ACCEPT, "application/vnd+de.dataelementhub.listview+json");
-            headersMembers.add("Authorization", "Bearer " + mdr.getToken());
-            ResponseEntity<List<NamespaceMember>> elementsE = rt.exchange(builderMember.build().toUri(), HttpMethod.GET,
-                    new HttpEntity<>(headersMembers), namespaceMembersType);
-            List<NamespaceMember> elements = elementsE.getBody();
-            Map<String, Map<String, String>> m = new HashMap<>();
-            elements.forEach(e -> {
-                Map<String, String> n = new HashMap<>();
-                String dataElement = "urn:" + id + ":dataelement:" + e.getIdentifier() + ":"
-                        + e.getRevision();
-
-                UriComponentsBuilder builderSlots = UriComponentsBuilder
-                        .fromHttpUrl(oldMdr.getUrl() + "/element/" + dataElement + "/slots");
-                ParameterizedTypeReference<List<Slot>> slotsType = new ParameterizedTypeReference<List<Slot>>() {
-                };
-                ResponseEntity<List<Slot>> slotsE = rt.exchange(builderSlots.build().toUri(), HttpMethod.GET,
-                        new HttpEntity<>(headersMembers), slotsType);
-                for (Slot s : slotsE.getBody()) {
-                    n.put(s.getName(), s.getValue());
-                }
-                m.put(e.getDefinitions().get(0).getDesignation(), n);
-            });
-
-            return m;
-
-        } catch (
-
-        final HttpClientErrorException e) {
-            Logger.error("Object not found in MDR!");
-            return null;
         }
+
+        return CACHE.get(targetNamespace + "_" + targetProfile);
+
     }
 
 }
