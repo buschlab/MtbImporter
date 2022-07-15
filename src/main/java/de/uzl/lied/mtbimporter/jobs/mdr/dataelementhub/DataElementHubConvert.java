@@ -1,7 +1,5 @@
 package de.uzl.lied.mtbimporter.jobs.mdr.dataelementhub;
 
-import de.dataelementhub.dal.jooq.enums.AccessLevelType;
-import de.dataelementhub.model.dto.element.Namespace;
 import de.dataelementhub.model.dto.element.section.ConceptAssociation;
 import de.dataelementhub.model.dto.listviews.DataElementGroupMember;
 import de.dataelementhub.model.dto.listviews.NamespaceMember;
@@ -21,7 +19,6 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
@@ -55,41 +52,14 @@ public final class DataElementHubConvert {
 
         DataElementHubSettings mdr = oldMdr;
 
-        String mdrNamespace = mdr.getSourceNamespace();
-
         if (mdr.isTokenExpired()) {
             mdr = DataElementHubLogin.login(mdr);
         }
 
-        RestTemplate rt = new RestTemplate();
-        HttpHeaders headers = new HttpHeaders();
-        UriComponentsBuilder builder = UriComponentsBuilder
-                .fromHttpUrl(mdr.getUrl() + "/namespaces");
-        headers.add(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON.toString());
-        headers.add("Authorization", "Bearer " + mdr.getToken());
         try {
-            ParameterizedTypeReference<Map<AccessLevelType, List<Namespace>>> responseType =
-                    new ParameterizedTypeReference<Map<AccessLevelType, List<Namespace>>>() {};
-            ResponseEntity<Map<AccessLevelType, List<Namespace>>> response = rt.exchange(
-                    builder.build().encode().toUri(), HttpMethod.GET,
-                    new HttpEntity<>(headers), responseType);
 
-            Map<AccessLevelType, List<Namespace>> ns = response.getBody();
-
-            List<Namespace> namespaces = new ArrayList<>();
-            ns.values().forEach(namespaces::addAll);
-            List<Namespace> l = new ArrayList<>();
-            namespaces.forEach(n ->
-                n.getDefinitions().forEach(d -> {
-                    if (d.getDesignation().equals(mdrNamespace)) {
-                        l.add(n);
-                    }
-                })
-            );
-            if (l.size() != 1) {
-                return null;
-            }
-            int namespaceId = l.get(0).getIdentification().getIdentifier();
+            RestTemplate rt = new RestTemplate();
+            int namespaceId = DataElementHubNamespace.getNameSpaceId(mdr, mdr.getSourceNamespace());
 
             ParameterizedTypeReference<List<NamespaceMember>> namespaceMembersType =
                     new ParameterizedTypeReference<List<NamespaceMember>>() {};
@@ -104,7 +74,6 @@ public final class DataElementHubConvert {
                     new HttpEntity<>(headersMembers), namespaceMembersType);
             List<NamespaceMember> elements = elementsE.getBody();
 
-            ns.values().forEach(namespaces::addAll);
             List<NamespaceMember> l2 = new ArrayList<>();
             elements.forEach(n ->
                 n.getDefinitions().forEach(d -> {
