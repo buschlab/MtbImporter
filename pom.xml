@@ -81,9 +81,9 @@
       <version>5.3.22</version>
     </dependency>
     <dependency>
-      <groupId>com.github.nr23730</groupId>
-      <artifactId>common-mdrclient</artifactId>
-      <version>99e83716728be00ca9a096039062a734dd7cd7f7</version>
+      <groupId>de.samply</groupId>
+      <artifactId>mdrclient</artifactId>
+      <version>3.1.0</version>
     </dependency>
     <dependency>
       <groupId>com.github.albfernandez</groupId>
