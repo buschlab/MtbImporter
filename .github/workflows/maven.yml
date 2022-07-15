@@ -10,11 +10,59 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
-    - name: Set up JDK 11
-      uses: actions/setup-java@v3
-      with:
-        distribution: 'adopt'
-        java-version: '11'
-    - name: Build with Maven
-      run: mvn install
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'adopt'
+          java-version: '17'
+      - name: Cache Maven packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+          restore-keys: ${{ runner.os }}-m2
+      - name: Checkout MIG Maven Parent
+        uses: actions/checkout@v3
+        with:
+          repository: mig-frankfurt/maven
+          ref: 061d99ff7da75f53b2b27b6193dcf2a9d254ed93
+      - name: Build MIG Maven Parent
+        run: mvn install -Dmaven.javadoc.skip=true -Dmaven.test.skip=true
+      - name: Checkout MIG Spring Parent
+        uses: actions/checkout@v3
+        with:
+          repository: mig-frankfurt/maven.spring
+          ref: 322fa274c9532b89b61d69b1785060e9c391aee4
+      - name: Build MIG Spring Parent
+        run: mvn install -Dmaven.javadoc.skip=true -Dmaven.test.skip=true
+      - name: Checkout DataElementHub Parent
+        uses: actions/checkout@v3
+        with:
+          repository: mig-frankfurt/dataelementhub.maven
+          ref: bff16bc88486891d0c8d3ba3ec22d4ad7c539749
+      - name: Build Build DataElementHub Parent
+        run: sed -i '8 i <version>11.0.0</version>' pom.xml && mvn install -Dmaven.javadoc.skip=true -Dmaven.test.skip=true
+      - name: Checkout DataElementHub Spring Parent
+        uses: actions/checkout@v3
+        with:
+          repository: mig-frankfurt/dataelementhub.maven.spring
+          ref: d3e6bed8ead13396e0a52127fef9f685aebbec84
+      - name: Build DataElementHub Spring Parent
+        run: mvn install -Dmaven.javadoc.skip=true -Dmaven.test.skip=true
+      - name: Checkout DataElementHub DAL
+        uses: actions/checkout@v3
+        with:
+          repository: mig-frankfurt/dataelementhub.dal
+          ref: 079da7a05cd4ab29cc45ee2c19749c6baa82b3ea
+      - name: Build DataElementHub DAL
+        run: mvn install -Dmaven.javadoc.skip=true -Dmaven.test.skip=true -Dmaven.compiler.release=17
+      - name: Checkout DataElementHub Model
+        uses: actions/checkout@v3
+        with:
+          repository: mig-frankfurt/dataelementhub.model
+          ref: d67f3654b371b94394d2c7eaf8b1a83188303df4
+      - name: Build DataElementHub Model
+        run: mvn install -Dmaven.javadoc.skip=true -Dmaven.test.skip=true
+      - uses: actions/checkout@v3
+      - name: Build with Maven
+        run: mvn install

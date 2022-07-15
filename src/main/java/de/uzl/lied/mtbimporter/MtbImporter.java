@@ -4,6 +4,7 @@ import de.uzl.lied.mtbimporter.jobs.CheckDropzone;
 import de.uzl.lied.mtbimporter.jobs.FhirResolver;
 import de.uzl.lied.mtbimporter.jobs.StudyHandler;
 import de.uzl.lied.mtbimporter.jobs.mdr.centraxx.CxxMdrLogin;
+import de.uzl.lied.mtbimporter.jobs.mdr.dataelementhub.DataElementHubLogin;
 import de.uzl.lied.mtbimporter.model.CbioPortalStudy;
 import de.uzl.lied.mtbimporter.settings.ConfigurationLoader;
 import de.uzl.lied.mtbimporter.settings.Mdr;
@@ -43,6 +44,9 @@ public final class MtbImporter {
         for (Mdr m : Settings.getMdr()) {
             if (m.getCxx() != null) {
                 CxxMdrLogin.login(m.getCxx());
+            }
+            if (m.getDataelementhub() != null) {
+                DataElementHubLogin.login(m.getDataelementhub());
             }
         }
 

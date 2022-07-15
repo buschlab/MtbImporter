@@ -7,6 +7,7 @@ public class Mdr {
 
     private CxxMdrSettings cxx;
     private SamplyMdrSettings samply;
+    private DataElementHubSettings dataelementhub;
 
     public CxxMdrSettings getCxx() {
         return cxx;
@@ -14,6 +15,10 @@ public class Mdr {
 
     public SamplyMdrSettings getSamply() {
         return samply;
+    }
+
+    public DataElementHubSettings getDataelementhub() {
+        return dataelementhub;
     }
 
 }

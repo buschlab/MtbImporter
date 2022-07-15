@@ -42,6 +42,17 @@ mdr:
   #     basicUsername: basicUser
   #     basicPassword: basicUUID
   #     mappingEnabled: true
+  #  - dataelementhub:
+  #     url: http://localhost:8090/v1
+  #     tokenUrl: http://mykeycloak/realms/master/protocol/openid-connect/token
+  #     username: admin
+  #     password: Pa55w0rd
+  #     clientId: basicUser
+  #     clientSecret: basicUUID
+  #     sourceNamespace: orbis
+  #     targetNamespace: cbioportal
+  #     language: en
+  #     mappingEnabled: true
 docker:
   compose:
     workdir: /home/user/git/MIRACUM-cbioportal
