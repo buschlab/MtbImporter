@@ -72,6 +72,7 @@ jobs:
           ref: d67f3654b371b94394d2c7eaf8b1a83188303df4
       - name: Build DataElementHub Model
         run: mvn install -Dmaven.javadoc.skip=true -Dmaven.test.skip=true
+      - uses: actions/checkout@v3
       - name: Build and analyze
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
