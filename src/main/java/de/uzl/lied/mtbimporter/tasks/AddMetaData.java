@@ -20,6 +20,7 @@ public final class AddMetaData {
 
     /**
      * Add meta data to study.
+     *
      * @param study Study where the metadata will be added
      * @param rData File with R data frame
      * @throws IOException
@@ -28,7 +29,10 @@ public final class AddMetaData {
         String load = "options(warn = -1); load(\"" + rData.getAbsolutePath() + "\"); ";
 
         String getSampleId = load + "cat(id);";
-        String getTmb = load + "cat(round(x = filt_result_td$tmb, digits = 2));";
+        String getTmb = load
+                + "cat(ifelse(protocol == \"somatic\" || protocol == \"somaticGermline\", "
+                + "round(x = filt_result_td$tmb, digits = 2), "
+                + "round(x = filt_result_td_mutect2$tmb, digits = 2)));";
         String getMsiStatus = load + "cat(as.character(filt_result_td$msi$result$MSI_status));";
         String getMsiScore = load + "cat(as.character(filt_result_td$msi$scores$ratio*100));";
         String getPanel = load + "cat(sureselect_type);";
