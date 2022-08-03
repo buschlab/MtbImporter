@@ -36,7 +36,7 @@ public final class AddResourceData {
      * @throws IOException
      */
     public static void processPdfFile(CbioPortalStudy study, File pdf) throws IOException {
-        String sampleId = pdf.getName().replaceAll("somaticGermline_|somatic_|tumorOnly_|_Report|.pdf", "");
+        String sampleId = pdf.getName().replaceAll("somaticGermline_|somatic_|tumorOnly_|_tumorOnly|_Report|.pdf", "");
         String patientId = FhirResolver.resolvePatientFromSample(sampleId);
         File target = new File(
                 Settings.getResourceFolder(), study.getStudyId() + "/" + patientId + "/" + pdf.getName());
