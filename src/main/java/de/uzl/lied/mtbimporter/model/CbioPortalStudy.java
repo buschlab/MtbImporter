@@ -45,6 +45,7 @@ public class CbioPortalStudy {
 
     /**
      * Filter mutations in study by a specific patient id.
+     *
      * @param sampleId patient id for filtering
      * @return all mutations for specified patient
      */
@@ -72,6 +73,7 @@ public class CbioPortalStudy {
 
     /**
      * Filter continuous cna in study by a specific patient id.
+     *
      * @param sampleId patient id for filtering
      * @return all continuous cna for specified patient
      */
@@ -103,6 +105,7 @@ public class CbioPortalStudy {
 
     /**
      * Adds patient to study with potential merging.
+     *
      * @param patient patient to be added
      */
     public void addPatient(ClinicalPatient patient) {
@@ -118,6 +121,7 @@ public class CbioPortalStudy {
 
     /**
      * Adds multiple patients to study.
+     *
      * @param newPatients list of patients to be added
      */
     public void addPatient(Collection<ClinicalPatient> newPatients) {
@@ -140,6 +144,7 @@ public class CbioPortalStudy {
 
     /**
      * Filter patients in study by a specific patient id.
+     *
      * @param patientId patient id for filtering
      * @return specified patient
      */
@@ -155,6 +160,7 @@ public class CbioPortalStudy {
 
     /**
      * Adds sample to study.
+     *
      * @param sample sample to be added
      */
     public void addSample(ClinicalSample sample) {
@@ -173,6 +179,7 @@ public class CbioPortalStudy {
 
     /**
      * Adds multiple samples to study.
+     *
      * @param newSamples list of samples to be added
      */
     public void addSample(Collection<ClinicalSample> newSamples) {
@@ -203,6 +210,7 @@ public class CbioPortalStudy {
 
     /**
      * Set a list of gene panel matrix entries for study.
+     *
      * @param newGenePanelMatrix list of gene panel matrix entries to be set
      */
     public void setGenePanelMatrix(Collection<GenePanelMatrix> newGenePanelMatrix) {
@@ -213,6 +221,7 @@ public class CbioPortalStudy {
 
     /**
      * Adds gene panel matrix to study.
+     *
      * @param newGenePanelMatrix gene panel matrix entries to be added
      */
     public void addGenePanelMatrix(GenePanelMatrix newGenePanelMatrix) {
@@ -223,6 +232,7 @@ public class CbioPortalStudy {
 
     /**
      * Adds multiple gene panel matrix entries to study.
+     *
      * @param newGenePanelMatrix gene panel matrix entries to be added
      */
     public void addGenePanelMatrix(Collection<GenePanelMatrix> newGenePanelMatrix) {
@@ -241,6 +251,7 @@ public class CbioPortalStudy {
 
     /**
      * Set a list of sample resources for study.
+     *
      * @param sampleResources list of sample resources to be set
      */
     public void setSampleResources(List<SampleResource> sampleResources) {
@@ -259,6 +270,7 @@ public class CbioPortalStudy {
 
     /**
      * Adds sample resource to study.
+     *
      * @param sampleResource sample resource to be added
      */
     public void addSampleResource(SampleResource sampleResource) {
@@ -269,6 +281,7 @@ public class CbioPortalStudy {
 
     /**
      * Adds multimple sample resources to study.
+     *
      * @param sampleResource list of sample resources to be added
      */
     public void addSampleResource(Collection<SampleResource> sampleResource) {
@@ -284,6 +297,7 @@ public class CbioPortalStudy {
 
     /**
      * Filter mutational contribution in study by a specific patient id.
+     *
      * @param sampleId patient id for filtering
      * @return all mutational contributions for specified patient
      */
@@ -308,6 +322,7 @@ public class CbioPortalStudy {
 
     /**
      * Filter mutational limits in study by a specific patient id.
+     *
      * @param sampleId patient id for filtering
      * @return all mutational limits for specified patient
      */
@@ -344,7 +359,8 @@ public class CbioPortalStudy {
             m2.setName(m.getName());
             m2.setDescription(m.getDescription());
             for (Entry<String, Number> e : m.getSamples().entrySet()) {
-                m2.getSamples().put(e.getKey().replace("_TD", ""), e.getValue());
+                m2.getSamples().put(e.getKey()
+                        .replaceAll("_TD|_td_gatk4_mutect2_filtered|tumorOnly_", ""), e.getValue());
             }
             if (map.containsKey(m.getEntityStableId())) {
                 sampleIds.addAll(m2.getSamples().keySet());
@@ -370,6 +386,7 @@ public class CbioPortalStudy {
 
     /**
      * Filter samples in study by a specific patient id.
+     *
      * @param sampleId patient id for filtering
      * @return all samples for specified patient
      */
@@ -389,6 +406,7 @@ public class CbioPortalStudy {
 
     /**
      * Add multiple discrete CNA entries.
+     *
      * @param newCna new discrete CNA entries
      */
     public void addCna(Collection<Cna> newCna) {
@@ -422,6 +440,7 @@ public class CbioPortalStudy {
 
     /**
      * Filter timelines in study by a specific patient id.
+     *
      * @param patientId patient id for filtering
      * @return all timeline entries for specified patient
      */
@@ -449,7 +468,8 @@ public class CbioPortalStudy {
 
     /**
      * Adds a timeline entry of whatever timeline type.
-     * @param type defines the timeline type for later serialization
+     *
+     * @param type  defines the timeline type for later serialization
      * @param entry timeilne entry
      */
     public void addTimeline(String type, Timeline entry) {
@@ -470,7 +490,9 @@ public class CbioPortalStudy {
     }
 
     /**
-     * MDR mapped objects may have various types so there differntiation is here at a central place.
+     * MDR mapped objects may have various types so there differntiation is here at
+     * a central place.
+     *
      * @param o study object of whatever type
      */
     public void add(Object o) {
@@ -536,7 +558,9 @@ public class CbioPortalStudy {
     }
 
     /**
-     * Set a new timestamp as last modficiation. Used as starting point after restart.
+     * Set a new timestamp as last modficiation. Used as starting point after
+     * restart.
+     *
      * @param newState timestamp representing the last modification
      */
     public void setState(Long newState) {
