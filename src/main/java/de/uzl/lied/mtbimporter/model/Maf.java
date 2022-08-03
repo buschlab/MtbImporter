@@ -109,7 +109,7 @@ public class Maf {
     }
 
     public void setTumorSampleBarcode(String tumorSampleBarcode) {
-        this.tumorSampleBarcode = tumorSampleBarcode.replace("_TD", "");
+        this.tumorSampleBarcode = tumorSampleBarcode.replaceAll("_TD|tumorOnly_", "");
     }
 
     public Integer getStartPosition() {
