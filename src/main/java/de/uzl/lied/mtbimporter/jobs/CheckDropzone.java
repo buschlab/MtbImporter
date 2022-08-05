@@ -63,22 +63,25 @@ public class CheckDropzone extends TimerTask {
                 count++;
             }
 
-            for (File f : files) {
-                try {
-                    Binding b = new Binding();
-                    GroovyShell s = new GroovyShell(b);
-                    b.setVariable("csv", f);
-                    b.setVariable("study", newStudy);
-                    s.evaluate(new File("mapper/prepare.groovy"));
-                } catch (IOException e) {
-                    Logger.error("Could not access file mapper/prepare.groovy");
-                    Logger.debug(e);
-                } catch (CompilationFailedException e) {
-                    Logger.error("Could not compile Groovy script mapper/prepare.groovy");
-                    Logger.debug(e);
-                } catch (Exception e) {
-                    Logger.error("Error executing Groovy script mapper/prepare.groovy");
-                    Logger.debug(e);
+            File prepare = new File("mapper/prepare.groovy");
+            if (prepare.exists()) {
+                for (File f : files) {
+                    try {
+                        Binding b = new Binding();
+                        GroovyShell s = new GroovyShell(b);
+                        b.setVariable("csv", f);
+                        b.setVariable("study", newStudy);
+                        s.evaluate(prepare);
+                    } catch (IOException e) {
+                        Logger.error("Could not access file mapper/prepare.groovy");
+                        Logger.debug(e);
+                    } catch (CompilationFailedException e) {
+                        Logger.error("Could not compile Groovy script mapper/prepare.groovy");
+                        Logger.debug(e);
+                    } catch (Exception e) {
+                        Logger.error("Error executing Groovy script mapper/prepare.groovy");
+                        Logger.debug(e);
+                    }
                 }
             }
 
