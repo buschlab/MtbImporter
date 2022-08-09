@@ -26,6 +26,8 @@ public class Settings {
     private static File studyFolder;
     @JsonProperty("studyTemplate")
     private static String studyTemplate;
+    @JsonProperty("patientIdName")
+    private static String patientIdName;
     @JsonProperty("mainStudyId")
     private static String mainStudyId;
     @JsonProperty("urlBase")
@@ -114,6 +116,15 @@ public class Settings {
     @JsonProperty("studyTemplate")
     public void setStudyTemplate(String newStudyTemplate) {
         studyTemplate = newStudyTemplate;
+    }
+
+    public static String getPatientIdName() {
+        return patientIdName;
+    }
+
+    @JsonProperty("patientIdName")
+    public static void setPatientIdName(String patientIdName) {
+        Settings.patientIdName = patientIdName;
     }
 
     public static String getMainStudyId() {

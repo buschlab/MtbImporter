@@ -85,7 +85,7 @@ public final class AddHisData {
 
         for (Map<String, Object> m : l) {
             input.setValues(m);
-            Map<String, String> preparation = study.getPreparation((String) m.get("PID"));
+            Map<String, String> preparation = study.getPreparation((String) m.get(Settings.getPatientIdName()));
             if (preparation != null) {
                 for (Entry<String, String> e : preparation.entrySet()) {
                     input.getValues().put("_" + e.getKey(), e.getValue());
