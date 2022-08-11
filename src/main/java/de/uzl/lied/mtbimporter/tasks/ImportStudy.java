@@ -83,27 +83,6 @@ public final class ImportStudy {
         Logger.debug(importResult);
         Logger.error(importError);
 
-        if (Boolean.TRUE.equals(Settings.getRestartAfterImport())) {
-            args.clear();
-            if (Settings.getDocker() != null && Settings.getDocker().getCompose() != null) {
-                args.add("docker-compose");
-                args.add("restart");
-                args.add(Settings.getDocker().getCompose().getServiceName());
-            } else if (Settings.getDocker() != null && Settings.getDocker().getCompose() == null) {
-                args.add("docker");
-                args.add("restart");
-                args.add(Settings.getDocker().getContainerName());
-            } else {
-                pb.command(Settings.getRestartCommand().split(" "));
-            }
-            final Process restartProcess = pb.start();
-            String restartResult = new String(restartProcess.getInputStream().readAllBytes());
-            String restartError = new String(restartProcess.getErrorStream().readAllBytes());
-            Logger.debug(restartResult);
-            Logger.error(restartError);
-            Logger.info("Restarted cBioPortal!");
-        }
-
     }
 
     /**
