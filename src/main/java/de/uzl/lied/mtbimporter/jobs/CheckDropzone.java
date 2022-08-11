@@ -44,14 +44,12 @@ public class CheckDropzone extends TimerTask {
     }
 
     @Override
-    @SuppressWarnings({"checkstyle:IllegalCatch"})
+    @SuppressWarnings({ "checkstyle:IllegalCatch", "checkstyle:MethodLength" })
     public void run() {
-
         Long newState = System.currentTimeMillis();
         int count = 0;
         CbioPortalStudy newStudy = new CbioPortalStudy();
         newStudy.setStudyId(study.getStudyId());
-
         Logger.info("Checking for files!");
         for (InputFolder inputfolder : Settings.getInputFolders()) {
             File[] files = new File(inputfolder.getSource()).listFiles();
@@ -62,7 +60,6 @@ public class CheckDropzone extends TimerTask {
             } else {
                 count++;
             }
-
             File prepare = new File("mapper/prepare.groovy");
             if (prepare.exists()) {
                 for (File f : files) {
@@ -84,7 +81,6 @@ public class CheckDropzone extends TimerTask {
                     }
                 }
             }
-
             for (File f : files) {
                 if (f.getName().equals(".gitkeep")) {
                     continue;
@@ -125,7 +121,6 @@ public class CheckDropzone extends TimerTask {
                         default:
                             break;
                     }
-
                     if (inputfolder.getTarget() == null || inputfolder.getTarget().length() == 0) {
                         Files.delete(f.toPath());
                     } else {
@@ -142,19 +137,16 @@ public class CheckDropzone extends TimerTask {
                 }
             }
         }
-
         if (count > 0) {
             try {
                 File folder = new File(Settings.getStudyFolder(), study.getStudyId());
                 FileUtils.copyDirectory(
                         new File(folder, Long.toString(study.getState())),
                         new File(folder, Long.toString(newState)));
-
                 StudyHandler.merge(study, newStudy);
                 StudyHandler.write(study, newState);
                 ImportStudy.importStudy(study.getStudyId(), newState, Settings.getOverrideWarnings());
                 study.setState(newState);
-
                 Map<String, List<String>> patientsByDate = new HashMap<>();
                 Map<String, CbioPortalStudy> patientStudy = new HashMap<>();
                 for (ClinicalPatient patient : newStudy.getPatients()) {
@@ -189,6 +181,29 @@ public class CheckDropzone extends TimerTask {
                 Logger.error("Importing study failed with timestamp", newState);
                 Logger.debug(e);
                 Thread.currentThread().interrupt();
+            }
+        }
+        if (count > 0 && Boolean.TRUE.equals(Settings.getRestartAfterImport())) {
+            ProcessBuilder pb = new ProcessBuilder();
+            List<String> args = new ArrayList<>();
+            if (Settings.getDocker() != null && Settings.getDocker().getCompose() != null) {
+                args.add("docker-compose");
+                args.add("restart");
+                args.add(Settings.getDocker().getCompose().getServiceName());
+            } else if (Settings.getDocker() != null && Settings.getDocker().getCompose() == null) {
+                args.add("docker");
+                args.add("restart");
+                args.add(Settings.getDocker().getContainerName());
+            } else {
+                pb.command(Settings.getRestartCommand().split(" "));
+            }
+            try {
+                Process restartProcess = pb.start();
+                String restartResult = new String(restartProcess.getInputStream().readAllBytes());
+                Logger.debug(restartResult);
+                Logger.info("Restarted cBioPortal!");
+            } catch (IOException e) {
+                Logger.error(e.getStackTrace());
             }
         }
     }
