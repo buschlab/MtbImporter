@@ -13,6 +13,7 @@ services:
       - "./processed:/app/processed"
       - "./study:/app/study"
       - "./template:/app/template"
+      - "./reports:/app/reports"
     networks:
       - miracum-cbioportal_cbioportal_net
 
