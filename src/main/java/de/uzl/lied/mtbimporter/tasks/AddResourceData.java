@@ -31,12 +31,14 @@ public final class AddResourceData {
 
     /**
      * Adds PDF-Report of MIRACUM-Pipe to study.
+     *
      * @param study
      * @param pdf
      * @throws IOException
      */
     public static void processPdfFile(CbioPortalStudy study, File pdf) throws IOException {
-        String sampleId = pdf.getName().replaceAll("somaticGermline_|somatic_|tumorOnly_|_tumorOnly|_Report|.pdf", "");
+        String sampleId = pdf.getName()
+                .replaceAll("somaticGermline_|somatic_|tumorOnly_|_tumorOnly|_Report|_Slides|.pdf", "");
         String patientId = FhirResolver.resolvePatientFromSample(sampleId);
         File target = new File(
                 Settings.getResourceFolder(), study.getStudyId() + "/" + patientId + "/" + pdf.getName());
@@ -45,7 +47,7 @@ public final class AddResourceData {
         SampleResource sr = new SampleResource();
         sr.setPatientId(patientId);
         sr.setSampleId(sampleId);
-        sr.setResourceId("PATHOLOGY_SLIDE");
+        sr.setResourceId(pdf.getName().contains("_Report") ? "PATHOLOGY_SLIDE" : "SLIDE");
         try {
             sr.setUrl(Settings.getUrlBase() + "/" + study.getStudyId() + "/" + patientId + "/" + pdf.getName());
         } catch (MalformedURLException e) {
@@ -57,6 +59,7 @@ public final class AddResourceData {
 
     /**
      * Read existing resource definitions.
+     *
      * @param input
      * @return
      * @throws IOException
@@ -73,6 +76,7 @@ public final class AddResourceData {
 
     /**
      * Write resource definitions from pojo to tsv.
+     *
      * @param resources
      * @param target
      * @throws JsonGenerationException
