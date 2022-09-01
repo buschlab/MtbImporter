@@ -32,7 +32,7 @@ public class CbioPortalStudy {
     private List<ContinuousCna> seg = new ArrayList<>();
     private Map<String, Map<String, String>> preparation = new HashMap<>();
     private Map<String, GenePanelMatrix> genePanelMatrix = new HashMap<>();
-    private Map<String, SampleResource> sampleResources = new HashMap<>();
+    private Map<String, Map<String, SampleResource>> sampleResources = new HashMap<>();
     private Map<String, MutationalSignature> mutationalLimit = new HashMap<>();
     private Map<String, MutationalSignature> mutationalContribution = new HashMap<>();
     private String studyId = "";
@@ -255,17 +255,30 @@ public class CbioPortalStudy {
      * @param sampleResources list of sample resources to be set
      */
     public void setSampleResources(List<SampleResource> sampleResources) {
+        Map<String, Map<String, SampleResource>> resources = new HashMap<>();
         for (SampleResource sr : sampleResources) {
-            this.sampleResources.put(sr.getSampleId(), sr);
+            Map<String, SampleResource> m = resources.getOrDefault(sr.getSampleId(), new HashMap<>());
+            m.put(sr.getResourceId(), sr);
+            resources.put(sr.getSampleId(), m);
         }
+        this.sampleResources = resources;
     }
 
+    /**
+     * Get a list of all sample resources of the study.
+     *
+     * @return
+     */
     public Collection<SampleResource> getSampleResources() {
-        return sampleResources.values();
+        List<SampleResource> sampleResourcesList = new ArrayList<>();
+        sampleResources.values().forEach(v -> {
+            sampleResourcesList.addAll(v.values());
+        });
+        return sampleResourcesList;
     }
 
-    public SampleResource getSampleResourcesBySampleId(String sampleId) {
-        return sampleResources.get(sampleId);
+    public Collection<SampleResource> getSampleResourcesBySampleId(String sampleId) {
+        return sampleResources.get(sampleId).values();
     }
 
     /**
@@ -275,7 +288,10 @@ public class CbioPortalStudy {
      */
     public void addSampleResource(SampleResource sampleResource) {
         if (sampleResource != null) {
-            this.sampleResources.put(sampleResource.getSampleId(), sampleResource);
+            Map<String, SampleResource> m = this.sampleResources.getOrDefault(sampleResource.getSampleId(),
+                    new HashMap<>());
+            m.put(sampleResource.getResourceId(), sampleResource);
+            sampleResources.put(sampleResource.getSampleId(), m);
         }
     }
 
