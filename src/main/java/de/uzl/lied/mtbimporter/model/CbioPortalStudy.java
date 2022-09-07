@@ -278,7 +278,7 @@ public class CbioPortalStudy {
     }
 
     public Collection<SampleResource> getSampleResourcesBySampleId(String sampleId) {
-        return sampleResources.get(sampleId).values();
+        return sampleResources.getOrDefault(sampleId, new HashMap<>()).values();
     }
 
     /**
