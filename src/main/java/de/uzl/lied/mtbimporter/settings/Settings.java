@@ -123,7 +123,7 @@ public class Settings {
     }
 
     @JsonProperty("patientIdName")
-    public static void setPatientIdName(String patientIdName) {
+    public void setPatientIdName(String patientIdName) {
         Settings.patientIdName = patientIdName;
     }
 
