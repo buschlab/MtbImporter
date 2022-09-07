@@ -197,6 +197,7 @@ public class CheckDropzone extends TimerTask {
             } else {
                 pb.command(Settings.getRestartCommand().split(" "));
             }
+            pb.command(args);
             try {
                 Process restartProcess = pb.start();
                 String restartResult = new String(restartProcess.getInputStream().readAllBytes());
