@@ -150,14 +150,15 @@ public class CheckDropzone extends TimerTask {
                 Map<String, List<String>> patientsByDate = new HashMap<>();
                 Map<String, CbioPortalStudy> patientStudy = new HashMap<>();
                 for (ClinicalPatient patient : newStudy.getPatients()) {
-                    if (patient.getAdditionalAttributes().containsKey("PRESENTATION_DATE")) {
+                    ClinicalPatient patient2 = study.getPatient(patient.getPatientId());
+                    if (patient2.getAdditionalAttributes().containsKey("PRESENTATION_DATE")) {
                         List<String> al = patientsByDate.getOrDefault(
-                                patient.getAdditionalAttributes().get("PRESENTATION_DATE"),
+                            patient2.getAdditionalAttributes().get("PRESENTATION_DATE"),
                                 new ArrayList<>());
-                        al.add(patient.getPatientId());
-                        patientsByDate.put((String) patient.getAdditionalAttributes().get("PRESENTATION_DATE"), al);
-                        patientStudy.put(patient.getPatientId(),
-                                StudyHandler.getPatientStudy(study, patient.getPatientId()));
+                        al.add(patient2.getPatientId());
+                        patientsByDate.put((String) patient2.getAdditionalAttributes().get("PRESENTATION_DATE"), al);
+                        patientStudy.put(patient2.getPatientId(),
+                                StudyHandler.getPatientStudy(study, patient2.getPatientId()));
                     }
                 }
                 for (Entry<String, List<String>> e : patientsByDate.entrySet()) {
