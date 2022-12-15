@@ -68,7 +68,7 @@ public final class AddTimelineData {
 
     private static void processTimelineClass(CbioPortalStudy study, Timeline t, String type) {
 
-        if (t.getStartDate() == null || t.getStopDate() == null) {
+        if (t.getStartDate() == null) {
             return;
         }
         study.addTimeline(type, t);
