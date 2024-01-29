@@ -47,7 +47,7 @@ public final class ImportStudy {
             args.add("-v");
             args.add(Settings.getStudyFolder() + ":" + Settings.getDocker().getStudyFolder());
             args.add("-v");
-            args.add(Settings.getDocker().getPropteriesFile() + ":/cbioportal/portal.properties");
+            args.add(Settings.getDocker().getPropteriesFile() + ":/cbioportal/application.properties");
             if (portal[0].equals("-p")) {
                 args.add("-v");
                 args.add(Settings.getDocker().getPortalInfoVolume() + ":" + Settings.getPortalInfo());
