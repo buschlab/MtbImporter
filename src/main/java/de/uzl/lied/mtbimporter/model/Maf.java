@@ -140,6 +140,10 @@ public class Maf {
         return hugoSymbol;
     }
 
+    public String getEntrezGeneId() {
+        return entrezGeneId;
+    }
+
     public String getChromosome() {
         return chromosome;
     }
@@ -178,13 +182,14 @@ public class Maf {
      * @return Merged list of mutations
      */
     public static List<Maf> merge(Collection<Maf> maf1, Collection<Maf> maf2) {
-        return new ArrayList<>(Stream.of(maf1, maf2).flatMap(Collection::stream).collect(Collectors.toMap(m -> {
-            String s = m.getTumorSampleBarcode() + ";";
-            s += m.getStartPosition() + ";";
-            s += m.getEndPosition() + ";";
-            s += m.getTxChange();
-            return s;
-        }, Function.identity(), (Maf x, Maf y) -> y)).values());
+        return new ArrayList<>(Stream.of(maf1, maf2).flatMap(Collection::stream)
+                .filter(m -> !"NA".equals(m.getEntrezGeneId())).collect(Collectors.toMap(m -> {
+                    String s = m.getTumorSampleBarcode() + ";";
+                    s += m.getStartPosition() + ";";
+                    s += m.getEndPosition() + ";";
+                    s += m.getTxChange();
+                    return s;
+                }, Function.identity(), (Maf x, Maf y) -> y)).values());
     }
 
 }
