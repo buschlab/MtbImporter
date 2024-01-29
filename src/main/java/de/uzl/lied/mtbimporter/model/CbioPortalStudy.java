@@ -427,6 +427,9 @@ public class CbioPortalStudy {
      */
     public void addCna(Collection<Cna> newCna) {
         for (Cna c : newCna) {
+            if ("NA".equals(c.getEntrezGeneId())) {
+                continue;
+            }
             Cna c2 = new Cna();
             c2.setEntrezGeneId(c.getEntrezGeneId());
             c2.setHugoSymbol(c.getHugoSymbol());
