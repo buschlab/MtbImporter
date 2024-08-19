@@ -16,7 +16,7 @@ If you want to consume FHIR resources, you will need to flatten them first to a 
 - Supports the following MDRs
     - [Kairos CentraXX MDR](https://www.kairos.de/knowledge-base/produkt/mdr/) (commercial product)
     - [Samply MDR](https://bitbucket.org/medicalinformatics/samply.mdr/src/master/src/site/markdown/index.md) (AGPL-3.0)
-    - [DataElementHub](https://github.com/mig-frankfurt/dataelementhub.rest) (AGPL-3.0), see [here](https://github.com/nr23730/dataelementhub-deploy) for Docker deployment
+    - [DataElementHub](https://github.com/imi-frankfurt/dataelementhub.rest) (AGPL-3.0), see [here](https://github.com/nr23730/dataelementhub-deploy) for Docker deployment
 - Annotation of data columns using metadata repository (MDR)
 - Code independent data transformation through MDR and Groovy scripts
 - Translation of ICD-O-3 classification to OncoTree using FHIR Terminology services
