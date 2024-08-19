@@ -65,7 +65,7 @@ jobs:
           repository: imi-frankfurt/dataelementhub.dal
           ref: 079da7a05cd4ab29cc45ee2c19749c6baa82b3ea
       - name: Build DataElementHub DAL
-        run: mvn install -Dmaven.javadoc.skip=true -Dmaven.test.skip=true -Dmaven.compiler.release=17
+        run: mvn install -Dmaven.javadoc.skip=true -Dmaven.test.skip=true -Dmaven.compiler.release=21
       - name: Checkout DataElementHub Model
         uses: actions/checkout@v4
         with:
@@ -78,4 +78,4 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Needed to get PR information, if any
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.organization=nr23730 -Dsonar.host.url=https://sonarcloud.io -Dsonar.projectKey=nr23730_MtbImporter
+        run: mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar -Dsonar.organization=buschlab -Dsonar.host.url=https://sonarcloud.io -Dsonar.projectKey=buschlab_MtbImporter

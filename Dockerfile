@@ -1,4 +1,4 @@
-FROM maven:3.8.5-openjdk-17-slim as build
+FROM maven:3-eclipse-temurin-21 as build
 
 RUN apt-get update && apt-get -y install git
 
@@ -21,7 +21,7 @@ RUN git checkout d3e6bed8ead13396e0a52127fef9f685aebbec84 && mvn install -Dmaven
 
 RUN git clone https://github.com/imi-frankfurt/dataelementhub.dal.git /dehub-dal
 WORKDIR /dehub-dal
-RUN git checkout 079da7a05cd4ab29cc45ee2c19749c6baa82b3ea && mvn install -Dmaven.javadoc.skip=true -Dmaven.test.skip=true -Dmaven.compiler.release=17
+RUN git checkout 079da7a05cd4ab29cc45ee2c19749c6baa82b3ea && mvn install -Dmaven.javadoc.skip=true -Dmaven.test.skip=true -Dmaven.compiler.release=21
 
 RUN git clone https://github.com/imi-frankfurt/dataelementhub.model.git /dehub-model
 WORKDIR /dehub-model
@@ -32,11 +32,9 @@ WORKDIR /mtbimporter
 
 RUN mvn install -Dmaven.javadoc.skip=true -Dmaven.test.skip=true
 
-FROM r-base:4.3.3
+FROM r-base:4.4.1
 
-RUN apt-get update && apt-get install -y openjdk-17-jre
-
-RUN wget https://download.docker.com/linux/debian/dists/bullseye/pool/stable/amd64/docker-ce-cli_20.10.12~3-0~debian-bullseye_amd64.deb && dpkg -i docker-ce-cli_*.deb && rm docker-ce-cli_*.deb
+RUN apt-get update && apt-get install -y openjdk-21-jre docker-cli
 
 COPY --from=build /mtbimporter/target/mtbimporter-*-jar-with-dependencies.jar /app/mtbimporter.jar
 ENTRYPOINT ["java", "-jar", "/app/mtbimporter.jar"]
