@@ -8,10 +8,25 @@ jobs:
   docker:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-    - name: Build the Docker image
-      run: docker build . --file Dockerfile --tag ghcr.io/${{ secrets.REPO }}/mtbimporter:latest --label maintainer="Niklas Reimer <${{ secrets.EMAIL }}>"
-    - name: Login to Docker registry
-      run: echo ${{ secrets.GITHUB_TOKEN }} | docker login -u ${{ secrets.USER }} --password-stdin ${{ secrets.DOCKER_URL }}
-    - name: Upload Docker image
-      run: docker push ${{ secrets.DOCKER_URL }}/${{ secrets.REPO }}/mtbimporter:latest
+     - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4
+
+      - name: Login to Docker registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Build and push image
+        id: docker_build
+        uses: docker/build-push-action@v6
+        with:
+          push: true
+          tags: ghcr.io/buschlab/mtbimporter:latest
+          platforms: linux/amd64,linux/arm64/v8

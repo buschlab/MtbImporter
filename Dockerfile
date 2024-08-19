@@ -1,4 +1,4 @@
-FROM maven:3-eclipse-temurin-21 as build
+FROM maven:3-eclipse-temurin-17 as build
 
 RUN apt-get update && apt-get -y install git
 
@@ -21,7 +21,7 @@ RUN git checkout d3e6bed8ead13396e0a52127fef9f685aebbec84 && mvn install -Dmaven
 
 RUN git clone https://github.com/imi-frankfurt/dataelementhub.dal.git /dehub-dal
 WORKDIR /dehub-dal
-RUN git checkout 079da7a05cd4ab29cc45ee2c19749c6baa82b3ea && mvn install -Dmaven.javadoc.skip=true -Dmaven.test.skip=true -Dmaven.compiler.release=21
+RUN git checkout 079da7a05cd4ab29cc45ee2c19749c6baa82b3ea && mvn install -Dmaven.javadoc.skip=true -Dmaven.test.skip=true -Dmaven.compiler.release=17
 
 RUN git clone https://github.com/imi-frankfurt/dataelementhub.model.git /dehub-model
 WORKDIR /dehub-model
