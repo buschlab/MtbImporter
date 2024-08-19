@@ -3,7 +3,7 @@
 MtbImporter is a tool that eases the data integration, management and import of both clinical and mutational data into [cBioPortal](https://cbioportal.org).
 It is tested and optimized to work with the core components of the MIRACUM UseCase 3 *Support for Molecular Tumor Boards*, which are available here:
 
-- [MIRACUM-cBioPortal](https://github.com/buschlab/MIRACUM-cBioPortal)
+- [MTB-cbioportal](https://github.com/buschlab/MTB-cbioportal)
 - [MIRACUM-Pipe](https://github.com/AG-Boerries/MIRACUM-Pipe) (v3.0.0 and upwards)
 
 To account for the huge variety of clinical source systems, this tool relies on csv files as input format and uses Metadata Repositories to store data model descriptions and their relations in a source code independent way.
@@ -181,9 +181,10 @@ _VORNAME + " " + src
 
 ## Authors
 
-- [Niklas Reimer](https://www.systembiologie.uni-luebeck.de/team/alumni/niklas-reimer/) | Group for Medical Systems Biology, Lübeck Institute of Experimental Dermatology, 
-Universität zu Lübeck, Germany
-  - [@niklas_reimer](https://twitter.com/niklas_reimer)
+- [Niklas Reimer](https://medsysbio-luebeck.de/team/niklas-reimer/)
+  - Group for Medical Systems Biology, Lübeck Institute of Experimental Dermatology, Universität zu Lübeck, Germany
+  - Medical Data Integration Center (MeDIC), University Hospital Schleswig-Holstein, Germany
+  - [@niklas@toot.backbord.net](https://toot.backbord.net/@niklas)
   - [n.reimer@uni-luebeck.de](mailto:n.reimer@uni-luebeck.de)
 
 ## References
