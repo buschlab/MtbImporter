@@ -14,11 +14,11 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
-      - name: Set up JDK 17
+      - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
-          distribution: 'zulu'
-          java-version: '17'
+          distribution: 'adopt'
+          java-version: '21'
       - name: Cache SonarCloud packages
         uses: actions/cache@v4
         with:
@@ -35,44 +35,44 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: imi-frankfurt/maven
-          ref: 061d99ff7da75f53b2b27b6193dcf2a9d254ed93
+          ref: 37dab8a52e2c38cb5d45a1c59cacaf4070c668ba
       - name: Build IMI Maven Parent
         run: mvn install -Dmaven.javadoc.skip=true -Dmaven.test.skip=true
       - name: Checkout IMI Spring Parent
         uses: actions/checkout@v4
         with:
           repository: imi-frankfurt/maven.spring
-          ref: 322fa274c9532b89b61d69b1785060e9c391aee4
+          ref: d716857d7e60d7e5a8fb213b93ea30c75958ad12
       - name: Build IMI Spring Parent
         run: mvn install -Dmaven.javadoc.skip=true -Dmaven.test.skip=true
       - name: Checkout DataElementHub Parent
         uses: actions/checkout@v4
         with:
           repository: imi-frankfurt/dataelementhub.maven
-          ref: bff16bc88486891d0c8d3ba3ec22d4ad7c539749
+          ref: 2bffcdf94cb2e210caa9ea67f84bf8b2e4e56612
       - name: Build Build DataElementHub Parent
-        run: sed -i '8 i <version>11.0.0</version>' pom.xml && mvn install -Dmaven.javadoc.skip=true -Dmaven.test.skip=true
+        run: mvn install -Dmaven.javadoc.skip=true -Dmaven.test.skip=true
       - name: Checkout DataElementHub Spring Parent
         uses: actions/checkout@v4
         with:
           repository: imi-frankfurt/dataelementhub.maven.spring
-          ref: d3e6bed8ead13396e0a52127fef9f685aebbec84
+          ref: 657516f56f73d7ab07872a3bf736bf258c7e018c
       - name: Build DataElementHub Spring Parent
-        run: mvn install -Dmaven.javadoc.skip=true -Dmaven.test.skip=true
+        run: sed -i 's/<version>12.0.0<\/version>/<version>13.0.0<\/version>/' pom.xml && mvn install -Dmaven.javadoc.skip=true -Dmaven.test.skip=true
       - name: Checkout DataElementHub DAL
         uses: actions/checkout@v4
         with:
           repository: imi-frankfurt/dataelementhub.dal
-          ref: 079da7a05cd4ab29cc45ee2c19749c6baa82b3ea
+          ref: 1f9cb07c4fed12dba3c09a846e89150c222efbf0
       - name: Build DataElementHub DAL
-        run: mvn install -Dmaven.javadoc.skip=true -Dmaven.test.skip=true -Dmaven.compiler.release=17
+        run: mvn install -Dmaven.javadoc.skip=true -Dmaven.test.skip=true
       - name: Checkout DataElementHub Model
         uses: actions/checkout@v4
         with:
           repository: imi-frankfurt/dataelementhub.model
-          ref: d67f3654b371b94394d2c7eaf8b1a83188303df4
+          ref: 0ae6275653b8b997253a1e7ad04549f95367d504
       - name: Build DataElementHub Model
-        run: mvn install -Dmaven.javadoc.skip=true -Dmaven.test.skip=true
+        run: sed -i 's/<version>11.3.0<\/version>/<version>13.0.0<\/version>/' pom.xml && sed -i 's/<version>1.18.24<\/version>/<version>1.18.30<\/version>/' pom.xml && mvn install -Dmaven.javadoc.skip=true -Dmaven.test.skip=true
       - uses: actions/checkout@v4
       - name: Build and analyze
         env:
