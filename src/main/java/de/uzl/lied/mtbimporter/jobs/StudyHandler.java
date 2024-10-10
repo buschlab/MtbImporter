@@ -1,6 +1,5 @@
 package de.uzl.lied.mtbimporter.jobs;
 
-import com.google.common.io.ByteStreams;
 import de.uzl.lied.mtbimporter.model.CbioPortalStudy;
 import de.uzl.lied.mtbimporter.model.ClinicalSample;
 import de.uzl.lied.mtbimporter.model.Cna;
@@ -16,10 +15,9 @@ import de.uzl.lied.mtbimporter.tasks.AddResourceData;
 import de.uzl.lied.mtbimporter.tasks.AddSignatureData;
 import de.uzl.lied.mtbimporter.tasks.AddTimelineData;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map.Entry;
@@ -42,15 +40,14 @@ public final class StudyHandler {
      */
     public static CbioPortalStudy load(String studyId) throws IOException {
         CbioPortalStudy study = new CbioPortalStudy();
-        File stateFile = new File(Settings.getStudyFolder(), studyId + "/.state");
+        Path stateFile = Path.of(Settings.getStudyFolder().getAbsolutePath(), studyId, ".state");
         study.setStudyId(studyId);
-        if (!stateFile.exists()) {
+        if (!stateFile.toFile().exists()) {
             FileUtils.copyDirectory(new File(Settings.getStudyTemplate()),
                     new File(Settings.getStudyFolder(), study.getStudyId() + "/0"));
             study.setState(0L);
         }
-        InputStream stateStream = new FileInputStream(stateFile);
-        long state = Long.parseLong(new String(ByteStreams.toByteArray(stateStream)));
+        long state = Long.parseLong(Files.lines(stateFile).findFirst().get());
         study.setState(state);
         AddGeneticData.processMafFile(study,
                 new File(Settings.getStudyFolder(), studyId + "/" + state + "/data_mutation_extended.maf"));
