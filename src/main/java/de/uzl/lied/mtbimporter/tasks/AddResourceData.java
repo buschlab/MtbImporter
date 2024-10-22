@@ -39,9 +39,10 @@ public final class AddResourceData {
     public static void processPdfFile(CbioPortalStudy study, File pdf) throws IOException {
         String sampleId = pdf.getName().replaceAll(
                 ".*_somaticGermline_|.*somatic_|.*tumorOnly_|_tumorOnly|_Report|_Slides|_Patho|_HumGen|.pdf", "");
+        sampleId = sampleId.replaceAll("somaticGermline_|somatic_|tumorOnly_", "");
         String patientId = pdf.getName().replaceAll("_somatic.*|_tumorOnly.*", "");
-        if (patientId == null || patientId.length() == 0) {
-            FhirResolver.resolvePatientFromSample(sampleId);
+        if (patientId == null || patientId.length() == 0 || patientId.equals(pdf.getName())) {
+            patientId = FhirResolver.resolvePatientFromSample(sampleId);
         }
         File target = new File(
                 Settings.getResourceFolder(), study.getStudyId() + "/" + patientId + "/" + pdf.getName());
